@@ -1,2303 +1,1083 @@
-<!doctype html>
-<html lang="en">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bane Phone - Tech Store</title>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="/_sdk/data_sdk.js"></script>
-  <style>
-    body {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #D5CABC;
-      color: #271408;
-      min-height: 100%;
-      width: 100%;
-      overflow-x: hidden;
-    }
-
-    * {
-      box-sizing: border-box;
-    }
-
-    /* Animated Background Particles */
-    .particles-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 1;
-      overflow: hidden;
-    }
-
-    .particle {
-      position: absolute;
-      border-radius: 50%;
-      opacity: 0.6;
-      animation: float linear infinite;
-    }
-
-    @keyframes float {
-      0% {
-        transform: translateY(0) translateX(0) scale(1);
-        opacity: 0;
-      }
-      10% {
-        opacity: 0.6;
-      }
-      90% {
-        opacity: 0.6;
-      }
-      100% {
-        transform: translateY(-100%) translateX(50px) scale(0.5);
-        opacity: 0;
-      }
-    }
-
-    /* Main Wrapper */
-    .app-wrapper {
-      width: 100%;
-      min-height: 100%;
-      position: relative;
-      z-index: 2;
-    }
-
-    /* Sidebar */
-    .tech-sidebar {
-      position: fixed;
-      left: 0;
-      top: 0;
-      width: 320px;
-      height: 100%;
-      background: linear-gradient(180deg, 
-        rgba(220, 38, 38, 0.95) 0%,
-        rgba(153, 27, 27, 0.95) 50%,
-        rgba(0, 0, 0, 0.95) 100%
-      );
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 1000;
-      padding: 0;
-      overflow-y: auto;
-      box-shadow: 8px 0 40px rgba(220, 38, 38, 0.4);
-      border-right: 2px solid rgba(220, 38, 38, 0.5);
-    }
-
-    .sidebar-header {
-      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
-      padding: 2rem 1.5rem;
-      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
-      text-align: center;
-    }
-
-    .sidebar-logo {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.8));
-    }
-
-    .sidebar-brand {
-      margin: 0;
-      font-size: 2rem;
-      font-weight: 900;
-      color: #ffffff;
-      text-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
-      letter-spacing: 3px;
-    }
-
-    .sidebar-tagline {
-      margin: 0.5rem 0 0 0;
-      font-size: 0.9rem;
-      color: #ffffff;
-      opacity: 0.9;
-      font-weight: 300;
-      letter-spacing: 1px;
-    }
-
-    .sidebar-nav {
-      padding: 2rem 1rem;
-    }
-
-    .nav-item {
-      margin-bottom: 1rem;
-    }
-
-    .nav-link {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1.25rem 1.5rem;
-      color: #ffffff;
-      text-decoration: none;
-      border-radius: 15px;
-      font-weight: 600;
-      font-size: 1.05rem;
-      transition: all 0.4s ease;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .nav-link::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      transition: left 0.6s ease;
-    }
-
-    .nav-link:hover::before {
-      left: 100%;
-    }
-
-    .nav-link:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: translateX(8px);
-      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
-      border-color: rgba(255, 255, 255, 0.3);
-    }
-
-    .nav-icon {
-      font-size: 1.5rem;
-      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
-    }
-
-    .cart-badge {
-      background: #ffffff;
-      color: #dc2626;
-      padding: 0.35rem 0.75rem;
-      border-radius: 25px;
-      font-size: 0.8rem;
-      font-weight: 900;
-      margin-left: auto;
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
-    }
-
-    /* Main Content */
-    .main-content {
-      margin-left: 320px;
-      width: calc(100% - 320px);
-      min-height: 100%;
-    }
-
-    /* Hero Section */
-    .hero-section {
-      min-height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4rem 2rem;
-      position: relative;
-      background: linear-gradient(135deg, 
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(248, 250, 252, 0.95) 100%
-      );
-    }
-
-    .hero-content {
-      max-width: 800px;
-      position: relative;
-      z-index: 10;
-    }
-
-    .hero-icon {
-      font-size: 8rem;
-      margin-bottom: 2rem;
-      animation: pulse 3s ease-in-out infinite;
-      filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.3));
-    }
-
-    @keyframes pulse {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
-
-    .hero-title {
-      font-size: 5rem;
-      font-weight: 900;
-      margin: 0 0 1rem 0;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      letter-spacing: 3px;
-      text-shadow: 0 4px 20px rgba(220, 38, 38, 0.2);
-    }
-
-    .hero-subtitle {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #dc2626;
-      margin: 0 0 1.5rem 0;
-      letter-spacing: 2px;
-    }
-
-    .hero-description {
-      font-size: 1.3rem;
-      color: #374151;
-      margin: 0 0 3rem 0;
-      line-height: 1.8;
-      font-weight: 400;
-    }
-
-    .hero-button {
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      color: #ffffff;
-      border: none;
-      padding: 1.75rem 4rem;
-      font-size: 1.5rem;
-      font-weight: 800;
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 10px 40px rgba(220, 38, 38, 0.4);
-      letter-spacing: 1px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .hero-button::before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 0;
-      height: 0;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.3);
-      transform: translate(-50%, -50%);
-      transition: width 0.6s, height 0.6s;
-    }
-
-    .hero-button:hover::before {
-      width: 300px;
-      height: 300px;
-    }
-
-    .hero-button:hover {
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 15px 50px rgba(220, 38, 38, 0.6);
-    }
-
-    .hero-button span {
-      position: relative;
-      z-index: 1;
-    }
-
-    /* Question Form */
-    .question-form-wrapper {
-      width: 100%;
-      background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(0, 0, 0, 0.08) 100%);
-      border: 3px solid #dc2626;
-      border-radius: 30px;
-      padding: 2.5rem;
-      box-shadow: 0 10px 40px rgba(220, 38, 38, 0.2);
-      margin-top: 4rem;
-    }
-
-    .question-form-title {
-      text-align: center;
-      font-size: 2rem;
-      font-weight: 900;
-      color: #000000;
-      margin: 0 0 2rem 0;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .question-form {
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .question-form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-    }
-
-    .question-input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .question-input-group label {
-      font-weight: 700;
-      color: #000000;
-      font-size: 1rem;
-    }
-
-    .question-input-group input,
-    .question-input-group textarea {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 1rem;
-      background: #ffffff;
-      color: #000000;
-      transition: all 0.3s ease;
-      font-family: inherit;
-      font-weight: 500;
-    }
-
-    .question-input-group textarea {
-      resize: vertical;
-    }
-
-    .question-input-group input:focus,
-    .question-input-group textarea:focus {
-      outline: none;
-      border-color: #dc2626;
-      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-    }
-
-    .question-submit-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      color: #ffffff;
-      border: none;
-      padding: 1.5rem;
-      border-radius: 15px;
-      font-weight: 900;
-      font-size: 1.25rem;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      letter-spacing: 1px;
-    }
-
-    .question-submit-btn:hover:not(:disabled) {
-      transform: scale(1.03);
-      box-shadow: 0 8px 35px rgba(220, 38, 38, 0.6);
-    }
-
-    .question-submit-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    /* Contact Info Below Form */
-    .contact-info-below {
-      border-top: 2px solid rgba(220, 38, 38, 0.2);
-      padding-top: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-    }
-
-    .store-info-compact {
-      display: flex;
-      justify-content: center;
-      gap: 3rem;
-      flex-wrap: wrap;
-    }
-
-    .info-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .info-icon {
-      font-size: 1.5rem;
-      filter: drop-shadow(0 2px 8px rgba(220, 38, 38, 0.4));
-    }
-
-    .info-text {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #000000;
-    }
-
-    .social-icons-compact {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-    }
-
-    .social-icon-link {
-      transition: all 0.3s ease;
-      display: block;
-      border-radius: 8px;
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-    }
-
-    .social-icon-link:hover {
-      transform: translateY(-5px) scale(1.1);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    }
-
-    /* Products Section */
-    .products-section {
-      padding: 4rem 2rem;
-      background: linear-gradient(180deg, 
-        rgba(255, 255, 255, 0.95) 0%,
-        rgba(248, 250, 252, 0.95) 100%
-      );
-      display: none;
-    }
-
-    .products-section.active {
-      display: block;
-    }
-
-    .products-header {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .products-header h2 {
-      font-size: 3rem;
-      font-weight: 900;
-      margin: 0 0 1rem 0;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .products-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 2.5rem;
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .product-card {
-      background: #ffffff;
-      border: 3px solid #e5e7eb;
-      border-radius: 25px;
-      padding: 2rem;
-      transition: all 0.4s ease;
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    .product-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 6px;
-      background: linear-gradient(90deg, #dc2626 0%, #000000 100%);
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.4s ease;
-    }
-
-    .product-card:hover {
-      border-color: #dc2626;
-      transform: translateY(-10px);
-      box-shadow: 0 15px 50px rgba(220, 38, 38, 0.3);
-    }
-
-    .product-card:hover::before {
-      transform: scaleX(1);
-    }
-
-    .product-icon {
-      font-size: 5rem;
-      text-align: center;
-      margin-bottom: 1.5rem;
-      filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.2));
-    }
-
-    .product-name {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: #000000;
-      margin-bottom: 0.75rem;
-      text-align: center;
-    }
-
-    .product-specs {
-      text-align: center;
-      color: #6b7280;
-      font-size: 1rem;
-      margin-bottom: 1.5rem;
-      font-weight: 500;
-    }
-
-    .product-price {
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: #dc2626;
-      text-align: center;
-      margin-bottom: 2rem;
-      text-shadow: 0 2px 10px rgba(220, 38, 38, 0.2);
-    }
-
-    .product-options {
-      margin-bottom: 2rem;
-    }
-
-    .product-options-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .product-options-group label {
-      display: block;
-      margin-bottom: 0.75rem;
-      color: #000000;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .product-options-group select {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 1rem;
-      background: #ffffff;
-      color: #000000;
-      transition: all 0.3s ease;
-      font-weight: 500;
-      cursor: pointer;
-    }
-
-    .product-options-group select:focus {
-      outline: none;
-      border-color: #dc2626;
-      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-    }
-
-    .battery-group {
-      display: none;
-      animation: fadeIn 0.4s ease;
-    }
-
-    .battery-group.show {
-      display: block;
-    }
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-        transform: translateY(-10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .add-to-cart-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      color: #ffffff;
-      border: none;
-      padding: 1.25rem;
-      border-radius: 15px;
-      font-weight: 800;
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
-      letter-spacing: 1px;
-    }
-
-    .add-to-cart-btn:hover:not(:disabled) {
-      transform: scale(1.05);
-      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
-    }
-
-    .add-to-cart-btn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    /* Cart Modal */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-      backdrop-filter: blur(5px);
-    }
-
-    .modal-overlay.active {
-      display: flex;
-    }
-
-    .modal-content {
-      background: #ffffff;
-      border: 4px solid #dc2626;
-      border-radius: 30px;
-      max-width: 900px;
-      width: 100%;
-      max-height: 90%;
-      overflow-y: auto;
-      box-shadow: 0 25px 80px rgba(220, 38, 38, 0.5);
-      position: relative;
-    }
-
-    .modal-header {
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      padding: 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-radius: 26px 26px 0 0;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-      font-size: 2rem;
-      font-weight: 900;
-      color: #ffffff;
-      letter-spacing: 1px;
-    }
-
-    .close-modal {
-      background: rgba(255, 255, 255, 0.2);
-      border: 2px solid rgba(255, 255, 255, 0.3);
-      color: #ffffff;
-      font-size: 2rem;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      font-weight: 700;
-    }
-
-    .close-modal:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: rotate(90deg);
-    }
-
-    .modal-body {
-      padding: 2.5rem;
-    }
-
-    .cart-items-list {
-      margin-bottom: 2rem;
-    }
-
-    .cart-item {
-      background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
-      border: 2px solid #e5e7eb;
-      border-radius: 20px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-
-    .cart-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      margin-bottom: 1rem;
-    }
-
-    .cart-item-name {
-      font-size: 1.5rem;
-      font-weight: 800;
-      color: #000000;
-      margin: 0;
-    }
-
-    .cart-item-price {
-      font-size: 1.75rem;
-      font-weight: 900;
-      color: #dc2626;
-    }
-
-    .cart-item-details {
-      color: #6b7280;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-
-    .cart-item-details div {
-      margin-bottom: 0.25rem;
-    }
-
-    .remove-item-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: #ef4444;
-      color: #ffffff;
-      border: none;
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      font-weight: 700;
-    }
-
-    .remove-item-btn:hover {
-      background: #dc2626;
-      transform: scale(1.1);
-    }
-
-    .order-form {
-      background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
-      border: 3px solid #dc2626;
-      border-radius: 20px;
-      padding: 2rem;
-    }
-
-    .order-form h4 {
-      margin: 0 0 2rem 0;
-      font-size: 1.75rem;
-      color: #000000;
-      font-weight: 800;
-      text-align: center;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group {
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.75rem;
-      color: #000000;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 1rem 1.25rem;
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      font-size: 1rem;
-      background: #ffffff;
-      color: #000000;
-      transition: all 0.3s ease;
-      font-weight: 500;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #dc2626;
-      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
-    }
-
-    .submit-order-btn {
-      width: 100%;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      color: #ffffff;
-      border: none;
-      padding: 1.5rem;
-      border-radius: 15px;
-      font-weight: 900;
-      font-size: 1.25rem;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.4);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.75rem;
-      letter-spacing: 1px;
-    }
-
-    .submit-order-btn:hover:not(:disabled) {
-      transform: scale(1.03);
-      box-shadow: 0 8px 35px rgba(220, 38, 38, 0.6);
-    }
-
-    .submit-order-btn:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .cart-total {
-      text-align: center;
-      margin: 2rem 0;
-      padding: 1.5rem;
-      background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
-      border-radius: 15px;
-      border: 2px solid #dc2626;
-    }
-
-    .cart-total-label {
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: #000000;
-      margin-bottom: 0.5rem;
-    }
-
-    .cart-total-amount {
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: #dc2626;
-    }
-
-    /* Success Message */
-    .success-message {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: #ffffff;
-      padding: 2.5rem;
-      border-radius: 20px;
-      text-align: center;
-      box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
-    }
-
-    .success-message h4 {
-      margin: 0 0 1rem 0;
-      font-size: 2rem;
-      font-weight: 900;
-    }
-
-    .success-message p {
-      margin: 0.5rem 0;
-      font-size: 1.2rem;
-      font-weight: 500;
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 2rem;
-      left: 50%;
-      transform: translateX(-50%) translateY(200%);
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      color: #ffffff;
-      padding: 1.25rem 2.5rem;
-      border-radius: 50px;
-      box-shadow: 0 10px 40px rgba(220, 38, 38, 0.5);
-      z-index: 3000;
-      transition: transform 0.4s ease;
-      font-weight: 700;
-      font-size: 1.1rem;
-      letter-spacing: 0.5px;
-    }
-
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-    }
-
-    /* Spinner */
-    .spinner {
-      display: inline-block;
-      width: 22px;
-      height: 22px;
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      border-top-color: #ffffff;
-      animation: spin 0.8s linear infinite;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Mobile Menu */
-    .mobile-menu-btn {
-      display: none;
-      position: fixed;
-      top: 1.5rem;
-      left: 1.5rem;
-      z-index: 999;
-      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
-      color: #ffffff;
-      border: none;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      font-size: 1.75rem;
-      cursor: pointer;
-      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
-      transition: all 0.3s ease;
-    }
-
-    .mobile-menu-btn:hover {
-      transform: scale(1.1);
-    }
-
-    .mobile-menu-badge {
-      position: absolute;
-      top: -5px;
-      right: -5px;
-      background: #ffffff;
-      color: #dc2626;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.85rem;
-      font-weight: 900;
-      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
-      border: 3px solid #dc2626;
-    }
-
-    /* Responsive */
-    @media (max-width: 1024px) {
-      .tech-sidebar {
-        transform: translateX(-100%);
-        transition: transform 0.4s ease;
-      }
-
-      .tech-sidebar.mobile-open {
-        transform: translateX(0);
-      }
-
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-
-      .mobile-menu-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .hero-title {
-        font-size: 3rem;
-      }
-
-      .hero-subtitle {
-        font-size: 1.5rem;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .hero-title {
-        font-size: 2.5rem;
-      }
-
-      .hero-icon {
-        font-size: 5rem;
-      }
-
-      .products-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .tech-sidebar {
-        width: 100%;
-      }
-
-      .question-form-row {
-        grid-template-columns: 1fr;
-      }
-
-      .store-info-compact {
-        flex-direction: column;
-        gap: 1.5rem;
-      }
-    }
-  </style>
-  <style>@view-transition { navigation: auto; }</style>
-  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
- </head>
- <body><!-- Animated Particles -->
-  <div class="particles-container" id="particles"></div>
-  <div class="app-wrapper"><!-- Sidebar -->
-   <aside class="tech-sidebar" id="sidebar">
-    <div class="sidebar-header">
-     <div class="sidebar-logo">
-      📱
-     </div>
-     <h2 class="sidebar-brand">ROLLA</h2>
-     <p class="sidebar-tagline">MARQUE VETEMENT</p>
-    </div>
-    <nav class="sidebar-nav">
-     <div class="nav-item"><a href="#" class="nav-link" id="nav-home"> <span class="nav-icon">��</span> <span>Home</span> </a>
-     </div>
-     <div class="nav-item"><a href="#" class="nav-link" id="nav-products"> <span class="nav-icon">📱</span> <span>Products</span> </a>
-     </div>
-     <div class="nav-item"><a href="#" class="nav-link" id="nav-accessories"> <span class="nav-icon">🎧</span> <span>Accessories</span> </a>
-     </div>
-     <div class="nav-item"><a href="#" class="nav-link" id="nav-cart"> <span class="nav-icon">🛒</span> <span>Cart</span> <span class="cart-badge" id="cart-badge">0</span> </a>
-     </div>
-    </nav>
-   </aside><!-- Mobile Menu Button --> <button class="mobile-menu-btn" id="mobile-menu-btn"> ☰ <span class="mobile-menu-badge" id="mobile-cart-badge">0</span> </button> <!-- Main Content -->
-   <div class="main-content"><!-- Hero Section -->
-    <section class="hero-section" id="hero-section">
-     <div class="hero-content">
-      <div class="hero-icon">
-       📱
-      </div>
-      <h1 class="hero-title" id="hero-title">ROLLA MARQUE</h1>
-      <h2 class="hero-subtitle" id="hero-subtitle">Advanced Technology</h2>
-      <p class="hero-description" id="hero-description">Your first destination for original iPhone devices with the latest technology and best prices</p><button class="hero-button" id="hero-cta"> <span id="hero-button-text">Order Now</span> </button> <!-- Question Form -->
-      <div class="question-form-wrapper">
-       <h3 class="question-form-title" id="question-title">Have a Question?</h3>
-       <form class="question-form" id="question-form">
-        <div class="question-form-row">
-         <div class="question-input-group"><label for="question-name" id="question-name-label">Name</label> <input type="text" id="question-name" required placeholder="Your full name">
-         </div>
-         <div class="question-input-group"><label for="question-email" id="question-email-label">Email</label> <input type="email" id="question-email" required placeholder="example@email.com">
-         </div>
-        </div>
-        <div class="question-input-group"><label for="question-message" id="question-message-label">Your Question</label> <textarea id="question-message" required placeholder="Write your question here..." rows="4"></textarea>
-        </div><button type="submit" class="question-submit-btn" id="question-submit-btn"> <span id="question-submit-text">Send Question</span> </button>
-       </form><!-- Contact Info Below Form -->
-       <div class="contact-info-below">
-        <div class="store-info-compact">
-         <div class="info-item"><span class="info-icon">📍</span> <span class="info-text" id="store-location">Downtown - New York</span>
-         </div>
-         <div class="info-item"><span class="info-icon">📞</span> <span class="info-text" id="store-phone">+1 XXX XXX XXXX</span>
-         </div>
-        </div>
-        <div class="social-icons-compact"><a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Instagram">
-          <svg width="44" height="44" viewbox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#instagram-gradient)" stroke="black" stroke-width="2" /> <circle cx="12" cy="12" r="4" stroke="black" stroke-width="2" /> <circle cx="17.5" cy="6.5" r="1.5" fill="black" /> <defs>
-            <lineargradient id="instagram-gradient" x1="2" y1="22" x2="22" y2="2">
-             <stop offset="0%" stop-color="#dc2626" />
-             <stop offset="100%" stop-color="#000000" />
-            </lineargradient>
-           </defs>
-          </svg></a> <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="TikTok">
-          <svg width="44" height="44" viewbox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#000000" /> <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" fill="#ffffff" />
-          </svg></a>
-        </div>
-       </div>
-      </div>
-     </div>
-    </section><!-- Products Section -->
-    <section class="products-section" id="products-section">
-     <div class="products-header">
-      <h2 id="products-title">Choose Your Device</h2>
-     </div>
-     <div class="products-grid" id="products-grid"></div>
-    </section><!-- Accessories Section -->
-    <section class="products-section" id="accessories-section">
-     <div class="products-header">
-      <h2>🎧 Accessories</h2>
-     </div>
-     <div class="products-grid" id="accessories-grid"></div>
-    </section>
-   </div><!-- Cart Modal -->
-   <div class="modal-overlay" id="cart-modal">
-    <div class="modal-content">
-     <div class="modal-header">
-      <h3>🛒 Shopping Cart</h3><button class="close-modal" id="close-cart">×</button>
-     </div>
-     <div class="modal-body" id="modal-body"></div>
-    </div>
-   </div><!-- Toast -->
-   <div class="toast" id="toast"></div>
-  </div>
-  <script>
-    const defaultConfig = {
-      hero_title: "Bane Phone",
-      hero_subtitle: "Advanced Technology",
-      hero_description: "Your first destination for original iPhone devices with the latest technology and best prices",
-      hero_button: "Order Now",
-      store_location: "Downtown - New York",
-      store_phone: "+1 XXX XXX XXXX",
-      question_title: "Have a Question?",
-      question_name_label: "Name",
-      question_email_label: "Email",
-      question_message_label: "Your Question",
-      question_submit_text: "Send Question",
-      products_title: "Choose Your Device",
-      color_label: "Choose Color",
-      battery_label: "Battery Type",
-      name_label: "Full Name",
-      email_label: "Email Address",
-      phone_label: "Phone Number",
-      state_label: "State",
-      payment_label: "Payment Method",
-      submit_button: "Confirm Order"
-    };
-
-    const products = [
-      { id: 'xs', name: 'iPhone XS', price: 2500, specs: '5.8" Display | A12 Bionic | 64GB' },
-      { id: '11', name: 'iPhone 11', price: 3200, specs: '6.1" Display | A13 Bionic | 128GB' },
-      { id: '12', name: 'iPhone 12', price: 4000, specs: '6.1" Display | A14 Bionic | 5G' },
-      { id: '13', name: 'iPhone 13', price: 4800, specs: '6.1" Display | A15 Bionic | 256GB' },
-      { id: '14', name: 'iPhone 14', price: 5500, specs: '6.1" Display | A15 Bionic | Dynamic Island' },
-      { id: '15', name: 'iPhone 15', price: 6200, specs: '6.1" Display | A16 Bionic | USB-C' },
-      { id: '15pro', name: 'iPhone 15 Pro', price: 7500, specs: '6.1" Display | A17 Pro | Titanium' },
-      { id: '16', name: 'iPhone 16', price: 7000, specs: '6.3" Display | A18 | Camera Control' },
-      { id: '16pro', name: 'iPhone 16 Pro Max', price: 8500, specs: '6.9" Display | A18 Pro | 1TB' }
-    ];
-
-    const accessories = [
-      { 
-        id: 'charger', 
-        name: 'Charger', 
-        icon: '🔌',
-        basePrice: 0,
-        specs: 'Fast Charging Support'
-      },
-      { 
-        id: 'headphones', 
-        name: 'Headphones', 
-        icon: '🎧',
-        basePrice: 0,
-        specs: 'Premium Sound Quality'
-      },
-      { 
-        id: 'bluetooth', 
-        name: 'Bluetooth Speaker', 
-        icon: '🔊',
-        basePrice: 0,
-        specs: 'Wireless Connection'
-      },
-      { 
-        id: 'case', 
-        name: 'Phone Case', 
-        icon: '���',
-        basePrice: 0,
-        specs: 'Full Protection'
-      }
-    ];
-
-    const chargerTypes = [
-      { value: '', label: 'Select Type', price: 0 },
-      { value: 'original_5w', label: 'Original 5W', price: 50 },
-      { value: 'original_20w', label: 'Original 20W Fast Charge', price: 80 },
-      { value: 'original_magsafe', label: 'Original MagSafe', price: 120 },
-      { value: 'copy_5w', label: 'Copy 5W', price: 15 },
-      { value: 'copy_20w', label: 'Copy 20W Fast Charge', price: 25 },
-      { value: 'copy_wireless', label: 'Copy Wireless', price: 35 }
-    ];
-
-    const headphoneTypes = [
-      { value: '', label: 'Select Type', price: 0 },
-      { value: 'airpods_2', label: 'AirPods 2nd Gen', price: 180 },
-      { value: 'airpods_3', label: 'AirPods 3rd Gen', price: 250 },
-      { value: 'airpods_pro', label: 'AirPods Pro', price: 350 },
-      { value: 'airpods_max', label: 'AirPods Max', price: 750 },
-      { value: 'wired_original', label: 'Wired Original', price: 50 },
-      { value: 'wired_copy', label: 'Wired Copy', price: 15 }
-    ];
-
-    const bluetoothTypes = [
-      { value: '', label: 'Select Type', price: 0 },
-      { value: 'small', label: 'Small Speaker', price: 80 },
-      { value: 'medium', label: 'Medium Speaker', price: 150 },
-      { value: 'large', label: 'Large Speaker', price: 250 },
-      { value: 'premium', label: 'Premium Speaker', price: 400 }
-    ];
-
-    const caseTypes = [
-      { value: '', label: 'Select Type', price: 0 },
-      { value: 'silicone', label: 'Silicone Case', price: 25 },
-      { value: 'leather', label: 'Leather Case', price: 45 },
-      { value: 'clear', label: 'Clear Case', price: 20 },
-      { value: 'magsafe', label: 'MagSafe Case', price: 60 },
-      { value: 'tough', label: 'Tough Armor', price: 50 }
-    ];
-
-    const phoneModels = [
-      { value: '', label: 'Select Phone Model' },
-      { value: 'xs', label: 'iPhone XS' },
-      { value: '11', label: 'iPhone 11' },
-      { value: '12', label: 'iPhone 12' },
-      { value: '13', label: 'iPhone 13' },
-      { value: '14', label: 'iPhone 14' },
-      { value: '15', label: 'iPhone 15' },
-      { value: '15pro', label: 'iPhone 15 Pro' },
-      { value: '16', label: 'iPhone 16' },
-      { value: '16pro', label: 'iPhone 16 Pro Max' }
-    ];
-
-    const accessoryColors = [
-      { value: '', label: 'Choose Color', priceAdd: 0 },
-      { value: 'black', label: 'Black', priceAdd: 0 },
-      { value: 'white', label: 'White', priceAdd: 0 },
-      { value: 'red', label: 'Red', priceAdd: 5 },
-      { value: 'blue', label: 'Blue', priceAdd: 5 },
-      { value: 'pink', label: 'Pink', priceAdd: 5 },
-      { value: 'green', label: 'Green', priceAdd: 5 },
-      { value: 'purple', label: 'Purple', priceAdd: 5 },
-      { value: 'gold', label: 'Gold', priceAdd: 10 }
-    ];
-
-    const colors = [
-      { value: '', label: 'Choose Color' },
-      { value: 'black', label: 'Black' },
-      { value: 'white', label: 'White' },
-      { value: 'red', label: 'Red' },
-      { value: 'blue', label: 'Blue' },
-      { value: 'gold', label: 'Gold' }
-    ];
-
-    const batteries = [
-      { value: 'standard', label: 'Standard Battery' },
-      { value: 'fast', label: 'Fast Charging 20W' },
-      { value: 'wireless', label: 'MagSafe Wireless Charging' },
-      { value: 'premium', label: 'Premium Battery + Fast Charging' }
-    ];
-
-    const states = [
-      { name: "Adrar", officePrice: 800, homePrice: 1000 },
-      { name: "Chlef", officePrice: 600, homePrice: 800 },
-      { name: "Laghouat", officePrice: 700, homePrice: 900 },
-      { name: "Oum El Bouaghi", officePrice: 600, homePrice: 800 },
-      { name: "Batna", officePrice: 600, homePrice: 800 },
-      { name: "Béjaïa", officePrice: 600, homePrice: 800 },
-      { name: "Biskra", officePrice: 700, homePrice: 900 },
-      { name: "Béchar", officePrice: 900, homePrice: 1200 },
-      { name: "Blida", officePrice: 400, homePrice: 600 },
-      { name: "Bouira", officePrice: 500, homePrice: 700 },
-      { name: "Tamanrasset", officePrice: 1500, homePrice: 2000 },
-      { name: "Tébessa", officePrice: 700, homePrice: 900 },
-      { name: "Tlemcen", officePrice: 700, homePrice: 900 },
-      { name: "Tiaret", officePrice: 600, homePrice: 800 },
-      { name: "Tizi Ouzou", officePrice: 500, homePrice: 700 },
-      { name: "Algiers", officePrice: 300, homePrice: 500 },
-      { name: "Djelfa", officePrice: 600, homePrice: 800 },
-      { name: "Jijel", officePrice: 600, homePrice: 800 },
-      { name: "Sétif", officePrice: 600, homePrice: 800 },
-      { name: "Saïda", officePrice: 700, homePrice: 900 },
-      { name: "Skikda", officePrice: 600, homePrice: 800 },
-      { name: "Sidi Bel Abbès", officePrice: 700, homePrice: 900 },
-      { name: "Annaba", officePrice: 600, homePrice: 800 },
-      { name: "Guelma", officePrice: 600, homePrice: 800 },
-      { name: "Constantine", officePrice: 600, homePrice: 800 },
-      { name: "Médéa", officePrice: 500, homePrice: 700 },
-      { name: "Mostaganem", officePrice: 600, homePrice: 800 },
-      { name: "M'Sila", officePrice: 600, homePrice: 800 },
-      { name: "Mascara", officePrice: 600, homePrice: 800 },
-      { name: "Ouargla", officePrice: 800, homePrice: 1000 },
-      { name: "Oran", officePrice: 600, homePrice: 800 },
-      { name: "El Bayadh", officePrice: 800, homePrice: 1000 },
-      { name: "Illizi", officePrice: 1200, homePrice: 1500 },
-      { name: "Bordj Bou Arreridj", officePrice: 600, homePrice: 800 },
-      { name: "Boumerdès", officePrice: 400, homePrice: 600 },
-      { name: "El Tarf", officePrice: 700, homePrice: 900 },
-      { name: "Tindouf", officePrice: 1200, homePrice: 1500 },
-      { name: "Tissemsilt", officePrice: 600, homePrice: 800 },
-      { name: "El Oued", officePrice: 700, homePrice: 900 },
-      { name: "Khenchela", officePrice: 700, homePrice: 900 },
-      { name: "Souk Ahras", officePrice: 700, homePrice: 900 },
-      { name: "Tipaza", officePrice: 400, homePrice: 600 },
-      { name: "Mila", officePrice: 600, homePrice: 800 },
-      { name: "Aïn Defla", officePrice: 500, homePrice: 700 },
-      { name: "Naâma", officePrice: 800, homePrice: 1000 },
-      { name: "Aïn Témouchent", officePrice: 700, homePrice: 900 },
-      { name: "Ghardaïa", officePrice: 800, homePrice: 1000 },
-      { name: "Relizane", officePrice: 600, homePrice: 800 },
-      { name: "Timimoun", officePrice: 1000, homePrice: 1300 },
-      { name: "Bordj Badji Mokhtar", officePrice: 1500, homePrice: 2000 },
-      { name: "Ouled Djellal", officePrice: 700, homePrice: 900 },
-      { name: "Béni Abbès", officePrice: 1000, homePrice: 1300 },
-      { name: "In Salah", officePrice: 1200, homePrice: 1500 },
-      { name: "In Guezzam", officePrice: 1500, homePrice: 2000 },
-      { name: "Touggourt", officePrice: 800, homePrice: 1000 },
-      { name: "Djanet", officePrice: 1500, homePrice: 2000 },
-      { name: "El M'Ghair", officePrice: 800, homePrice: 1000 },
-      { name: "El Meniaa", officePrice: 900, homePrice: 1200 }
-    ];
-
-    const paymentMethods = [
-      { value: 'cash', label: 'Cash on Delivery' },
-      { value: 'cib', label: 'CIB Card (Algerie Poste)' },
-      { value: 'baridimob', label: 'BaridiMob' },
-      { value: 'bank_transfer', label: 'Bank Transfer' },
-      { value: 'western_union', label: 'Western Union' },
-      { value: 'money_gram', label: 'MoneyGram' }
-    ];
-
-    let cart = [];
-    let currentRecordCount = 0;
-
-    function createParticles() {
-      const container = document.getElementById('particles');
-      const particleCount = 30;
-      
-      for (let i = 0; i < particleCount; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        
-        const size = Math.random() * 6 + 3;
-        const left = Math.random() * 100;
-        const duration = Math.random() * 10 + 15;
-        const delay = Math.random() * 5;
-        const isRed = Math.random() > 0.5;
-        
-        particle.style.width = `${size}px`;
-        particle.style.height = `${size}px`;
-        particle.style.left = `${left}%`;
-        particle.style.background = isRed ? '#dc2626' : '#000000';
-        particle.style.animationDuration = `${duration}s`;
-        particle.style.animationDelay = `${delay}s`;
-        
-        container.appendChild(particle);
-      }
-    }
-
-    const dataHandler = {
-      onDataChanged(data) {
-        currentRecordCount = data.length;
-      }
-    };
-
-    async function initApp() {
-      createParticles();
-      
-      if (window.dataSdk) {
-        const initResult = await window.dataSdk.init(dataHandler);
-        if (!initResult.isOk) {
-          console.error("Failed to initialize data system");
-        }
-      }
-      
-      setupEventListeners();
-      renderProducts();
-      renderAccessories();
-    }
-
-    function setupEventListeners() {
-      document.getElementById('hero-cta').addEventListener('click', showProducts);
-      document.getElementById('nav-home').addEventListener('click', (e) => {
-        e.preventDefault();
-        showHome();
-      });
-      document.getElementById('nav-products').addEventListener('click', (e) => {
-        e.preventDefault();
-        showProducts();
-      });
-      document.getElementById('nav-accessories').addEventListener('click', (e) => {
-        e.preventDefault();
-        showAccessories();
-      });
-      document.getElementById('nav-cart').addEventListener('click', (e) => {
-        e.preventDefault();
-        openCart();
-      });
-      document.getElementById('close-cart').addEventListener('click', closeCart);
-      document.getElementById('cart-modal').addEventListener('click', (e) => {
-        if (e.target.id === 'cart-modal') closeCart();
-      });
-      document.getElementById('question-form').addEventListener('submit', handleQuestionSubmit);
-      document.getElementById('mobile-menu-btn').addEventListener('click', toggleSidebar);
-      
-      document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
-          if (window.innerWidth <= 1024) {
-            document.getElementById('sidebar').classList.remove('mobile-open');
-          }
-        });
-      });
-    }
-
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('mobile-open');
-    }
-
-    function showHome() {
-      document.getElementById('hero-section').style.display = 'flex';
-      document.getElementById('products-section').classList.remove('active');
-      document.getElementById('accessories-section').classList.remove('active');
-    }
-
-    function showProducts() {
-      document.getElementById('hero-section').style.display = 'none';
-      document.getElementById('products-section').classList.add('active');
-      document.getElementById('accessories-section').classList.remove('active');
-    }
-
-    function showAccessories() {
-      document.getElementById('hero-section').style.display = 'none';
-      document.getElementById('products-section').classList.remove('active');
-      document.getElementById('accessories-section').classList.add('active');
-    }
-
-    function renderProducts() {
-      const grid = document.getElementById('products-grid');
-      grid.innerHTML = products.map(product => `
-        <div class="product-card">
-          <div class="product-icon">📱</div>
-          <div class="product-name">${product.name}</div>
-          <div class="product-specs">${product.specs}</div>
-          <div class="product-price">$${product.price.toLocaleString()}</div>
-          
-          <div class="product-options">
-            <div class="product-options-group">
-              <label for="color-${product.id}" id="color-label-${product.id}">${defaultConfig.color_label}</label>
-              <select id="color-${product.id}" onchange="handleColorChange('${product.id}')">
-                ${colors.map(c => `<option value="${c.value}">${c.label}</option>`).join('')}
-              </select>
-            </div>
-            
-            <div class="product-options-group battery-group" id="battery-group-${product.id}">
-              <label for="battery-${product.id}" id="battery-label-${product.id}">${defaultConfig.battery_label}</label>
-              <select id="battery-${product.id}">
-                ${batteries.map(b => `<option value="${b.value}">${b.label}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-          
-          <button class="add-to-cart-btn" id="add-btn-${product.id}" onclick="addToCart('${product.id}')" disabled>
-            Add to Cart 🛒
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function renderAccessories() {
-      const grid = document.getElementById('accessories-grid');
-      grid.innerHTML = accessories.map(accessory => {
-        let optionsHTML = '';
-        
-        if (accessory.id === 'charger') {
-          optionsHTML = `
-            <div class="product-options-group">
-              <label for="type-${accessory.id}">Charger Type</label>
-              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${chargerTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
-              </select>
-            </div>
-            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
-              <label for="color-${accessory.id}">Color</label>
-              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
-              </select>
-            </div>
-          `;
-        } else if (accessory.id === 'headphones') {
-          optionsHTML = `
-            <div class="product-options-group">
-              <label for="type-${accessory.id}">Headphone Type</label>
-              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${headphoneTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
-              </select>
-            </div>
-            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
-              <label for="color-${accessory.id}">Color</label>
-              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
-              </select>
-            </div>
-          `;
-        } else if (accessory.id === 'bluetooth') {
-          optionsHTML = `
-            <div class="product-options-group">
-              <label for="type-${accessory.id}">Speaker Type</label>
-              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${bluetoothTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
-              </select>
-            </div>
-            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
-              <label for="color-${accessory.id}">Color</label>
-              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
-              </select>
-            </div>
-          `;
-        } else if (accessory.id === 'case') {
-          optionsHTML = `
-            <div class="product-options-group">
-              <label for="model-${accessory.id}">Phone Model</label>
-              <select id="model-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${phoneModels.map(m => `<option value="${m.value}">${m.label}</option>`).join('')}
-              </select>
-            </div>
-            <div class="product-options-group battery-group" id="type-group-${accessory.id}">
-              <label for="type-${accessory.id}">Case Type</label>
-              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${caseTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
-              </select>
-            </div>
-            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
-              <label for="color-${accessory.id}">Color</label>
-              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
-                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
-              </select>
-            </div>
-          `;
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لعبة الكلمات المتقاطعة</title>
+    <script src="/_sdk/data_sdk.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            box-sizing: border-box;
         }
         
-        return `
-          <div class="product-card">
-            <div class="product-icon">${accessory.icon}</div>
-            <div class="product-name">${accessory.name}</div>
-            <div class="product-specs">${accessory.specs}</div>
-            <div class="product-price" id="price-${accessory.id}">Select Options</div>
-            
-            <div class="product-options">
-              ${optionsHTML}
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
+        
+        * {
+            font-family: 'Cairo', Arial, sans-serif;
+        }
+        
+        @keyframes matrix-rain {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100vh); }
+        }
+        
+        @keyframes digital-flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
+        
+        @keyframes scan-line {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(100%); }
+        }
+        
+        @keyframes pulse-ring {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); }
+            100% { box-shadow: 0 0 0 20px rgba(0, 255, 157, 0); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes slide-in {
+            from { transform: translateY(-100%); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        @keyframes pop-in {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+            50% { opacity: 1; transform: scale(1) rotate(180deg); }
+        }
+        
+        @keyframes correct-flash {
+            0%, 100% { background: linear-gradient(135deg, #00ff9d 0%, #00cc7a 100%); }
+            50% { background: linear-gradient(135deg, #00ffcc 0%, #00ff9d 100%); }
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { filter: drop-shadow(0 0 5px #00ff9d); }
+            50% { filter: drop-shadow(0 0 20px #00ff9d); }
+        }
+        
+        .matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+        
+        .matrix-char {
+            position: absolute;
+            color: #00ff9d;
+            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            opacity: 0.3;
+            animation: matrix-rain linear infinite;
+        }
+        
+        .scan-line {
+            position: fixed;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(transparent, #00ff9d, transparent);
+            opacity: 0.1;
+            animation: scan-line 4s linear infinite;
+            z-index: 1;
+        }
+        
+        .letter-tile {
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: grab;
+            user-select: none;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            border: 2px solid #00ff9d;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3), inset 0 0 10px rgba(0, 255, 157, 0.1);
+        }
+        
+        .letter-tile::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(0, 255, 157, 0.2), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
+        }
+        
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        
+        .letter-tile:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.5), inset 0 0 15px rgba(0, 255, 157, 0.2);
+            border-color: #00ffcc;
+        }
+        
+        .letter-tile:active {
+            cursor: grabbing;
+            transform: scale(0.95);
+        }
+        
+        .drop-zone {
+            transition: all 0.3s ease;
+            background: rgba(10, 14, 39, 0.6);
+            backdrop-filter: blur(10px);
+            border: 2px dashed rgba(0, 255, 157, 0.3);
+            box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.1);
+        }
+        
+        .drop-zone.drag-over {
+            background: rgba(0, 255, 157, 0.2);
+            border-color: #00ff9d;
+            border-style: solid;
+            transform: scale(1.05);
+            animation: pulse-ring 1s infinite;
+        }
+        
+        .drop-zone.filled {
+            background: linear-gradient(135deg, #00ff9d 0%, #00cc7a 100%);
+            border-color: #00ff9d;
+            animation: correct-flash 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 157, 0.6);
+        }
+        
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #00ff9d, #00ffcc);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkle 1s ease-out forwards;
+            box-shadow: 0 0 10px #00ff9d;
+        }
+        
+        .word-complete {
+            animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .game-container {
+            background: radial-gradient(ellipse at top, #0a0e27 0%, #000000 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tech-panel {
+            background: linear-gradient(135deg, rgba(10, 14, 39, 0.9) 0%, rgba(26, 31, 58, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(0, 255, 157, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 255, 157, 0.2), inset 0 0 20px rgba(0, 255, 157, 0.05);
+            position: relative;
+        }
+        
+        .tech-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00ff9d, transparent);
+            animation: digital-flicker 2s infinite;
+        }
+        
+        .neon-text {
+            color: #00ff9d;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.8),
+                         0 0 20px rgba(0, 255, 157, 0.6),
+                         0 0 30px rgba(0, 255, 157, 0.4),
+                         0 0 40px rgba(0, 255, 157, 0.2);
+            animation: glow-pulse 2s infinite;
+        }
+        
+        .neon-text-blue {
+            color: #00ccff;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.8),
+                         0 0 20px rgba(0, 204, 255, 0.6);
+        }
+        
+        .neon-text-purple {
+            color: #cc00ff;
+            text-shadow: 0 0 10px rgba(204, 0, 255, 0.8),
+                         0 0 20px rgba(204, 0, 255, 0.6);
+        }
+        
+        .loading-spinner {
+            border: 3px solid rgba(0, 255, 157, 0.2);
+            border-top: 3px solid #00ff9d;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes wheel-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1800deg); }
+        }
+        
+        @keyframes fade-in {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes bounce-in {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .wheel-container {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 50;
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        .wheel {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            position: relative;
+            background: conic-gradient(
+                from 0deg,
+                #ff006e 0deg 60deg,
+                #ff8500 60deg 120deg,
+                #00ff9d 120deg 180deg,
+                #00ccff 180deg 240deg,
+                #cc00ff 240deg 300deg,
+                #ff00aa 300deg 360deg
+            );
+            box-shadow: 0 0 40px rgba(0, 255, 157, 0.6), inset 0 0 30px rgba(0,0,0,0.5);
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+            border: 3px solid #00ff9d;
+        }
+        
+        .wheel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #00ff9d, #00ffcc);
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0, 255, 157, 0.5);
+            z-index: 10;
+        }
+        
+        .wheel-pointer {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 15px solid transparent;
+            border-right: 15px solid transparent;
+            border-top: 25px solid #00ff9d;
+            filter: drop-shadow(0 4px 10px rgba(0, 255, 157, 0.7));
+            z-index: 20;
+        }
+        
+        .wheel-segment-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100px;
+            height: 20px;
+            transform-origin: 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            font-weight: bold;
+            font-size: 14px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        
+        .welcome-screen {
+            animation: fade-in 0.8s ease;
+        }
+        
+        .game-screen {
+            animation: fade-in 0.8s ease;
+        }
+        
+        .difficulty-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid;
+        }
+        
+        .difficulty-easy {
+            background: rgba(0, 255, 157, 0.2);
+            border-color: #00ff9d;
+            color: #00ff9d;
+        }
+        
+        .difficulty-medium {
+            background: rgba(255, 133, 0, 0.2);
+            border-color: #ff8500;
+            color: #ff8500;
+        }
+        
+        .difficulty-hard {
+            background: rgba(255, 0, 110, 0.2);
+            border-color: #ff006e;
+            color: #ff006e;
+        }
+        
+        .category-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            background: rgba(0, 204, 255, 0.2);
+            border: 1px solid #00ccff;
+            color: #00ccff;
+            margin-left: 8px;
+        }
+        
+        .hex-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: 
+                linear-gradient(30deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d),
+                linear-gradient(150deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d),
+                linear-gradient(30deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d),
+                linear-gradient(150deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d);
+            background-size: 80px 140px;
+            background-position: 0 0, 0 0, 40px 70px, 40px 70px;
+        }
+    </style>
+</head>
+<body class="h-full m-0 p-0">
+    <!-- Matrix Background -->
+    <div class="matrix-bg" id="matrixBg"></div>
+    <div class="scan-line"></div>
+    <div class="hex-pattern"></div>
+    
+    <!-- Welcome Screen -->
+    <div id="welcomeScreen" class="game-container welcome-screen w-full h-full flex flex-col items-center justify-center p-6 relative">
+        <div class="tech-panel rounded-3xl p-12 max-w-3xl text-center relative z-10">
+            <div class="mb-8">
+                <div class="text-8xl mb-4">💻</div>
+                <h1 id="welcomeTitle" class="text-7xl font-black neon-text mb-4">لعبة الكلمات المتقاطعة</h1>
+                <p id="welcomeDescription" class="text-2xl mb-4 neon-text-blue">اختبر ذكاءك وكوّن الكلمات</p>
+                <div class="text-sm neon-text-purple">⚡ أكثر من 50 لغز تقني متنوع ⚡</div>
             </div>
             
-            <button class="add-to-cart-btn" id="add-btn-${accessory.id}" onclick="addAccessoryToCart('${accessory.id}')" disabled>
-              Add to Cart 🛒
+            <div class="tech-panel rounded-2xl p-6 mb-8">
+                <h3 class="text-xl font-bold mb-6 neon-text">✨ فئات الألغاز</h3>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-2">🐍</div>
+                        <div class="font-bold neon-text-blue">لغات البرمجة</div>
+                        <div class="text-xs" style="color: #888;">Python, Java, JavaScript</div>
+                    </div>
+                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-2">⚙️</div>
+                        <div class="font-bold neon-text-blue">مصطلحات تقنية</div>
+                        <div class="text-xs" style="color: #888;">خوارزميات، قواعد بيانات</div>
+                    </div>
+                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-2">👨‍💻</div>
+                        <div class="font-bold neon-text-blue">شخصيات تقنية</div>
+                        <div class="text-xs" style="color: #888;">Gates, Jobs, Musk</div>
+                    </div>
+                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+                        <div class="text-4xl mb-2">🤖</div>
+                        <div class="font-bold neon-text-blue">تقنيات متقدمة</div>
+                        <div class="text-xs" style="color: #888;">AI, Blockchain, Cloud</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tech-panel rounded-2xl p-6 mb-8">
+                <h3 class="text-lg font-bold mb-4 neon-text">🎮 مستويات الصعوبة</h3>
+                <div class="flex justify-center gap-4">
+                    <div class="difficulty-badge difficulty-easy">⭐ سهل</div>
+                    <div class="difficulty-badge difficulty-medium">⭐⭐ متوسط</div>
+                    <div class="difficulty-badge difficulty-hard">⭐⭐⭐ صعب</div>
+                </div>
+            </div>
+            
+            <button id="startGameBtn" class="w-full py-6 px-8 rounded-2xl font-black text-3xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-[#00ff9d]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #00ff9d; box-shadow: 0 0 30px rgba(0, 255, 157, 0.4), inset 0 0 20px rgba(0, 255, 157, 0.1);">
+                <span class="relative z-10" id="startButtonText">🚀 ابدأ اللعبة</span>
             </button>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function handleColorChange(productId) {
-      const colorSelect = document.getElementById(`color-${productId}`);
-      const batteryGroup = document.getElementById(`battery-group-${productId}`);
-      const addBtn = document.getElementById(`add-btn-${productId}`);
-      
-      if (colorSelect.value) {
-        batteryGroup.classList.add('show');
-        addBtn.disabled = false;
-      } else {
-        batteryGroup.classList.remove('show');
-        addBtn.disabled = true;
-      }
-    }
-
-    function handleAccessoryChange(accessoryId) {
-      const accessory = accessories.find(a => a.id === accessoryId);
-      const priceDisplay = document.getElementById(`price-${accessoryId}`);
-      const addBtn = document.getElementById(`add-btn-${accessoryId}`);
-      
-      let totalPrice = 0;
-      let canAdd = false;
-      
-      if (accessoryId === 'charger') {
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        if (typeSelect.value) {
-          colorGroup.classList.add('show');
-          const selectedType = typeSelect.options[typeSelect.selectedIndex];
-          const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-          
-          const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-          const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-          
-          totalPrice = typePrice + colorAdd;
-          
-          if (colorSelect.value) {
-            canAdd = true;
-          }
-        } else {
-          colorGroup.classList.remove('show');
-        }
-        
-      } else if (accessoryId === 'headphones') {
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        if (typeSelect.value) {
-          colorGroup.classList.add('show');
-          const selectedType = typeSelect.options[typeSelect.selectedIndex];
-          const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-          
-          const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-          const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-          
-          totalPrice = typePrice + colorAdd;
-          
-          if (colorSelect.value) {
-            canAdd = true;
-          }
-        } else {
-          colorGroup.classList.remove('show');
-        }
-        
-      } else if (accessoryId === 'bluetooth') {
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        if (typeSelect.value) {
-          colorGroup.classList.add('show');
-          const selectedType = typeSelect.options[typeSelect.selectedIndex];
-          const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-          
-          const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-          const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-          
-          totalPrice = typePrice + colorAdd;
-          
-          if (colorSelect.value) {
-            canAdd = true;
-          }
-        } else {
-          colorGroup.classList.remove('show');
-        }
-        
-      } else if (accessoryId === 'case') {
-        const modelSelect = document.getElementById(`model-${accessoryId}`);
-        const typeGroup = document.getElementById(`type-group-${accessoryId}`);
-        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        if (modelSelect.value) {
-          typeGroup.classList.add('show');
-          
-          if (typeSelect.value) {
-            colorGroup.classList.add('show');
-            
-            const selectedType = typeSelect.options[typeSelect.selectedIndex];
-            const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-            
-            const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-            const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-            
-            totalPrice = typePrice + colorAdd;
-            
-            if (colorSelect.value) {
-              canAdd = true;
-            }
-          } else {
-            colorGroup.classList.remove('show');
-          }
-        } else {
-          typeGroup.classList.remove('show');
-          colorGroup.classList.remove('show');
-        }
-      }
-      
-      if (totalPrice > 0) {
-        priceDisplay.textContent = `$${totalPrice.toLocaleString()}`;
-        priceDisplay.style.color = '#dc2626';
-      } else {
-        priceDisplay.textContent = 'Select Options';
-        priceDisplay.style.color = '#6b7280';
-      }
-      
-      addBtn.disabled = !canAdd;
-    }
-
-    function addToCart(productId) {
-      const product = products.find(p => p.id === productId);
-      const colorSelect = document.getElementById(`color-${productId}`);
-      const batterySelect = document.getElementById(`battery-${productId}`);
-      
-      const colorValue = colorSelect.value;
-      const batteryValue = batterySelect.value;
-      
-      if (!colorValue) {
-        showToast('⚠️ Please choose a color');
-        return;
-      }
-      
-      const colorLabel = colors.find(c => c.value === colorValue)?.label || '';
-      const batteryLabel = batteries.find(b => b.value === batteryValue)?.label || '';
-      
-      cart.push({
-        ...product,
-        color: colorLabel,
-        battery: batteryLabel,
-        cartId: Date.now(),
-        itemType: 'phone'
-      });
-      
-      updateCartCount();
-      showToast('✅ Added to cart successfully');
-      
-      // Reset selections
-      colorSelect.value = '';
-      document.getElementById(`battery-group-${productId}`).classList.remove('show');
-      document.getElementById(`add-btn-${productId}`).disabled = true;
-    }
-
-    function addAccessoryToCart(accessoryId) {
-      const accessory = accessories.find(a => a.id === accessoryId);
-      
-      let itemDetails = {
-        name: accessory.name,
-        price: 0,
-        cartId: Date.now(),
-        itemType: 'accessory',
-        icon: accessory.icon
-      };
-      
-      if (accessoryId === 'charger') {
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        const selectedType = typeSelect.options[typeSelect.selectedIndex];
-        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-        const typeLabel = selectedType.text;
-        
-        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-        const colorLabel = selectedColor.text;
-        
-        itemDetails.price = typePrice + colorAdd;
-        itemDetails.type = typeLabel;
-        itemDetails.color = colorLabel;
-        
-      } else if (accessoryId === 'headphones') {
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        const selectedType = typeSelect.options[typeSelect.selectedIndex];
-        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-        const typeLabel = selectedType.text;
-        
-        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-        const colorLabel = selectedColor.text;
-        
-        itemDetails.price = typePrice + colorAdd;
-        itemDetails.type = typeLabel;
-        itemDetails.color = colorLabel;
-        
-      } else if (accessoryId === 'bluetooth') {
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        const selectedType = typeSelect.options[typeSelect.selectedIndex];
-        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-        const typeLabel = selectedType.text;
-        
-        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-        const colorLabel = selectedColor.text;
-        
-        itemDetails.price = typePrice + colorAdd;
-        itemDetails.type = typeLabel;
-        itemDetails.color = colorLabel;
-        
-      } else if (accessoryId === 'case') {
-        const modelSelect = document.getElementById(`model-${accessoryId}`);
-        const typeSelect = document.getElementById(`type-${accessoryId}`);
-        const colorSelect = document.getElementById(`color-${accessoryId}`);
-        
-        const modelLabel = modelSelect.options[modelSelect.selectedIndex].text;
-        
-        const selectedType = typeSelect.options[typeSelect.selectedIndex];
-        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
-        const typeLabel = selectedType.text;
-        
-        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
-        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
-        const colorLabel = selectedColor.text;
-        
-        itemDetails.price = typePrice + colorAdd;
-        itemDetails.model = modelLabel;
-        itemDetails.type = typeLabel;
-        itemDetails.color = colorLabel;
-      }
-      
-      cart.push(itemDetails);
-      updateCartCount();
-      showToast('✅ Added to cart successfully');
-      
-      // Reset selections based on accessory type
-      if (accessoryId === 'case') {
-        document.getElementById(`model-${accessoryId}`).value = '';
-        document.getElementById(`type-group-${accessoryId}`).classList.remove('show');
-        document.getElementById(`color-group-${accessoryId}`).classList.remove('show');
-      } else {
-        document.getElementById(`type-${accessoryId}`).value = '';
-        document.getElementById(`color-group-${accessoryId}`).classList.remove('show');
-      }
-      
-      document.getElementById(`price-${accessoryId}`).textContent = 'Select Options';
-      document.getElementById(`add-btn-${accessoryId}`).disabled = true;
-    }
-
-    function removeFromCart(cartId) {
-      cart = cart.filter(item => item.cartId !== cartId);
-      updateCartCount();
-      
-      if (cart.length === 0) {
-        renderEmptyCart();
-      } else {
-        renderCartWithItems();
-      }
-      
-      showToast('🗑️ Removed from cart');
-    }
-
-    function handleStateChange() {
-      const stateSelect = document.getElementById('customer-state');
-      const deliveryGroup = document.getElementById('delivery-group');
-      const deliveryTypeSelect = document.getElementById('delivery-type');
-      const deliveryCostDisplay = document.getElementById('delivery-cost-display');
-      const finalTotalDisplay = document.getElementById('final-total-display');
-      
-      if (stateSelect.value) {
-        const selectedOption = stateSelect.options[stateSelect.selectedIndex];
-        const officePrice = selectedOption.getAttribute('data-office-price');
-        const homePrice = selectedOption.getAttribute('data-home-price');
-        
-        // Update delivery options with prices
-        const officeOption = deliveryTypeSelect.querySelector('option[value="office"]');
-        const homeOption = deliveryTypeSelect.querySelector('option[value="home"]');
-        
-        officeOption.textContent = `Office Delivery (+${officePrice} DA)`;
-        officeOption.setAttribute('data-price', officePrice);
-        
-        homeOption.textContent = `Home Delivery (+${homePrice} DA)`;
-        homeOption.setAttribute('data-price', homePrice);
-        
-        deliveryGroup.style.display = 'block';
-        deliveryTypeSelect.value = '';
-        deliveryCostDisplay.style.display = 'none';
-        finalTotalDisplay.style.display = 'none';
-      } else {
-        deliveryGroup.style.display = 'none';
-        deliveryCostDisplay.style.display = 'none';
-        finalTotalDisplay.style.display = 'none';
-      }
-    }
-
-    function handleDeliveryChange() {
-      const deliveryTypeSelect = document.getElementById('delivery-type');
-      const deliveryCostDisplay = document.getElementById('delivery-cost-display');
-      const deliveryCostAmount = document.getElementById('delivery-cost-amount');
-      const finalTotalDisplay = document.getElementById('final-total-display');
-      const finalTotalAmount = document.getElementById('final-total-amount');
-      
-      if (deliveryTypeSelect.value) {
-        const selectedOption = deliveryTypeSelect.options[deliveryTypeSelect.selectedIndex];
-        const deliveryPrice = parseInt(selectedOption.getAttribute('data-price')) || 0;
-        
-        deliveryCostAmount.textContent = `${deliveryPrice.toLocaleString()} DA`;
-        deliveryCostDisplay.style.display = 'block';
-        
-        // Calculate final total
-        const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
-        const finalTotal = cartTotal + deliveryPrice;
-        finalTotalAmount.textContent = `$${finalTotal.toLocaleString()}`;
-        finalTotalDisplay.style.display = 'block';
-      } else {
-        deliveryCostDisplay.style.display = 'none';
-        finalTotalDisplay.style.display = 'none';
-      }
-    }
-
-    function updateCartCount() {
-      document.getElementById('cart-badge').textContent = cart.length;
-      document.getElementById('mobile-cart-badge').textContent = cart.length;
-    }
-
-    function openCart() {
-      document.getElementById('cart-modal').classList.add('active');
-      
-      if (cart.length === 0) {
-        renderEmptyCart();
-      } else {
-        renderCartWithItems();
-      }
-    }
-
-    function closeCart() {
-      document.getElementById('cart-modal').classList.remove('active');
-    }
-
-    function renderEmptyCart() {
-      const modalBody = document.getElementById('modal-body');
-      modalBody.innerHTML = `
-        <div style="text-align: center; padding: 3rem; color: #6b7280;">
-          <div style="font-size: 5rem; margin-bottom: 1rem;">🛒</div>
-          <p style="font-size: 1.25rem;">Your cart is empty</p>
         </div>
-      `;
-    }
+    </div>
 
-    function renderCartWithItems() {
-      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
-      
-      const modalBody = document.getElementById('modal-body');
-      modalBody.innerHTML = `
-        <div class="cart-items-list">
-          ${cart.map(item => {
-            let detailsHTML = '';
+    <!-- Game Screen -->
+    <div id="gameScreen" class="game-container game-screen w-full h-full flex flex-col items-center justify-center p-6 relative" style="display: none;">
+        <!-- Wheel of Fortune -->
+        <div id="wheelContainer" class="wheel-container" style="display: none;">
+            <div class="tech-panel rounded-3xl p-4 text-center">
+                <div class="relative">
+                    <div class="wheel-pointer"></div>
+                    <div id="wheel" class="wheel">
+                        <div class="wheel-segment-text" style="transform: rotate(30deg) translateX(-50px);">+100</div>
+                        <div class="wheel-segment-text" style="transform: rotate(90deg) translateX(-50px);">+50</div>
+                        <div class="wheel-segment-text" style="transform: rotate(150deg) translateX(-50px);">+200</div>
+                        <div class="wheel-segment-text" style="transform: rotate(210deg) translateX(-50px);">0</div>
+                        <div class="wheel-segment-text" style="transform: rotate(270deg) translateX(-50px);">+150</div>
+                        <div class="wheel-segment-text" style="transform: rotate(330deg) translateX(-50px);">+75</div>
+                    </div>
+                </div>
+                <button id="spinBtn" class="mt-4 py-3 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 border-2" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); border-color: #00ff9d; color: #00ff9d; box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);">
+                    🎡 لف العجلة
+                </button>
+                <p id="wheelTimer" class="mt-2 text-sm neon-text-blue"></p>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="tech-panel rounded-3xl p-6 mb-6 w-full max-w-5xl relative z-10 word-complete">
+            <h1 id="gameTitle" class="text-5xl font-black text-center neon-text mb-2">لعبة الكلمات المتقاطعة</h1>
+            <p id="instructionText" class="text-center text-lg neon-text-blue">اسحب الحروف لتكوين الكلمات</p>
             
-            if (item.itemType === 'phone') {
-              detailsHTML = `
-                <div><strong>Color:</strong> ${item.color}</div>
-                <div><strong>Battery:</strong> ${item.battery}</div>
-              `;
-            } else if (item.itemType === 'accessory') {
-              if (item.model) {
-                detailsHTML = `
-                  <div><strong>Model:</strong> ${item.model}</div>
-                  <div><strong>Type:</strong> ${item.type}</div>
-                  <div><strong>Color:</strong> ${item.color}</div>
-                `;
-              } else {
-                detailsHTML = `
-                  <div><strong>Type:</strong> ${item.type}</div>
-                  <div><strong>Color:</strong> ${item.color}</div>
-                `;
-              }
+            <!-- Score and Level -->
+            <div class="grid grid-cols-4 gap-4 mt-6">
+                <div class="tech-panel px-6 py-3 rounded-2xl">
+                    <span class="text-xs neon-text-blue">النقاط</span>
+                    <div id="score" class="text-3xl font-black neon-text">0</div>
+                </div>
+                <div class="tech-panel px-6 py-3 rounded-2xl">
+                    <span class="text-xs neon-text-blue">المستوى</span>
+                    <div id="level" class="text-3xl font-black neon-text">1</div>
+                </div>
+                <div class="tech-panel px-6 py-3 rounded-2xl">
+                    <span class="text-xs neon-text-blue">الكلمات</span>
+                    <div id="wordsCompleted" class="text-3xl font-black neon-text">0</div>
+                </div>
+                <div class="tech-panel px-6 py-3 rounded-2xl">
+                    <span class="text-xs neon-text-blue">الصعوبة</span>
+                    <div id="currentDifficulty" class="text-3xl font-black neon-text">⭐</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Board -->
+        <div class="tech-panel rounded-3xl p-8 w-full max-w-5xl relative z-10 mb-6">
+            <div id="targetWord" class="text-center mb-8">
+                <div class="flex justify-center items-center gap-3 mb-3">
+                    <span id="difficultyBadge" class="difficulty-badge difficulty-easy">⭐ سهل</span>
+                    <span id="categoryBadge" class="category-badge">لغات</span>
+                </div>
+                <div id="wordHint" class="text-3xl font-black neon-text mb-6"></div>
+                <div id="dropZones" class="flex justify-center gap-3 flex-wrap"></div>
+            </div>
+            
+            <div id="letterBank" class="flex justify-center gap-3 flex-wrap mt-8"></div>
+            
+            <div class="flex gap-4 mt-8">
+                <button id="checkBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-[#00ff9d]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #00ff9d; box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);">
+                    <span class="relative z-10">✓ تحقق</span>
+                </button>
+                <button id="resetBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff006e]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #ff006e; box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);">
+                    ↻ إعادة
+                </button>
+                <button id="skipBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff8500]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #ff8500; box-shadow: 0 0 20px rgba(255, 133, 0, 0.4);">
+                    ⏭️ تخطي
+                </button>
+            </div>
+        </div>
+
+        <!-- Message Area -->
+        <div id="message" class="tech-panel rounded-2xl px-8 py-4 text-center font-bold text-xl relative z-10" style="color: #00ff9d; display: none;"></div>
+    </div>
+
+    <script>
+        const defaultConfig = {
+            game_title: "لعبة الكلمات المتقاطعة",
+            welcome_description: "اختبر ذكاءك وكوّن الكلمات",
+            start_button_text: "ابدأ اللعبة",
+            instruction_text: "اسحب الحروف لتكوين الكلمات",
+            primary_color: "#00ff9d",
+            secondary_color: "#0a0e27",
+            text_color: "#00ff9d",
+            accent_color: "#00ccff",
+            success_color: "#00ff9d"
+        };
+
+        let currentScore = 0;
+        let currentLevel = 1;
+        let wordsCompleted = 0;
+        let currentWord = '';
+        let currentWordData = null;
+        let currentLetters = [];
+        let draggedElement = null;
+        let isLoading = false;
+        let lastSpinTime = null;
+        let gameData = [];
+        let currentDifficulty = 1;
+        let usedWords = [];
+        
+        const wheelPrizes = [100, 50, 200, 0, 150, 75];
+
+        const words = [
+            // لغات البرمجة - سهل
+            { word: "بايثون", hint: "🐍 لغة برمجة سهلة للمبتدئين", difficulty: 1, category: "لغات" },
+            { word: "جافا", hint: "☕ لغة برمجة للتطبيقات", difficulty: 1, category: "لغات" },
+            { word: "سويفت", hint: "🍎 لغة برمجة آبل", difficulty: 1, category: "لغات" },
+            { word: "كوتلن", hint: "📱 لغة برمجة أندرويد حديثة", difficulty: 1, category: "لغات" },
+            { word: "روبي", hint: "💎 لغة برمجة ديناميكية", difficulty: 1, category: "لغات" },
+            
+            // مصطلحات برمجية - سهل
+            { word: "متغير", hint: "📦 حاوية لتخزين البيانات", difficulty: 1, category: "مصطلحات" },
+            { word: "دالة", hint: "⚙️ كتلة كود قابلة لإعادة الاستخدام", difficulty: 1, category: "مصطلحات" },
+            { word: "حلقة", hint: "🔄 تكرار تنفيذ كود معين", difficulty: 1, category: "مصطلحات" },
+            { word: "مصفوفة", hint: "📊 مجموعة عناصر مرتبة", difficulty: 1, category: "مصطلحات" },
+            { word: "كائن", hint: "🎯 وحدة برمجية تحتوي بيانات", difficulty: 1, category: "مصطلحات" },
+            
+            // شخصيات تقنية - سهل
+            { word: "جيتس", hint: "💻 مؤسس مايكروسوفت", difficulty: 1, category: "شخصيات" },
+            { word: "جوبز", hint: "🍎 مؤسس آبل العبقري", difficulty: 1, category: "شخصيات" },
+            { word: "ماسك", hint: "🚀 مؤسس تسلا وسبيس إكس", difficulty: 1, category: "شخصيات" },
+            
+            // لغات برمجة - متوسط
+            { word: "جافاسكربت", hint: "🌐 لغة برمجة الويب الأساسية", difficulty: 2, category: "لغات" },
+            { word: "تايبسكربت", hint: "📘 جافاسكربت بأنواع ثابتة", difficulty: 2, category: "لغات" },
+            { word: "سيبلاسبلاس", hint: "⚡ لغة برمجة قوية وسريعة", difficulty: 2, category: "لغات" },
+            { word: "روست", hint: "🦀 لغة برمجة آمنة للذاكرة", difficulty: 2, category: "لغات" },
+            { word: "جولانج", hint: "🔷 لغة برمجة من جوجل", difficulty: 2, category: "لغات" },
+            { word: "دارت", hint: "🎯 لغة برمجة فلاتر", difficulty: 2, category: "لغات" },
+            { word: "اسكالا", hint: "🎭 لغة وظيفية للجافا", difficulty: 2, category: "لغات" },
+            { word: "ايرلانج", hint: "📡 لغة للأنظمة الموزعة", difficulty: 2, category: "لغات" },
+            
+            // مصطلحات برمجية - متوسط
+            { word: "خوارزمية", hint: "🧮 خطوات منطقية لحل مشكلة", difficulty: 2, category: "مصطلحات" },
+            { word: "واجهة", hint: "🖼️ تصميم التفاعل مع المستخدم", difficulty: 2, category: "مصطلحات" },
+            { word: "قاعدةبيانات", hint: "🗄️ مخزن منظم للمعلومات", difficulty: 2, category: "مصطلحات" },
+            { word: "خادم", hint: "🖥️ حاسوب يقدم خدمات للشبكة", difficulty: 2, category: "مصطلحات" },
+            { word: "اختبار", hint: "🧪 فحص جودة الكود", difficulty: 2, category: "مصطلحات" },
+            { word: "تشفير", hint: "🔐 حماية البيانات بالترميز", difficulty: 2, category: "مصطلحات" },
+            { word: "استثناء", hint: "⚠️ خطأ أثناء تشغيل البرنامج", difficulty: 2, category: "مصطلحات" },
+            { word: "مكتبة", hint: "📚 مجموعة دوال جاهزة", difficulty: 2, category: "مصطلحات" },
+            { word: "اطارعمل", hint: "🏗️ بنية تحتية للتطوير", difficulty: 2, category: "مصطلحات" },
+            { word: "واجهةبرمجية", hint: "🔌 نقطة اتصال بين البرامج", difficulty: 2, category: "مصطلحات" },
+            
+            // شخصيات تقنية - متوسط
+            { word: "زوكربيرج", hint: "👤 مؤسس فيسبوك الشاب", difficulty: 2, category: "شخصيات" },
+            { word: "بيزوس", hint: "📦 مؤسس أمازون العملاق", difficulty: 2, category: "شخصيات" },
+            { word: "بيتشاي", hint: "🔍 الرئيس التنفيذي لجوجل", difficulty: 2, category: "شخصيات" },
+            { word: "تورفالدز", hint: "🐧 مبتكر نظام لينكس", difficulty: 2, category: "شخصيات" },
+            { word: "وزنياك", hint: "🍎 مؤسس آبل مع جوبز", difficulty: 2, category: "شخصيات" },
+            
+            // مصطلحات متقدمة - صعب
+            { word: "ذكاءاصطناعي", hint: "🤖 محاكاة الذكاء البشري", difficulty: 3, category: "متقدم" },
+            { word: "تعلمآلي", hint: "🧠 تعلم الآلة من البيانات", difficulty: 3, category: "متقدم" },
+            { word: "بلوكتشين", hint: "⛓️ تقنية السجل الموزع", difficulty: 3, category: "متقدم" },
+            { word: "حوسبةسحابية", hint: "☁️ خدمات عبر الإنترنت", difficulty: 3, category: "متقدم" },
+            { word: "واقعافتراضي", hint: "🥽 عالم رقمي ثلاثي الأبعاد", difficulty: 3, category: "متقدم" },
+            { word: "واقعمعزز", hint: "📱 دمج الرقمي مع الحقيقي", difficulty: 3, category: "متقدم" },
+            { word: "انترنتالاشياء", hint: "🌐 اتصال الأجهزة بالإنترنت", difficulty: 3, category: "متقدم" },
+            { word: "امنسيبراني", hint: "🛡️ حماية الأنظمة الرقمية", difficulty: 3, category: "متقدم" },
+            { word: "حوسبةكمية", hint: "⚛️ حوسبة بالجسيمات دون الذرية", difficulty: 3, category: "متقدم" },
+            { word: "معالجةطبيعية", hint: "💬 فهم اللغة البشرية بالآلة", difficulty: 3, category: "متقدم" },
+            { word: "تعلمعميق", hint: "🕸️ شبكات عصبية متعددة الطبقات", difficulty: 3, category: "متقدم" },
+            { word: "اتمتة", hint: "🤖 تنفيذ مهام بدون تدخل بشري", difficulty: 3, category: "متقدم" },
+            { word: "بياناتضخمة", hint: "📊 معالجة كميات هائلة من البيانات", difficulty: 3, category: "متقدم" },
+            { word: "حوسبةطرفية", hint: "🌐 معالجة البيانات قرب المصدر", difficulty: 3, category: "متقدم" },
+            
+            // أطر عمل ومنصات - صعب
+            { word: "ريأكت", hint: "⚛️ مكتبة جافاسكربت من فيسبوك", difficulty: 3, category: "تقنيات" },
+            { word: "فلاتر", hint: "🎨 إطار عمل تطبيقات متعدد المنصات", difficulty: 3, category: "تقنيات" },
+            { word: "دوكر", hint: "🐳 منصة لحاويات التطبيقات", difficulty: 3, category: "تقنيات" },
+            { word: "كوبرنتس", hint: "☸️ إدارة الحاويات تلقائياً", difficulty: 3, category: "تقنيات" },
+            { word: "تينسرفلو", hint: "🔢 مكتبة تعلم آلي من جوجل", difficulty: 3, category: "تقنيات" },
+            { word: "نودجيإس", hint: "💚 بيئة تشغيل جافاسكربت", difficulty: 3, category: "تقنيات" },
+            { word: "انجولار", hint: "🅰️ إطار عمل ويب من جوجل", difficulty: 3, category: "تقنيات" },
+            { word: "فيوجيإس", hint: "💚 إطار عمل جافاسكربت تفاعلي", difficulty: 3, category: "تقنيات" },
+            
+            // شخصيات متقدمة - صعب
+            { word: "تورينج", hint: "🧮 أبو علم الحاسوب الحديث", difficulty: 3, category: "شخصيات" },
+            { word: "جريسهوبر", hint: "👩‍💻 مخترعة أول مترجم برمجي", difficulty: 3, category: "شخصيات" },
+            { word: "كنوث", hint: "📚 أبو تحليل الخوارزميات", difficulty: 3, category: "شخصيات" },
+            { word: "سترستروب", hint: "⚡ مخترع لغة سي بلس بلس", difficulty: 3, category: "شخصيات" }
+        ];
+
+        const dataHandler = {
+            onDataChanged(data) {
+                gameData = data || [];
+                if (data && data.length > 0) {
+                    const latestGame = data[data.length - 1];
+                    if (latestGame.score !== undefined) {
+                        currentScore = latestGame.score;
+                        currentLevel = latestGame.level;
+                        wordsCompleted = latestGame.completedWords ? parseInt(latestGame.completedWords) : 0;
+                        lastSpinTime = latestGame.lastSpinTime || null;
+                        currentDifficulty = latestGame.currentDifficulty || 1;
+                        updateDisplay();
+                        checkWheelAvailability();
+                    }
+                }
+            }
+        };
+
+        async function initializeGame() {
+            createMatrixEffect();
+            
+            const initResult = await window.dataSdk.init(dataHandler);
+            if (!initResult.isOk) {
+                console.error("Failed to initialize data SDK");
             }
             
-            return `
-              <div class="cart-item">
-                <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">×</button>
-                <div class="cart-item-header">
-                  <h4 class="cart-item-name">${item.icon || '📱'} ${item.name}</h4>
-                  <div class="cart-item-price">$${item.price.toLocaleString()}</div>
-                </div>
-                <div class="cart-item-details">
-                  ${detailsHTML}
-                </div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-        
-        <div class="cart-total">
-          <div class="cart-total-label">Cart Total:</div>
-          <div class="cart-total-amount">$${totalPrice.toLocaleString()}</div>
-        </div>
-        
-        <div class="cart-total" id="final-total-display" style="display: none;">
-          <div class="cart-total-label">Final Total (with Delivery):</div>
-          <div class="cart-total-amount" id="final-total-amount">$${totalPrice.toLocaleString()}</div>
-        </div>
-        
-        <form class="order-form" id="order-form">
-          <h4>Complete Your Order</h4>
-          
-          <div class="form-group">
-            <label for="customer-name" id="name-label">${defaultConfig.name_label}</label>
-            <input type="text" id="customer-name" required placeholder="Full name">
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="customer-email" id="email-label">${defaultConfig.email_label}</label>
-              <input type="email" id="customer-email" required placeholder="example@email.com">
-            </div>
+            if (window.elementSdk) {
+                window.elementSdk.init({
+                    defaultConfig,
+                    onConfigChange: async (config) => {
+                        document.getElementById('welcomeTitle').textContent = config.game_title || defaultConfig.game_title;
+                        document.getElementById('welcomeDescription').textContent = config.welcome_description || defaultConfig.welcome_description;
+                        const startBtnText = document.getElementById('startButtonText');
+                        if (startBtnText) {
+                            startBtnText.textContent = '🚀 ' + (config.start_button_text || defaultConfig.start_button_text);
+                        }
+                        const gameTitle = document.getElementById('gameTitle');
+                        if (gameTitle) {
+                            gameTitle.textContent = config.game_title || defaultConfig.game_title;
+                        }
+                        const instructionText = document.getElementById('instructionText');
+                        if (instructionText) {
+                            instructionText.textContent = config.instruction_text || defaultConfig.instruction_text;
+                        }
+                    },
+                    mapToCapabilities: (config) => ({
+                        recolorables: [
+                            {
+                                get: () => config.primary_color || defaultConfig.primary_color,
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.config.primary_color = value;
+                                        window.elementSdk.setConfig({ primary_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.secondary_color || defaultConfig.secondary_color,
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.config.secondary_color = value;
+                                        window.elementSdk.setConfig({ secondary_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.text_color || defaultConfig.text_color,
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.config.text_color = value;
+                                        window.elementSdk.setConfig({ text_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.accent_color || defaultConfig.accent_color,
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.config.accent_color = value;
+                                        window.elementSdk.setConfig({ accent_color: value });
+                                    }
+                                }
+                            },
+                            {
+                                get: () => config.success_color || defaultConfig.success_color,
+                                set: (value) => {
+                                    if (window.elementSdk) {
+                                        window.elementSdk.config.success_color = value;
+                                        window.elementSdk.setConfig({ success_color: value });
+                                    }
+                                }
+                            }
+                        ],
+                        borderables: [],
+                        fontEditable: undefined,
+                        fontSizeable: undefined
+                    }),
+                    mapToEditPanelValues: (config) => new Map([
+                        ["game_title", config.game_title || defaultConfig.game_title],
+                        ["welcome_description", config.welcome_description || defaultConfig.welcome_description],
+                        ["start_button_text", config.start_button_text || defaultConfig.start_button_text],
+                        ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
+                    ])
+                });
+            }
+        }
+
+        function createMatrixEffect() {
+            const matrixBg = document.getElementById('matrixBg');
+            const chars = '01أبتثجحخدذرزسشصضطظعغفقكلمنهوي';
             
-            <div class="form-group">
-              <label for="customer-phone" id="phone-label">${defaultConfig.phone_label}</label>
-              <input type="tel" id="customer-phone" required placeholder="+1 XXX XXX XXXX">
-            </div>
-          </div>
-          
-          <div class="form-row">
-            <div class="form-group">
-              <label for="customer-state" id="state-label">${defaultConfig.state_label}</label>
-              <select id="customer-state" required onchange="handleStateChange()">
-                <option value="">Select State</option>
-                ${states.map(s => `<option value="${s.name}" data-office-price="${s.officePrice}" data-home-price="${s.homePrice}">${s.name}</option>`).join('')}
-              </select>
-            </div>
+            for (let i = 0; i < 50; i++) {
+                const span = document.createElement('span');
+                span.className = 'matrix-char';
+                span.textContent = chars[Math.floor(Math.random() * chars.length)];
+                span.style.left = Math.random() * 100 + '%';
+                span.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                span.style.animationDelay = Math.random() * 5 + 's';
+                matrixBg.appendChild(span);
+            }
+        }
+
+        function startGame() {
+            document.getElementById('welcomeScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'flex';
+            checkWheelAvailability();
+            loadNewWord();
+        }
+
+        function checkWheelAvailability() {
+            const wheelContainer = document.getElementById('wheelContainer');
             
-            <div class="form-group">
-              <label for="payment-method" id="payment-label">${defaultConfig.payment_label}</label>
-              <select id="payment-method" required>
-                ${paymentMethods.map(p => `<option value="${p.value}">${p.label}</option>`).join('')}
-              </select>
-            </div>
-          </div>
-          
-          <div class="form-group" id="delivery-group" style="display: none;">
-            <label for="delivery-type">Delivery Type</label>
-            <select id="delivery-type" onchange="handleDeliveryChange()">
-              <option value="">Choose Delivery Type</option>
-              <option value="office" data-price="0">Office Delivery (+0 DA)</option>
-              <option value="home" data-price="0">Home Delivery (+0 DA)</option>
-            </select>
-          </div>
-          
-          <div id="delivery-cost-display" style="display: none; text-align: center; margin: 1.5rem 0; padding: 1rem; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%); border-radius: 15px; border: 2px solid #dc2626;">
-            <div style="font-size: 1rem; font-weight: 700; color: #000000; margin-bottom: 0.5rem;">Delivery Cost:</div>
-            <div id="delivery-cost-amount" style="font-size: 1.75rem; font-weight: 900; color: #dc2626;">0 DA</div>
-          </div>
-          
-          <button type="submit" class="submit-order-btn" id="submit-btn">
-            <span id="submit-text">${defaultConfig.submit_button}</span>
-          </button>
-        </form>
-      `;
-
-      document.getElementById('order-form').addEventListener('submit', handleOrderSubmit);
-    }
-
-    async function handleOrderSubmit(e) {
-      e.preventDefault();
-
-      if (currentRecordCount >= 999) {
-        showToast('⚠️ Maximum order limit reached (999)');
-        return;
-      }
-
-      const submitBtn = document.getElementById('submit-btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
-
-      const customerName = document.getElementById('customer-name').value;
-      const customerEmail = document.getElementById('customer-email').value;
-      const customerPhone = document.getElementById('customer-phone').value;
-      const customerState = document.getElementById('customer-state').value;
-      const paymentMethod = document.getElementById('payment-method').value;
-      const deliveryType = document.getElementById('delivery-type').value;
-
-      if (!deliveryType) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        showToast('⚠️ Please select delivery type');
-        return;
-      }
-
-      const deliveryTypeSelect = document.getElementById('delivery-type');
-      const selectedDeliveryOption = deliveryTypeSelect.options[deliveryTypeSelect.selectedIndex];
-      const deliveryPrice = parseInt(selectedDeliveryOption.getAttribute('data-price')) || 0;
-      const deliveryLabel = deliveryType === 'office' ? 'Office Delivery' : 'Home Delivery';
-
-      const paymentLabel = paymentMethods.find(p => p.value === paymentMethod)?.label || paymentMethod;
-
-      // Save each cart item as a separate order
-      if (window.dataSdk) {
-        let allSuccess = true;
-        
-        for (const item of cart) {
-          let orderData;
-          
-          if (item.itemType === 'phone') {
-            orderData = {
-              product_name: item.name,
-              color_choice: item.color,
-              battery_type: item.battery,
-              customer_name: customerName,
-              customer_email: customerEmail,
-              customer_phone: customerPhone,
-              state: customerState,
-              payment_method: paymentLabel,
-              delivery_type: deliveryLabel,
-              delivery_cost: deliveryPrice,
-              total_price: item.price,
-              order_date: new Date().toISOString(),
-              order_type: "Phone Order"
-            };
-          } else if (item.itemType === 'accessory') {
-            orderData = {
-              product_name: item.name,
-              color_choice: item.color || '',
-              battery_type: item.type || '',
-              customer_name: customerName,
-              customer_email: customerEmail,
-              customer_phone: customerPhone,
-              state: customerState,
-              payment_method: paymentLabel,
-              delivery_type: deliveryLabel,
-              delivery_cost: deliveryPrice,
-              total_price: item.price,
-              order_date: new Date().toISOString(),
-              order_type: item.model ? `Accessory: ${item.model}` : "Accessory Order"
-            };
-          }
-
-          const result = await window.dataSdk.create(orderData);
-          
-          if (!result.isOk) {
-            allSuccess = false;
-            break;
-          }
+            if (!lastSpinTime) {
+                wheelContainer.style.display = 'block';
+                return;
+            }
+            
+            const lastSpin = new Date(lastSpinTime);
+            const now = new Date();
+            const hoursSinceLastSpin = (now - lastSpin) / (1000 * 60 * 60);
+            
+            if (hoursSinceLastSpin >= 24) {
+                wheelContainer.style.display = 'block';
+            } else {
+                wheelContainer.style.display = 'none';
+            }
         }
-        
-        if (allSuccess) {
-          const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
-          const finalTotal = cartTotal + deliveryPrice;
-          
-          const modalBody = document.getElementById('modal-body');
-          modalBody.innerHTML = `
-            <div class="success-message">
-              <h4>✅ Order Confirmed Successfully!</h4>
-              <p>Number of Items: ${cart.length}</p>
-              <p>Cart Total: $${cartTotal.toLocaleString()}</p>
-              <p>Delivery (${deliveryLabel}): ${deliveryPrice.toLocaleString()} DA</p>
-              <p><strong>Final Total: $${finalTotal.toLocaleString()}</strong></p>
-              <p style="margin-top: 1rem;">Thank you for choosing Bane Phone</p>
-              <p>We'll contact you soon at ${customerPhone}</p>
-            </div>
-          `;
-          
-          cart = [];
-          updateCartCount();
-          
-          setTimeout(() => {
-            closeCart();
-            showToast('Order saved successfully! 🎉');
-          }, 3000);
-        } else {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-          showToast('⚠️ An error occurred. Please try again');
+
+        async function spinWheel() {
+            const wheel = document.getElementById('wheel');
+            const spinBtn = document.getElementById('spinBtn');
+            
+            spinBtn.disabled = true;
+            spinBtn.innerHTML = '<div class="loading-spinner mx-auto"></div>';
+            
+            const randomRotation = 1800 + Math.random() * 360;
+            wheel.style.transform = `rotate(${randomRotation}deg)`;
+            
+            setTimeout(async () => {
+                const finalRotation = randomRotation % 360;
+                const segmentIndex = Math.floor((360 - finalRotation + 30) / 60) % 6;
+                const prize = wheelPrizes[segmentIndex];
+                
+                currentScore += prize;
+                lastSpinTime = new Date().toISOString();
+                
+                const newGameData = {
+                    id: Date.now().toString(),
+                    level: currentLevel,
+                    score: currentScore,
+                    completedWords: wordsCompleted.toString(),
+                    timestamp: new Date().toISOString(),
+                    lastSpinTime: lastSpinTime,
+                    currentDifficulty: currentDifficulty
+                };
+                
+                const result = await window.dataSdk.create(newGameData);
+                
+                if (result.isOk) {
+                    updateDisplay();
+                    
+                    const message = prize > 0 
+                        ? `🎉 مبروك! ربحت ${prize} نقطة!`
+                        : `😔 حظ أوفر المرة القادمة!`;
+                    showMessage(message, prize > 0 ? '#00ff9d' : '#ff006e');
+                    
+                    setTimeout(() => {
+                        document.getElementById('wheelContainer').style.display = 'none';
+                        hideMessage();
+                    }, 3000);
+                } else {
+                    showMessage('❌ خطأ في حفظ البيانات', '#ff006e');
+                    spinBtn.disabled = false;
+                    spinBtn.innerHTML = '🎡 لف العجلة';
+                }
+            }, 4000);
         }
-      }
-    }
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
-    }
-
-    async function handleQuestionSubmit(e) {
-      e.preventDefault();
-
-      if (currentRecordCount >= 999) {
-        showToast('⚠️ Maximum message limit reached (999)');
-        return;
-      }
-
-      const submitBtn = document.getElementById('question-submit-btn');
-      const originalText = submitBtn.innerHTML;
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner"></span> Sending...';
-
-      const questionData = {
-        product_name: "General Inquiry",
-        color_choice: "",
-        battery_type: "",
-        customer_name: document.getElementById('question-name').value,
-        customer_email: document.getElementById('question-email').value,
-        customer_phone: document.getElementById('question-message').value,
-        state: "",
-        payment_method: "",
-        total_price: 0,
-        order_date: new Date().toISOString(),
-        order_type: "Question"
-      };
-
-      if (window.dataSdk) {
-        const result = await window.dataSdk.create(questionData);
-        
-        if (result.isOk) {
-          showToast('✅ Question sent successfully! We\'ll reply soon');
-          document.getElementById('question-form').reset();
-        } else {
-          showToast('⚠️ Sending error. Please try again');
+        function getAvailableWords() {
+            return words.filter(w => w.difficulty <= currentDifficulty && !usedWords.includes(w.word));
         }
-      }
 
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = originalText;
-    }
+        function loadNewWord() {
+            const availableWords = getAvailableWords();
+            
+            if (availableWords.length === 0) {
+                usedWords = [];
+                currentDifficulty = Math.min(currentDifficulty + 1, 3);
+            }
+            
+            const filteredWords = getAvailableWords();
+            currentWordData = filteredWords[Math.floor(Math.random() * filteredWords.length)];
+            currentWord = currentWordData.word;
+            usedWords.push(currentWord);
+            
+            currentLetters = shuffleArray(currentWord.split(''));
+            
+            document.getElementById('wordHint').textContent = currentWordData.hint;
+            
+            const difficultyBadge = document.getElementById('difficultyBadge');
+            const categoryBadge = document.getElementById('categoryBadge');
+            
+            if (currentWordData.difficulty === 1) {
+                difficultyBadge.className = 'difficulty-badge difficulty-easy';
+                difficultyBadge.textContent = '⭐ سهل';
+            } else if (currentWordData.difficulty === 2) {
+                difficultyBadge.className = 'difficulty-badge difficulty-medium';
+                difficultyBadge.textContent = '⭐⭐ متوسط';
+            } else {
+                difficultyBadge.className = 'difficulty-badge difficulty-hard';
+                difficultyBadge.textContent = '⭐⭐⭐ صعب';
+            }
+            
+            categoryBadge.textContent = currentWordData.category;
+            
+            const dropZones = document.getElementById('dropZones');
+            dropZones.innerHTML = '';
+            for (let i = 0; i < currentWord.length; i++) {
+                const zone = document.createElement('div');
+                zone.className = 'drop-zone w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black';
+                zone.dataset.index = i;
+                zone.style.color = '#0a0e27';
+                zone.addEventListener('dragover', handleDragOver);
+                zone.addEventListener('drop', handleDrop);
+                zone.addEventListener('dragleave', handleDragLeave);
+                dropZones.appendChild(zone);
+            }
+            
+            const letterBank = document.getElementById('letterBank');
+            letterBank.innerHTML = '';
+            currentLetters.forEach((letter, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'letter-tile w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black';
+                tile.style.color = '#00ff9d';
+                tile.textContent = letter;
+                tile.draggable = true;
+                tile.dataset.letter = letter;
+                tile.dataset.originalIndex = index;
+                tile.addEventListener('dragstart', handleDragStart);
+                tile.addEventListener('dragend', handleDragEnd);
+                letterBank.appendChild(tile);
+            });
+        }
 
-    async function onConfigChange(config) {
-      document.getElementById('hero-title').textContent = config.hero_title || defaultConfig.hero_title;
-      document.getElementById('hero-subtitle').textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
-      document.getElementById('hero-description').textContent = config.hero_description || defaultConfig.hero_description;
-      document.getElementById('hero-button-text').textContent = config.hero_button || defaultConfig.hero_button;
-      document.getElementById('store-location').textContent = config.store_location || defaultConfig.store_location;
-      document.getElementById('store-phone').textContent = config.store_phone || defaultConfig.store_phone;
-      document.getElementById('question-title').textContent = config.question_title || defaultConfig.question_title;
-      document.getElementById('question-name-label').textContent = config.question_name_label || defaultConfig.question_name_label;
-      document.getElementById('question-email-label').textContent = config.question_email_label || defaultConfig.question_email_label;
-      document.getElementById('question-message-label').textContent = config.question_message_label || defaultConfig.question_message_label;
-      document.getElementById('question-submit-text').textContent = config.question_submit_text || defaultConfig.question_submit_text;
-      document.getElementById('products-title').textContent = config.products_title || defaultConfig.products_title;
-      
-      products.forEach(product => {
-        const colorLabel = document.getElementById(`color-label-${product.id}`);
-        if (colorLabel) colorLabel.textContent = config.color_label || defaultConfig.color_label;
-        
-        const batteryLabel = document.getElementById(`battery-label-${product.id}`);
-        if (batteryLabel) batteryLabel.textContent = config.battery_label || defaultConfig.battery_label;
-      });
-      
-      const nameLabel = document.getElementById('name-label');
-      if (nameLabel) nameLabel.textContent = config.name_label || defaultConfig.name_label;
-      
-      const emailLabel = document.getElementById('email-label');
-      if (emailLabel) emailLabel.textContent = config.email_label || defaultConfig.email_label;
-      
-      const phoneLabel = document.getElementById('phone-label');
-      if (phoneLabel) phoneLabel.textContent = config.phone_label || defaultConfig.phone_label;
-      
-      const stateLabel = document.getElementById('state-label');
-      if (stateLabel) stateLabel.textContent = config.state_label || defaultConfig.state_label;
-      
-      const paymentLabel = document.getElementById('payment-label');
-      if (paymentLabel) paymentLabel.textContent = config.payment_label || defaultConfig.payment_label;
-      
-      const submitText = document.getElementById('submit-text');
-      if (submitText) submitText.textContent = config.submit_button || defaultConfig.submit_button;
-    }
+        function shuffleArray(array) {
+            const newArray = [...array];
+            for (let i = newArray.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+            }
+            return newArray;
+        }
 
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities: (config) => ({
-          recolorables: [],
-          borderables: [],
-          fontEditable: undefined,
-          fontSizeable: undefined
-        }),
-        mapToEditPanelValues: (config) => new Map([
-          ["hero_title", config.hero_title || defaultConfig.hero_title],
-          ["hero_subtitle", config.hero_subtitle || defaultConfig.hero_subtitle],
-          ["hero_description", config.hero_description || defaultConfig.hero_description],
-          ["hero_button", config.hero_button || defaultConfig.hero_button],
-          ["store_location", config.store_location || defaultConfig.store_location],
-          ["store_phone", config.store_phone || defaultConfig.store_phone],
-          ["question_title", config.question_title || defaultConfig.question_title],
-          ["question_name_label", config.question_name_label || defaultConfig.question_name_label],
-          ["question_email_label", config.question_email_label || defaultConfig.question_email_label],
-          ["question_message_label", config.question_message_label || defaultConfig.question_message_label],
-          ["question_submit_text", config.question_submit_text || defaultConfig.question_submit_text],
-          ["products_title", config.products_title || defaultConfig.products_title],
-          ["color_label", config.color_label || defaultConfig.color_label],
-          ["battery_label", config.battery_label || defaultConfig.battery_label],
-          ["name_label", config.name_label || defaultConfig.name_label],
-          ["email_label", config.email_label || defaultConfig.email_label],
-          ["phone_label", config.phone_label || defaultConfig.phone_label],
-          ["state_label", config.state_label || defaultConfig.state_label],
-          ["payment_label", config.payment_label || defaultConfig.payment_label],
-          ["submit_button", config.submit_button || defaultConfig.submit_button]
-        ])
-      });
-    }
+        function handleDragStart(e) {
+            draggedElement = e.target;
+            e.target.style.opacity = '0.5';
+        }
 
-    initApp();
-  </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a834be7c352294d',t:'MTc2NDc2NzM0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        function handleDragEnd(e) {
+            e.target.style.opacity = '1';
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            if (e.currentTarget.classList.contains('drop-zone') && !e.currentTarget.classList.contains('filled')) {
+                e.currentTarget.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const dropZone = e.currentTarget;
+            dropZone.classList.remove('drag-over');
+            
+            if (!dropZone.classList.contains('filled') && draggedElement) {
+                dropZone.textContent = draggedElement.dataset.letter;
+                dropZone.classList.add('filled');
+                dropZone.style.color = '#0a0e27';
+                draggedElement.style.display = 'none';
+                createParticles(dropZone);
+            }
+        }
+
+        function createParticles(element) {
+            const rect = element.getBoundingClientRect();
+            for (let i = 0; i < 8; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = rect.left + rect.width / 2 + 'px';
+                particle.style.top = rect.top + rect.height / 2 + 'px';
+                particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
+                particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+        }
+
+        async function checkWord() {
+            if (isLoading) return;
+            
+            const dropZones = document.querySelectorAll('.drop-zone');
+            let formedWord = '';
+            let allFilled = true;
+            
+            dropZones.forEach(zone => {
+                if (zone.textContent) {
+                    formedWord += zone.textContent;
+                } else {
+                    allFilled = false;
+                }
+            });
+            
+            if (!allFilled) {
+                showMessage('⚠️ أكمل جميع الحروف!', '#ff8500');
+                return;
+            }
+            
+            if (formedWord === currentWord) {
+                isLoading = true;
+                document.getElementById('checkBtn').innerHTML = '<div class="loading-spinner mx-auto"></div>';
+                
+                const points = currentWordData.difficulty === 1 ? 100 : currentWordData.difficulty === 2 ? 200 : 300;
+                currentScore += points * currentLevel;
+                wordsCompleted++;
+                
+                if (wordsCompleted % 3 === 0 && currentDifficulty < 3) {
+                    currentDifficulty++;
+                }
+                
+                if (wordsCompleted % 5 === 0) {
+                    currentLevel++;
+                }
+                
+                const gameData = {
+                    id: Date.now().toString(),
+                    level: currentLevel,
+                    score: currentScore,
+                    completedWords: wordsCompleted.toString(),
+                    timestamp: new Date().toISOString(),
+                    lastSpinTime: lastSpinTime || '',
+                    currentDifficulty: currentDifficulty
+                };
+                
+                const result = await window.dataSdk.create(gameData);
+                
+                if (result.isOk) {
+                    updateDisplay();
+                    showMessage(`🎉 رائع! +${points * currentLevel} نقطة!`, '#00ff9d');
+                    setTimeout(() => {
+                        loadNewWord();
+                        isLoading = false;
+                        document.getElementById('checkBtn').innerHTML = '<span class="relative z-10">✓ تحقق</span>';
+                    }, 2000);
+                } else {
+                    showMessage('❌ خطأ في حفظ البيانات', '#ff006e');
+                    isLoading = false;
+                    document.getElementById('checkBtn').innerHTML = '<span class="relative z-10">✓ تحقق</span>';
+                }
+            } else {
+                showMessage('❌ حاول مرة أخرى!', '#ff006e');
+            }
+        }
+
+        function resetWord() {
+            const dropZones = document.querySelectorAll('.drop-zone');
+            dropZones.forEach(zone => {
+                zone.textContent = '';
+                zone.classList.remove('filled');
+            });
+            
+            const tiles = document.querySelectorAll('.letter-tile');
+            tiles.forEach(tile => {
+                tile.style.display = 'flex';
+            });
+            
+            hideMessage();
+        }
+
+        function skipWord() {
+            showMessage('⏭️ تم تخطي الكلمة', '#ff8500');
+            setTimeout(() => {
+                loadNewWord();
+                hideMessage();
+            }, 1000);
+        }
+
+        function updateDisplay() {
+            document.getElementById('score').textContent = currentScore;
+            document.getElementById('level').textContent = currentLevel;
+            document.getElementById('wordsCompleted').textContent = wordsCompleted;
+            
+            const difficultyDisplay = document.getElementById('currentDifficulty');
+            if (currentDifficulty === 1) {
+                difficultyDisplay.textContent = '⭐';
+            } else if (currentDifficulty === 2) {
+                difficultyDisplay.textContent = '⭐⭐';
+            } else {
+                difficultyDisplay.textContent = '⭐⭐⭐';
+            }
+        }
+
+        function showMessage(text, color) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.style.borderColor = color;
+            message.style.color = color;
+            message.style.boxShadow = `0 0 30px ${color}50`;
+            message.style.display = 'block';
+            message.classList.add('word-complete');
+        }
+
+        function hideMessage() {
+            const message = document.getElementById('message');
+            message.style.display = 'none';
+        }
+
+        document.getElementById('startGameBtn').addEventListener('click', startGame);
+        document.getElementById('spinBtn').addEventListener('click', spinWheel);
+        document.getElementById('checkBtn').addEventListener('click', checkWord);
+        document.getElementById('resetBtn').addEventListener('click', resetWord);
+        document.getElementById('skipBtn').addEventListener('click', skipWord);
+
+        initializeGame();
+    </script>
+</body>
 </html>
