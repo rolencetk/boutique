@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl" class="h-full">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>لعبة الكلمات المتقاطعة</title>
-    <script src="/_sdk/data_sdk.js"></script>
-    <script src="/_sdk/element_sdk.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لعبة الكلمات المتقاطعة</title>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
         body {
             box-sizing: border-box;
         }
@@ -18,118 +18,24 @@
             font-family: 'Cairo', Arial, sans-serif;
         }
         
-        @keyframes matrix-rain {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100vh); }
-        }
-        
-        @keyframes digital-flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-        
-        @keyframes scan-line {
-            0% { transform: translateY(-100%); }
-            100% { transform: translateY(100%); }
-        }
-        
-        @keyframes pulse-ring {
-            0% { box-shadow: 0 0 0 0 rgba(0, 255, 157, 0.7); }
-            100% { box-shadow: 0 0 0 20px rgba(0, 255, 157, 0); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-        }
-        
-        @keyframes slide-in {
-            from { transform: translateY(-100%); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        
         @keyframes pop-in {
             0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
             100% { transform: scale(1); opacity: 1; }
         }
         
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
-            50% { opacity: 1; transform: scale(1) rotate(180deg); }
-        }
-        
-        @keyframes correct-flash {
-            0%, 100% { background: linear-gradient(135deg, #00ff9d 0%, #00cc7a 100%); }
-            50% { background: linear-gradient(135deg, #00ffcc 0%, #00ff9d 100%); }
-        }
-        
-        @keyframes glow-pulse {
-            0%, 100% { filter: drop-shadow(0 0 5px #00ff9d); }
-            50% { filter: drop-shadow(0 0 20px #00ff9d); }
-        }
-        
-        .matrix-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-        }
-        
-        .matrix-char {
-            position: absolute;
-            color: #00ff9d;
-            font-family: 'Courier New', monospace;
-            font-size: 20px;
-            opacity: 0.3;
-            animation: matrix-rain linear infinite;
-        }
-        
-        .scan-line {
-            position: fixed;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(transparent, #00ff9d, transparent);
-            opacity: 0.1;
-            animation: scan-line 4s linear infinite;
-            z-index: 1;
-        }
-        
         .letter-tile {
-            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transition: all 0.2s ease;
             cursor: grab;
             user-select: none;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            background: #1a1f3a;
             border: 2px solid #00ff9d;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.3), inset 0 0 10px rgba(0, 255, 157, 0.1);
-        }
-        
-        .letter-tile::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(0, 255, 157, 0.2), transparent);
-            transform: rotate(45deg);
-            animation: shine 3s infinite;
-        }
-        
-        @keyframes shine {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+            box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);
         }
         
         .letter-tile:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 10px 30px rgba(0, 255, 157, 0.5), inset 0 0 15px rgba(0, 255, 157, 0.2);
-            border-color: #00ffcc;
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 255, 157, 0.3);
         }
         
         .letter-tile:active {
@@ -138,41 +44,24 @@
         }
         
         .drop-zone {
-            transition: all 0.3s ease;
-            background: rgba(10, 14, 39, 0.6);
-            backdrop-filter: blur(10px);
-            border: 2px dashed rgba(0, 255, 157, 0.3);
-            box-shadow: inset 0 0 15px rgba(0, 255, 157, 0.1);
+            transition: all 0.2s ease;
+            background: rgba(26, 31, 58, 0.5);
+            border: 2px dashed rgba(0, 255, 157, 0.4);
         }
         
         .drop-zone.drag-over {
-            background: rgba(0, 255, 157, 0.2);
+            background: rgba(0, 255, 157, 0.15);
             border-color: #00ff9d;
             border-style: solid;
-            transform: scale(1.05);
-            animation: pulse-ring 1s infinite;
         }
         
         .drop-zone.filled {
-            background: linear-gradient(135deg, #00ff9d 0%, #00cc7a 100%);
+            background: #00ff9d;
             border-color: #00ff9d;
-            animation: correct-flash 0.5s ease;
-            box-shadow: 0 0 20px rgba(0, 255, 157, 0.6);
-        }
-        
-        .particle {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: linear-gradient(135deg, #00ff9d, #00ffcc);
-            border-radius: 50%;
-            pointer-events: none;
-            animation: sparkle 1s ease-out forwards;
-            box-shadow: 0 0 10px #00ff9d;
         }
         
         .word-complete {
-            animation: pop-in 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            animation: pop-in 0.4s ease;
         }
         
         .game-container {
@@ -182,43 +71,25 @@
         }
         
         .tech-panel {
-            background: linear-gradient(135deg, rgba(10, 14, 39, 0.9) 0%, rgba(26, 31, 58, 0.9) 100%);
-            backdrop-filter: blur(20px);
+            background: rgba(26, 31, 58, 0.8);
+            backdrop-filter: blur(10px);
             border: 2px solid rgba(0, 255, 157, 0.3);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 30px rgba(0, 255, 157, 0.2), inset 0 0 20px rgba(0, 255, 157, 0.05);
-            position: relative;
-        }
-        
-        .tech-panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #00ff9d, transparent);
-            animation: digital-flicker 2s infinite;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
         }
         
         .neon-text {
             color: #00ff9d;
-            text-shadow: 0 0 10px rgba(0, 255, 157, 0.8),
-                         0 0 20px rgba(0, 255, 157, 0.6),
-                         0 0 30px rgba(0, 255, 157, 0.4),
-                         0 0 40px rgba(0, 255, 157, 0.2);
-            animation: glow-pulse 2s infinite;
+            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
         }
         
         .neon-text-blue {
             color: #00ccff;
-            text-shadow: 0 0 10px rgba(0, 204, 255, 0.8),
-                         0 0 20px rgba(0, 204, 255, 0.6);
+            text-shadow: 0 0 8px rgba(0, 204, 255, 0.4);
         }
         
         .neon-text-purple {
             color: #cc00ff;
-            text-shadow: 0 0 10px rgba(204, 0, 255, 0.8),
-                         0 0 20px rgba(204, 0, 255, 0.6);
+            text-shadow: 0 0 8px rgba(204, 0, 255, 0.4);
         }
         
         .loading-spinner {
@@ -233,11 +104,6 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes wheel-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(1800deg); }
         }
         
         @keyframes fade-in {
@@ -273,7 +139,7 @@
                 #cc00ff 240deg 300deg,
                 #ff00aa 300deg 360deg
             );
-            box-shadow: 0 0 40px rgba(0, 255, 157, 0.6), inset 0 0 30px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
             border: 3px solid #00ff9d;
         }
@@ -286,9 +152,8 @@
             transform: translate(-50%, -50%);
             width: 40px;
             height: 40px;
-            background: linear-gradient(135deg, #00ff9d, #00ffcc);
+            background: #00ff9d;
             border-radius: 50%;
-            box-shadow: 0 4px 20px rgba(0, 255, 157, 0.5);
             z-index: 10;
         }
         
@@ -302,7 +167,6 @@
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
             border-top: 25px solid #00ff9d;
-            filter: drop-shadow(0 4px 10px rgba(0, 255, 157, 0.7));
             z-index: 20;
         }
         
@@ -370,158 +234,172 @@
             margin-left: 8px;
         }
         
-        .hex-pattern {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0.03;
-            background-image: 
-                linear-gradient(30deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d),
-                linear-gradient(150deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d),
-                linear-gradient(30deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d),
-                linear-gradient(150deg, #00ff9d 12%, transparent 12.5%, transparent 87%, #00ff9d 87.5%, #00ff9d);
-            background-size: 80px 140px;
-            background-position: 0 0, 0 0, 40px 70px, 40px 70px;
+        .start-button {
+            background: #00ff9d;
+            color: #0a0e27;
+            box-shadow: 0 8px 24px rgba(0, 255, 157, 0.4);
+            border: 3px solid #00ff9d;
+            cursor: pointer;
+        }
+        
+        .start-button:hover {
+            box-shadow: 0 12px 32px rgba(0, 255, 157, 0.6);
+            transform: scale(1.05) translateY(-2px);
+        }
+        
+        .start-button:active {
+            transform: scale(0.98);
         }
     </style>
-</head>
-<body class="h-full m-0 p-0">
-    <!-- Matrix Background -->
-    <div class="matrix-bg" id="matrixBg"></div>
-    <div class="scan-line"></div>
-    <div class="hex-pattern"></div>
-    
-    <!-- Welcome Screen -->
-    <div id="welcomeScreen" class="game-container welcome-screen w-full h-full flex flex-col items-center justify-center p-6 relative">
-        <div class="tech-panel rounded-3xl p-12 max-w-3xl text-center relative z-10">
-            <div class="mb-8">
-                <div class="text-8xl mb-4">💻</div>
-                <h1 id="welcomeTitle" class="text-7xl font-black neon-text mb-4">لعبة الكلمات المتقاطعة</h1>
-                <p id="welcomeDescription" class="text-2xl mb-4 neon-text-blue">اختبر ذكاءك وكوّن الكلمات</p>
-                <div class="text-sm neon-text-purple">⚡ أكثر من 50 لغز تقني متنوع ⚡</div>
-            </div>
-            
-            <div class="tech-panel rounded-2xl p-6 mb-8">
-                <h3 class="text-xl font-bold mb-6 neon-text">✨ فئات الألغاز</h3>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-                        <div class="text-4xl mb-2">🐍</div>
-                        <div class="font-bold neon-text-blue">لغات البرمجة</div>
-                        <div class="text-xs" style="color: #888;">Python, Java, JavaScript</div>
-                    </div>
-                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-                        <div class="text-4xl mb-2">⚙️</div>
-                        <div class="font-bold neon-text-blue">مصطلحات تقنية</div>
-                        <div class="text-xs" style="color: #888;">خوارزميات، قواعد بيانات</div>
-                    </div>
-                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-                        <div class="text-4xl mb-2">👨‍💻</div>
-                        <div class="font-bold neon-text-blue">شخصيات تقنية</div>
-                        <div class="text-xs" style="color: #888;">Gates, Jobs, Musk</div>
-                    </div>
-                    <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-                        <div class="text-4xl mb-2">🤖</div>
-                        <div class="font-bold neon-text-blue">تقنيات متقدمة</div>
-                        <div class="text-xs" style="color: #888;">AI, Blockchain, Cloud</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="tech-panel rounded-2xl p-6 mb-8">
-                <h3 class="text-lg font-bold mb-4 neon-text">🎮 مستويات الصعوبة</h3>
-                <div class="flex justify-center gap-4">
-                    <div class="difficulty-badge difficulty-easy">⭐ سهل</div>
-                    <div class="difficulty-badge difficulty-medium">⭐⭐ متوسط</div>
-                    <div class="difficulty-badge difficulty-hard">⭐⭐⭐ صعب</div>
-                </div>
-            </div>
-            
-            <button id="startGameBtn" class="w-full py-6 px-8 rounded-2xl font-black text-3xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-[#00ff9d]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #00ff9d; box-shadow: 0 0 30px rgba(0, 255, 157, 0.4), inset 0 0 20px rgba(0, 255, 157, 0.1);">
-                <span class="relative z-10" id="startButtonText">🚀 ابدأ اللعبة</span>
-            </button>
-        </div>
+  <style>@view-transition { navigation: auto; }</style>
+ </head>
+ <body class="h-full m-0 p-0"><!-- Welcome Screen -->
+  <div id="welcomeScreen" class="game-container welcome-screen w-full h-full flex flex-col items-center justify-center p-6 relative">
+   <div class="tech-panel rounded-3xl p-12 max-w-3xl text-center relative z-10">
+    <div class="mb-8">
+     <div class="text-8xl mb-4">
+      💻
+     </div>
+     <h1 id="welcomeTitle" class="text-7xl font-black neon-text mb-4">لعبة الكلمات المتقاطعة</h1>
+     <p id="welcomeDescription" class="text-2xl mb-4 neon-text-blue">اختبر ذكاءك وكوّن الكلمات</p>
+     <div class="text-sm neon-text-purple">
+      ⚡ أكثر من 56 لغز تقني متنوع ⚡
+     </div>
     </div>
-
-    <!-- Game Screen -->
-    <div id="gameScreen" class="game-container game-screen w-full h-full flex flex-col items-center justify-center p-6 relative" style="display: none;">
-        <!-- Wheel of Fortune -->
-        <div id="wheelContainer" class="wheel-container" style="display: none;">
-            <div class="tech-panel rounded-3xl p-4 text-center">
-                <div class="relative">
-                    <div class="wheel-pointer"></div>
-                    <div id="wheel" class="wheel">
-                        <div class="wheel-segment-text" style="transform: rotate(30deg) translateX(-50px);">+100</div>
-                        <div class="wheel-segment-text" style="transform: rotate(90deg) translateX(-50px);">+50</div>
-                        <div class="wheel-segment-text" style="transform: rotate(150deg) translateX(-50px);">+200</div>
-                        <div class="wheel-segment-text" style="transform: rotate(210deg) translateX(-50px);">0</div>
-                        <div class="wheel-segment-text" style="transform: rotate(270deg) translateX(-50px);">+150</div>
-                        <div class="wheel-segment-text" style="transform: rotate(330deg) translateX(-50px);">+75</div>
-                    </div>
-                </div>
-                <button id="spinBtn" class="mt-4 py-3 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 border-2" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); border-color: #00ff9d; color: #00ff9d; box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);">
-                    🎡 لف العجلة
-                </button>
-                <p id="wheelTimer" class="mt-2 text-sm neon-text-blue"></p>
-            </div>
-        </div>
-
-        <!-- Header -->
-        <div class="tech-panel rounded-3xl p-6 mb-6 w-full max-w-5xl relative z-10 word-complete">
-            <h1 id="gameTitle" class="text-5xl font-black text-center neon-text mb-2">لعبة الكلمات المتقاطعة</h1>
-            <p id="instructionText" class="text-center text-lg neon-text-blue">اسحب الحروف لتكوين الكلمات</p>
-            
-            <!-- Score and Level -->
-            <div class="grid grid-cols-4 gap-4 mt-6">
-                <div class="tech-panel px-6 py-3 rounded-2xl">
-                    <span class="text-xs neon-text-blue">النقاط</span>
-                    <div id="score" class="text-3xl font-black neon-text">0</div>
-                </div>
-                <div class="tech-panel px-6 py-3 rounded-2xl">
-                    <span class="text-xs neon-text-blue">المستوى</span>
-                    <div id="level" class="text-3xl font-black neon-text">1</div>
-                </div>
-                <div class="tech-panel px-6 py-3 rounded-2xl">
-                    <span class="text-xs neon-text-blue">الكلمات</span>
-                    <div id="wordsCompleted" class="text-3xl font-black neon-text">0</div>
-                </div>
-                <div class="tech-panel px-6 py-3 rounded-2xl">
-                    <span class="text-xs neon-text-blue">الصعوبة</span>
-                    <div id="currentDifficulty" class="text-3xl font-black neon-text">⭐</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Board -->
-        <div class="tech-panel rounded-3xl p-8 w-full max-w-5xl relative z-10 mb-6">
-            <div id="targetWord" class="text-center mb-8">
-                <div class="flex justify-center items-center gap-3 mb-3">
-                    <span id="difficultyBadge" class="difficulty-badge difficulty-easy">⭐ سهل</span>
-                    <span id="categoryBadge" class="category-badge">لغات</span>
-                </div>
-                <div id="wordHint" class="text-3xl font-black neon-text mb-6"></div>
-                <div id="dropZones" class="flex justify-center gap-3 flex-wrap"></div>
-            </div>
-            
-            <div id="letterBank" class="flex justify-center gap-3 flex-wrap mt-8"></div>
-            
-            <div class="flex gap-4 mt-8">
-                <button id="checkBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-[#00ff9d]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #00ff9d; box-shadow: 0 0 20px rgba(0, 255, 157, 0.4);">
-                    <span class="relative z-10">✓ تحقق</span>
-                </button>
-                <button id="resetBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff006e]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #ff006e; box-shadow: 0 0 20px rgba(255, 0, 110, 0.4);">
-                    ↻ إعادة
-                </button>
-                <button id="skipBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff8500]" style="background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%); color: #ff8500; box-shadow: 0 0 20px rgba(255, 133, 0, 0.4);">
-                    ⏭️ تخطي
-                </button>
-            </div>
-        </div>
-
-        <!-- Message Area -->
-        <div id="message" class="tech-panel rounded-2xl px-8 py-4 text-center font-bold text-xl relative z-10" style="color: #00ff9d; display: none;"></div>
+    <div class="tech-panel rounded-2xl p-6 mb-8">
+     <h3 class="text-xl font-bold mb-6 neon-text">✨ فئات الألغاز</h3>
+     <div class="grid grid-cols-2 gap-4 mb-6">
+      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+       <div class="text-4xl mb-2">
+        🐍
+       </div>
+       <div class="font-bold neon-text-blue">
+        لغات البرمجة
+       </div>
+       <div class="text-xs" style="color: #888;">
+        Python, Java, JavaScript
+       </div>
+      </div>
+      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+       <div class="text-4xl mb-2">
+        ⚙️
+       </div>
+       <div class="font-bold neon-text-blue">
+        مصطلحات تقنية
+       </div>
+       <div class="text-xs" style="color: #888;">
+        خوارزميات، ��واعد بيانات
+       </div>
+      </div>
+      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+       <div class="text-4xl mb-2">
+        👨‍💻
+       </div>
+       <div class="font-bold neon-text-blue">
+        شخصيات تقنية
+       </div>
+       <div class="text-xs" style="color: #888;">
+        Gates, Jobs, Musk
+       </div>
+      </div>
+      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
+       <div class="text-4xl mb-2">
+        🤖
+       </div>
+       <div class="font-bold neon-text-blue">
+        تقنيات متقدمة
+       </div>
+       <div class="text-xs" style="color: #888;">
+        AI, Blockchain, Cloud
+       </div>
+      </div>
+     </div><button id="startGameBtn" style="width: 100%; padding: 24px 32px; border-radius: 16px; font-weight: 900; font-size: 32px; background: #ffffff; color: #000000; border: 3px solid #ffffff; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.4); cursor: pointer; transition: all 0.3s ease; display: block; margin: 0 auto;"> <span id="startButtonText">🚀 ابدأ اللعبة</span> </button>
     </div>
-
-    <script>
+    <div class="tech-panel rounded-2xl p-6 mb-8">
+     <h3 class="text-lg font-bold mb-4 neon-text">🎮 مستويات الصعوبة</h3>
+     <div class="flex justify-center gap-4">
+      <div class="difficulty-badge difficulty-easy">
+       ⭐ سهل (15 لغز)
+      </div>
+      <div class="difficulty-badge difficulty-medium">
+       ⭐⭐ متوسط (24 لغز)
+      </div>
+      <div class="difficulty-badge difficulty-hard">
+       ⭐⭐⭐ صعب (17 لغز)
+      </div>
+     </div>
+    </div>
+   </div>
+  </div><!-- Game Screen -->
+  <div id="gameScreen" class="game-container game-screen w-full h-full flex flex-col items-center justify-center p-6 relative" style="display: none;"><!-- Wheel of Fortune -->
+   <div id="wheelContainer" class="wheel-container" style="display: none;">
+    <div class="tech-panel rounded-3xl p-4 text-center">
+     <div class="relative">
+      <div class="wheel-pointer"></div>
+      <div id="wheel" class="wheel">
+       <div class="wheel-segment-text" style="transform: rotate(30deg) translateX(-50px);">
+        +100
+       </div>
+       <div class="wheel-segment-text" style="transform: rotate(90deg) translateX(-50px);">
+        +50
+       </div>
+       <div class="wheel-segment-text" style="transform: rotate(150deg) translateX(-50px);">
+        +200
+       </div>
+       <div class="wheel-segment-text" style="transform: rotate(210deg) translateX(-50px);">
+        0
+       </div>
+       <div class="wheel-segment-text" style="transform: rotate(270deg) translateX(-50px);">
+        +150
+       </div>
+       <div class="wheel-segment-text" style="transform: rotate(330deg) translateX(-50px);">
+        +75
+       </div>
+      </div>
+     </div><button id="spinBtn" class="mt-4 py-3 px-6 rounded-xl font-bold text-lg transition-all duration-300 transform hover:scale-105 border-2" style="background: #1a1f3a; border-color: #00ff9d; color: #00ff9d; box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);"> 🎡 لف العجلة </button>
+     <p id="wheelTimer" class="mt-2 text-sm neon-text-blue"></p>
+    </div>
+   </div><!-- Header -->
+   <div class="tech-panel rounded-3xl p-6 mb-6 w-full max-w-5xl relative z-10 word-complete">
+    <h1 id="gameTitle" class="text-5xl font-black text-center neon-text mb-2">لعبة الكلمات المتقاطعة</h1>
+    <p id="instructionText" class="text-center text-lg neon-text-blue">اسحب الحروف لتكوين الكلمات</p><!-- Score and Level -->
+    <div class="grid grid-cols-4 gap-4 mt-6">
+     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">النقاط</span>
+      <div id="score" class="text-3xl font-black neon-text">
+       0
+      </div>
+     </div>
+     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">ال��ستوى</span>
+      <div id="level" class="text-3xl font-black neon-text">
+       1
+      </div>
+     </div>
+     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">الكلمات</span>
+      <div id="wordsCompleted" class="text-3xl font-black neon-text">
+       0
+      </div>
+     </div>
+     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">الصعوبة</span>
+      <div id="currentDifficulty" class="text-3xl font-black neon-text">
+       ⭐
+      </div>
+     </div>
+    </div>
+   </div><!-- Game Board -->
+   <div class="tech-panel rounded-3xl p-8 w-full max-w-5xl relative z-10 mb-6">
+    <div id="targetWord" class="text-center mb-8">
+     <div class="flex justify-center items-center gap-3 mb-3"><span id="difficultyBadge" class="difficulty-badge difficulty-easy">⭐ سهل</span> <span id="categoryBadge" class="category-badge">لغات</span>
+     </div>
+     <div id="wordHint" class="text-3xl font-black neon-text mb-6"></div>
+     <div id="dropZones" class="flex justify-center gap-3 flex-wrap"></div>
+    </div>
+    <div id="letterBank" class="flex justify-center gap-3 flex-wrap mt-8"></div>
+    <div class="flex gap-4 mt-8"><button id="checkBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-[#00ff9d]" style="background: #1a1f3a; color: #00ff9d; box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);"> <span class="relative z-10">✓ تحقق</span> </button> <button id="resetBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff006e]" style="background: #1a1f3a; color: #ff006e; box-shadow: 0 2px 8px rgba(255, 0, 110, 0.2);"> �� إعادة </button> <button id="skipBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff8500]" style="background: #1a1f3a; color: #ff8500; box-shadow: 0 2px 8px rgba(255, 133, 0, 0.2);"> ⏭️ تخطي </button>
+    </div>
+   </div><!-- Message Area -->
+   <div id="message" class="tech-panel rounded-2xl px-8 py-4 text-center font-bold text-xl relative z-10" style="color: #00ff9d; display: none;"></div>
+  </div>
+  <script>
         const defaultConfig = {
             game_title: "لعبة الكلمات المتقاطعة",
             welcome_description: "اختبر ذكاءك وكوّن الكلمات",
@@ -550,85 +428,67 @@
         const wheelPrizes = [100, 50, 200, 0, 150, 75];
 
         const words = [
-            // لغات البرمجة - سهل
-            { word: "بايثون", hint: "🐍 لغة برمجة سهلة للمبتدئين", difficulty: 1, category: "لغات" },
+            // لغات البرمجة - سهل (15)
+            { word: "��ايثون", hint: "🐍 لغة برمجة سهلة للمبتدئين", difficulty: 1, category: "لغات" },
             { word: "جافا", hint: "☕ لغة برمجة للتطبيقات", difficulty: 1, category: "لغات" },
             { word: "سويفت", hint: "🍎 لغة برمجة آبل", difficulty: 1, category: "لغات" },
-            { word: "كوتلن", hint: "📱 لغة برمجة أندرويد حديثة", difficulty: 1, category: "لغات" },
+            { word: "كوتلن", hint: "📱 لغة برمجة أندرو��د ��ديثة", difficulty: 1, category: "لغات" },
             { word: "روبي", hint: "💎 لغة برمجة ديناميكية", difficulty: 1, category: "لغات" },
-            
-            // مصطلحات برمجية - سهل
             { word: "متغير", hint: "📦 حاوية لتخزين البيانات", difficulty: 1, category: "مصطلحات" },
-            { word: "دالة", hint: "⚙️ كتلة كود قابلة لإعادة الاستخدام", difficulty: 1, category: "مصطلحات" },
-            { word: "حلقة", hint: "🔄 تكرار تنفيذ كود معين", difficulty: 1, category: "مصطلحات" },
-            { word: "مصفوفة", hint: "📊 مجموعة عناصر مرتبة", difficulty: 1, category: "مصطلحات" },
+            { word: "دالة", hint: "⚙��� كتلة كود قابلة لإعادة ال��ستخدام", difficulty: 1, category: "مصطلحات" },
+            { word: "حلقة", hint: "🔄 تكرار تنفي�� كود مع��ن", difficulty: 1, category: "مصطلحات" },
+            { word: "مصفوفة", hint: "📊 م��موعة عناصر مرتبة", difficulty: 1, category: "مصطلحات" },
             { word: "كائن", hint: "🎯 وحدة برمجية تحتوي بيانات", difficulty: 1, category: "مصطلحات" },
-            
-            // شخصيات تقنية - سهل
             { word: "جيتس", hint: "💻 مؤسس مايكروسوفت", difficulty: 1, category: "شخصيات" },
             { word: "جوبز", hint: "🍎 مؤسس آبل العبقري", difficulty: 1, category: "شخصيات" },
             { word: "ماسك", hint: "🚀 مؤسس تسلا وسبيس إكس", difficulty: 1, category: "شخصيات" },
+            { word: "نص", hint: "📝 بيانات حروف وكلمات", difficulty: 1, category: "مصطلحات" },
+            { word: "رقم", hint: "🔢 بيانات عددية", difficulty: 1, category: "مصطلحات" },
             
-            // لغات برمجة - متوسط
-            { word: "جافاسكربت", hint: "🌐 لغة برمجة الويب الأساسية", difficulty: 2, category: "لغات" },
+            // متو��ط (24)
+            { word: "جافاسكربت", hint: "🌐 لغة بر��جة الويب الأساسية", difficulty: 2, category: "لغات" },
             { word: "تايبسكربت", hint: "📘 جافاسكربت بأنواع ثابتة", difficulty: 2, category: "لغات" },
-            { word: "سيبلاسبلاس", hint: "⚡ لغة برمجة قوية وسريعة", difficulty: 2, category: "لغات" },
-            { word: "روست", hint: "🦀 لغة برمجة آمنة للذاكرة", difficulty: 2, category: "لغات" },
+            { word: "سيبلاسبلاس", hint: "⚡ لغة برمجة ��وية وسريعة", difficulty: 2, category: "لغا��" },
+            { word: "روست", hint: "�� لغة برمجة آمنة للذاكرة", difficulty: 2, category: "لغات" },
             { word: "جولانج", hint: "🔷 لغة برمجة من جوجل", difficulty: 2, category: "لغات" },
             { word: "دارت", hint: "🎯 لغة برمجة فلاتر", difficulty: 2, category: "لغات" },
-            { word: "اسكالا", hint: "🎭 لغة وظيفية للجافا", difficulty: 2, category: "لغات" },
+            { word: "اسك��ل��", hint: "🎭 لغة وظيف��ة للجافا", difficulty: 2, category: "لغات" },
             { word: "ايرلانج", hint: "📡 لغة للأنظمة الموزعة", difficulty: 2, category: "لغات" },
-            
-            // مصطلحات برمجية - متوسط
-            { word: "خوارزمية", hint: "🧮 خطوات منطقية لحل مشكلة", difficulty: 2, category: "مصطلحات" },
+            { word: "خوارزمية", hint: "🧮 خطوات م��طقية لحل مشكلة", difficulty: 2, category: "مصطلحات" },
             { word: "واجهة", hint: "🖼️ تصميم التفاعل مع المستخدم", difficulty: 2, category: "مصطلحات" },
-            { word: "قاعدةبيانات", hint: "🗄️ مخزن منظم للمعلومات", difficulty: 2, category: "مصطلحات" },
+            { word: "��اعدةبيانات", hint: "🗄️ مخزن منظم للمعلومات", difficulty: 2, category: "مصطلحات" },
             { word: "خادم", hint: "🖥️ حاسوب يقدم خدمات للشبكة", difficulty: 2, category: "مصطلحات" },
             { word: "اختبار", hint: "🧪 فحص جودة الكود", difficulty: 2, category: "مصطلحات" },
-            { word: "تشفير", hint: "🔐 حماية البيانات بالترميز", difficulty: 2, category: "مصطلحات" },
+            { word: "تشفير", hint: "🔐 حما��ة البيانات بالترميز", difficulty: 2, category: "مصطلحات" },
             { word: "استثناء", hint: "⚠️ خطأ أثناء تشغيل البرنامج", difficulty: 2, category: "مصطلحات" },
-            { word: "مكتبة", hint: "📚 مجموعة دوال جاهزة", difficulty: 2, category: "مصطلحات" },
+            { word: "مكتبة", hint: "📚 مجموعة دو��ل جاهزة", difficulty: 2, category: "مصطلحات" },
             { word: "اطارعمل", hint: "🏗️ بنية تحتية للتطوير", difficulty: 2, category: "مصطلحات" },
             { word: "واجهةبرمجية", hint: "🔌 نقطة اتصال بين البرامج", difficulty: 2, category: "مصطلحات" },
-            
-            // شخصيات تقنية - متوسط
-            { word: "زوكربيرج", hint: "👤 مؤسس فيسبوك الشاب", difficulty: 2, category: "شخصيات" },
+            { word: "زوكربير��", hint: "👤 مؤسس فيسبوك ال��اب", difficulty: 2, category: "شخصيات" },
             { word: "بيزوس", hint: "📦 مؤسس أمازون العملاق", difficulty: 2, category: "شخصيات" },
-            { word: "بيتشاي", hint: "🔍 الرئيس التنفيذي لجوجل", difficulty: 2, category: "شخصيات" },
+            { word: "بيتشاي", hint: "🔍 الر��يس الت��فيذي لجوجل", difficulty: 2, category: "شخصيات" },
             { word: "تورفالدز", hint: "🐧 مبتكر نظام لينكس", difficulty: 2, category: "شخصيات" },
-            { word: "وزنياك", hint: "🍎 مؤسس آبل مع جوبز", difficulty: 2, category: "شخصيات" },
+            { word: "وزنياك", hint: "🍎 مؤسس آبل مع ��وبز", difficulty: 2, category: "ش��صيات" },
+            { word: "شبكة", hint: "🌐 اتصال بين أجهزة", difficulty: 2, category: "مصطلحات" },
             
-            // مصطلحات متقدمة - صعب
-            { word: "ذكاءاصطناعي", hint: "🤖 محاكاة الذكاء البشري", difficulty: 3, category: "متقدم" },
-            { word: "تعلمآلي", hint: "🧠 تعلم الآلة من البيانات", difficulty: 3, category: "متقدم" },
+            // صعب (17)
+            { word: "ذكاءاصطناعي", hint: "🤖 محاكا�� الذكاء البشري", difficulty: 3, category: "متقدم" },
+            { word: "تعلمآلي", hint: "�� تعلم الآلة من البيانات", difficulty: 3, category: "متقدم" },
             { word: "بلوكتشين", hint: "⛓️ تقنية السجل الموزع", difficulty: 3, category: "متقدم" },
-            { word: "حوسبةسحابية", hint: "☁️ خدمات عبر الإنترنت", difficulty: 3, category: "متقدم" },
+            { word: "حوسبةسحابية", hint: "☁️ خدمات عبر ��لإنترنت", difficulty: 3, category: "متقدم" },
             { word: "واقعافتراضي", hint: "🥽 عالم رقمي ثلاثي الأبعاد", difficulty: 3, category: "متقدم" },
             { word: "واقعمعزز", hint: "📱 دمج الرقمي مع الحقيقي", difficulty: 3, category: "متقدم" },
             { word: "انترنتالاشياء", hint: "🌐 اتصال الأجهزة بالإنترنت", difficulty: 3, category: "متقدم" },
             { word: "امنسيبراني", hint: "🛡️ حماية الأنظمة الرقمية", difficulty: 3, category: "متقدم" },
-            { word: "حوسبةكمية", hint: "⚛️ حوسبة بالجسيمات دون الذرية", difficulty: 3, category: "متقدم" },
-            { word: "معالجةطبيعية", hint: "💬 فهم اللغة البشرية بالآلة", difficulty: 3, category: "متقدم" },
+            { word: "حوسبةكمية", hint: "⚛️ حوسبة بالجسيمات دون ا��ذرية", difficulty: 3, category: "متقدم" },
+            { word: "معالجةطبيعية", hint: "💬 فهم ��للغة البشرية بالآلة", difficulty: 3, category: "متقدم" },
             { word: "تعلمعميق", hint: "🕸️ شبكات عصبية متعددة الطبقات", difficulty: 3, category: "متقدم" },
-            { word: "اتمتة", hint: "🤖 تنفيذ مهام بدون تدخل بشري", difficulty: 3, category: "متقدم" },
-            { word: "بياناتضخمة", hint: "📊 معالجة كميات هائلة من البيانات", difficulty: 3, category: "متقدم" },
+            { word: "اتمت��", hint: "🤖 تنفيذ مهام بدون تدخل بشري", difficulty: 3, category: "متقدم" },
+            { word: "��ياناتضخمة", hint: "📊 معالجة كميات هائلة من البيانات", difficulty: 3, category: "متقدم" },
             { word: "حوسبةطرفية", hint: "🌐 معالجة البيانات قرب المصدر", difficulty: 3, category: "متقدم" },
-            
-            // أطر عمل ومنصات - صعب
-            { word: "ريأكت", hint: "⚛️ مكتبة جافاسكربت من فيسبوك", difficulty: 3, category: "تقنيات" },
-            { word: "فلاتر", hint: "🎨 إطار عمل تطبيقات متعدد المنصات", difficulty: 3, category: "تقنيات" },
-            { word: "دوكر", hint: "🐳 منصة لحاويات التطبيقات", difficulty: 3, category: "تقنيات" },
-            { word: "كوبرنتس", hint: "☸️ إدارة الحاويات تلقائياً", difficulty: 3, category: "تقنيات" },
-            { word: "تينسرفلو", hint: "🔢 مكتبة تعلم آلي من جوجل", difficulty: 3, category: "تقنيات" },
-            { word: "نودجيإس", hint: "💚 بيئة تشغيل جافاسكربت", difficulty: 3, category: "تقنيات" },
-            { word: "انجولار", hint: "🅰️ إطار عمل ويب من جوجل", difficulty: 3, category: "تقنيات" },
-            { word: "فيوجيإس", hint: "💚 إطار عمل جافاسكربت تفاعلي", difficulty: 3, category: "تقنيات" },
-            
-            // شخصيات متقدمة - صعب
             { word: "تورينج", hint: "🧮 أبو علم الحاسوب الحديث", difficulty: 3, category: "شخصيات" },
-            { word: "جريسهوبر", hint: "👩‍💻 مخترعة أول مترجم برمجي", difficulty: 3, category: "شخصيات" },
-            { word: "كنوث", hint: "📚 أبو تحليل الخوارزميات", difficulty: 3, category: "شخصيات" },
-            { word: "سترستروب", hint: "⚡ مخترع لغة سي بلس بلس", difficulty: 3, category: "شخصيات" }
+            { word: "جريسه��بر", hint: "👩‍💻 مخترعة أول مترجم برمجي", difficulty: 3, category: "شخصيات" },
+            { word: "كنوث", hint: "📚 أبو تحليل الخوارزميات", difficulty: 3, category: "شخصيات" }
         ];
 
         const dataHandler = {
@@ -650,8 +510,6 @@
         };
 
         async function initializeGame() {
-            createMatrixEffect();
-            
             const initResult = await window.dataSdk.init(dataHandler);
             if (!initResult.isOk) {
                 console.error("Failed to initialize data SDK");
@@ -738,21 +596,6 @@
             }
         }
 
-        function createMatrixEffect() {
-            const matrixBg = document.getElementById('matrixBg');
-            const chars = '01أبتثجحخدذرزسشصضطظعغفقكلمنهوي';
-            
-            for (let i = 0; i < 50; i++) {
-                const span = document.createElement('span');
-                span.className = 'matrix-char';
-                span.textContent = chars[Math.floor(Math.random() * chars.length)];
-                span.style.left = Math.random() * 100 + '%';
-                span.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                span.style.animationDelay = Math.random() * 5 + 's';
-                matrixBg.appendChild(span);
-            }
-        }
-
         function startGame() {
             document.getElementById('welcomeScreen').style.display = 'none';
             document.getElementById('gameScreen').style.display = 'flex';
@@ -822,7 +665,7 @@
                         hideMessage();
                     }, 3000);
                 } else {
-                    showMessage('❌ خطأ في حفظ البيانات', '#ff006e');
+                    showMessage('��� خطأ في حفظ البيانات', '#ff006e');
                     spinBtn.disabled = false;
                     spinBtn.innerHTML = '🎡 لف العجلة';
                 }
@@ -884,7 +727,7 @@
             currentLetters.forEach((letter, index) => {
                 const tile = document.createElement('div');
                 tile.className = 'letter-tile w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black';
-                tile.style.color = '#00ff9d';
+                tile.style.color = '#ffffff';
                 tile.textContent = letter;
                 tile.draggable = true;
                 tile.dataset.letter = letter;
@@ -934,21 +777,6 @@
                 dropZone.classList.add('filled');
                 dropZone.style.color = '#0a0e27';
                 draggedElement.style.display = 'none';
-                createParticles(dropZone);
-            }
-        }
-
-        function createParticles(element) {
-            const rect = element.getBoundingClientRect();
-            for (let i = 0; i < 8; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = rect.left + rect.width / 2 + 'px';
-                particle.style.top = rect.top + rect.height / 2 + 'px';
-                particle.style.setProperty('--tx', (Math.random() - 0.5) * 100 + 'px');
-                particle.style.setProperty('--ty', (Math.random() - 0.5) * 100 + 'px');
-                document.body.appendChild(particle);
-                setTimeout(() => particle.remove(), 1000);
             }
         }
 
@@ -968,7 +796,7 @@
             });
             
             if (!allFilled) {
-                showMessage('⚠️ أكمل جميع الحروف!', '#ff8500');
+                showMessage('⚠��� أكمل جميع الحروف!', '#ff8500');
                 return;
             }
             
@@ -1006,7 +834,7 @@
                     setTimeout(() => {
                         loadNewWord();
                         isLoading = false;
-                        document.getElementById('checkBtn').innerHTML = '<span class="relative z-10">✓ تحقق</span>';
+                        document.getElementById('checkBtn').innerHTML = '<span class="relative z-10">✓ تح��ق</span>';
                     }, 2000);
                 } else {
                     showMessage('❌ خطأ في حفظ البيانات', '#ff006e');
@@ -1022,7 +850,9 @@
             const dropZones = document.querySelectorAll('.drop-zone');
             dropZones.forEach(zone => {
                 zone.textContent = '';
-                zone.classList.remove('filled');
+                zone.classList.remove('filled', 'correct', 'incorrect');
+                zone.style.background = 'rgba(50, 50, 50, 0.5)';
+                zone.style.color = '#000000';
             });
             
             const tiles = document.querySelectorAll('.letter-tile');
@@ -1034,7 +864,7 @@
         }
 
         function skipWord() {
-            showMessage('⏭️ تم تخطي الكلمة', '#ff8500');
+            showMessage('⏭️ تم ��خطي الكلمة', '#ff8500');
             setTimeout(() => {
                 loadNewWord();
                 hideMessage();
@@ -1061,7 +891,7 @@
             message.textContent = text;
             message.style.borderColor = color;
             message.style.color = color;
-            message.style.boxShadow = `0 0 30px ${color}50`;
+            message.style.boxShadow = `0 4px 16px ${color}30`;
             message.style.display = 'block';
             message.classList.add('word-complete');
         }
@@ -1075,9 +905,66 @@
         document.getElementById('spinBtn').addEventListener('click', spinWheel);
         document.getElementById('checkBtn').addEventListener('click', checkWord);
         document.getElementById('resetBtn').addEventListener('click', resetWord);
-        document.getElementById('skipBtn').addEventListener('click', skipWord);
+        document.getElementById('skipBtn').addEventListener('click', showHint);
+
+        async function showHint() {
+            if (isLoading) return;
+            
+            if (currentScore < 100) {
+                showMessage('❌ تحتاج 100 نقطة للحصول على تلميح!', '#ff0000');
+                return;
+            }
+            
+            isLoading = true;
+            document.getElementById('skipBtn').innerHTML = '<div class="loading-spinner mx-auto"></div>';
+            
+            currentScore -= 100;
+            
+            const gameData = {
+                id: Date.now().toString(),
+                level: currentLevel,
+                score: currentScore,
+                completedWords: wordsCompleted.toString(),
+                timestamp: new Date().toISOString(),
+                lastSpinTime: lastSpinTime || '',
+                currentDifficulty: currentDifficulty
+            };
+            
+            const result = await window.dataSdk.create(gameData);
+            
+            if (result.isOk) {
+                updateDisplay();
+                const firstLetter = currentWord[0];
+                const dropZones = document.querySelectorAll('.drop-zone');
+                dropZones[0].textContent = firstLetter;
+                dropZones[0].classList.add('filled');
+                dropZones[0].style.background = '#ffff00';
+                dropZones[0].style.color = '#000000';
+                
+                const tiles = document.querySelectorAll('.letter-tile');
+                tiles.forEach(tile => {
+                    if (tile.dataset.letter === firstLetter && tile.style.display !== 'none') {
+                        tile.style.display = 'none';
+                        return;
+                    }
+                });
+                
+                showMessage('💡 تم عرض الحرف الأول!', '#ffff00');
+                
+                setTimeout(() => {
+                    isLoading = false;
+                    document.getElementById('skipBtn').innerHTML = '💡 تلميح (100 نقطة)';
+                    hideMessage();
+                }, 2000);
+            } else {
+                showMessage('❌ خطأ في حفظ البيانات', '#ff0000');
+                currentScore += 100;
+                isLoading = false;
+                document.getElementById('skipBtn').innerHTML = '💡 تلميح (100 نقطة)';
+            }
+        }
 
         initializeGame();
     </script>
-</body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b3b7b3e94e4a0e6',t:'MTc2NjY5ODY2NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
