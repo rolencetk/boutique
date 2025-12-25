@@ -1,0 +1,2303 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bane Phone - Tech Store</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <style>
+    body {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #ffffff;
+      color: #000000;
+      min-height: 100%;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    /* Animated Background Particles */
+    .particles-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: float linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0) scale(1);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.6;
+      }
+      100% {
+        transform: translateY(-100%) translateX(50px) scale(0.5);
+        opacity: 0;
+      }
+    }
+
+    /* Main Wrapper */
+    .app-wrapper {
+      width: 100%;
+      min-height: 100%;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Sidebar */
+    .tech-sidebar {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 320px;
+      height: 100%;
+      background: linear-gradient(180deg, 
+        rgba(220, 38, 38, 0.95) 0%,
+        rgba(153, 27, 27, 0.95) 50%,
+        rgba(0, 0, 0, 0.95) 100%
+      );
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 1000;
+      padding: 0;
+      overflow-y: auto;
+      box-shadow: 8px 0 40px rgba(220, 38, 38, 0.4);
+      border-right: 2px solid rgba(220, 38, 38, 0.5);
+    }
+
+    .sidebar-header {
+      background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, transparent 100%);
+      padding: 2rem 1.5rem;
+      border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+      text-align: center;
+    }
+
+    .sidebar-logo {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      filter: drop-shadow(0 0 20px rgba(220, 38, 38, 0.8));
+    }
+
+    .sidebar-brand {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(220, 38, 38, 0.8);
+      letter-spacing: 3px;
+    }
+
+    .sidebar-tagline {
+      margin: 0.5rem 0 0 0;
+      font-size: 0.9rem;
+      color: #ffffff;
+      opacity: 0.9;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .sidebar-nav {
+      padding: 2rem 1rem;
+    }
+
+    .nav-item {
+      margin-bottom: 1rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 15px;
+      font-weight: 600;
+      font-size: 1.05rem;
+      transition: all 0.4s ease;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-link::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.6s ease;
+    }
+
+    .nav-link:hover::before {
+      left: 100%;
+    }
+
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.15);
+      transform: translateX(8px);
+      box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+      border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .nav-icon {
+      font-size: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+    }
+
+    .cart-badge {
+      background: #ffffff;
+      color: #dc2626;
+      padding: 0.35rem 0.75rem;
+      border-radius: 25px;
+      font-size: 0.8rem;
+      font-weight: 900;
+      margin-left: auto;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-left: 320px;
+      width: calc(100% - 320px);
+      min-height: 100%;
+    }
+
+    /* Hero Section */
+    .hero-section {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 4rem 2rem;
+      position: relative;
+      background: linear-gradient(135deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.95) 100%
+      );
+    }
+
+    .hero-content {
+      max-width: 800px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .hero-icon {
+      font-size: 8rem;
+      margin-bottom: 2rem;
+      animation: pulse 3s ease-in-out infinite;
+      filter: drop-shadow(0 0 30px rgba(220, 38, 38, 0.3));
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .hero-title {
+      font-size: 5rem;
+      font-weight: 900;
+      margin: 0 0 1rem 0;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 3px;
+      text-shadow: 0 4px 20px rgba(220, 38, 38, 0.2);
+    }
+
+    .hero-subtitle {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #dc2626;
+      margin: 0 0 1.5rem 0;
+      letter-spacing: 2px;
+    }
+
+    .hero-description {
+      font-size: 1.3rem;
+      color: #374151;
+      margin: 0 0 3rem 0;
+      line-height: 1.8;
+      font-weight: 400;
+    }
+
+    .hero-button {
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      color: #ffffff;
+      border: none;
+      padding: 1.75rem 4rem;
+      font-size: 1.5rem;
+      font-weight: 800;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 10px 40px rgba(220, 38, 38, 0.4);
+      letter-spacing: 1px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-button::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 0;
+      height: 0;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      transform: translate(-50%, -50%);
+      transition: width 0.6s, height 0.6s;
+    }
+
+    .hero-button:hover::before {
+      width: 300px;
+      height: 300px;
+    }
+
+    .hero-button:hover {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: 0 15px 50px rgba(220, 38, 38, 0.6);
+    }
+
+    .hero-button span {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Question Form */
+    .question-form-wrapper {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.08) 0%, rgba(0, 0, 0, 0.08) 100%);
+      border: 3px solid #dc2626;
+      border-radius: 30px;
+      padding: 2.5rem;
+      box-shadow: 0 10px 40px rgba(220, 38, 38, 0.2);
+      margin-top: 4rem;
+    }
+
+    .question-form-title {
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #000000;
+      margin: 0 0 2rem 0;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .question-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .question-form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .question-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .question-input-group label {
+      font-weight: 700;
+      color: #000000;
+      font-size: 1rem;
+    }
+
+    .question-input-group input,
+    .question-input-group textarea {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #ffffff;
+      color: #000000;
+      transition: all 0.3s ease;
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    .question-input-group textarea {
+      resize: vertical;
+    }
+
+    .question-input-group input:focus,
+    .question-input-group textarea:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+    }
+
+    .question-submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      color: #ffffff;
+      border: none;
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-weight: 900;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    .question-submit-btn:hover:not(:disabled) {
+      transform: scale(1.03);
+      box-shadow: 0 8px 35px rgba(220, 38, 38, 0.6);
+    }
+
+    .question-submit-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Contact Info Below Form */
+    .contact-info-below {
+      border-top: 2px solid rgba(220, 38, 38, 0.2);
+      padding-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .store-info-compact {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .info-icon {
+      font-size: 1.5rem;
+      filter: drop-shadow(0 2px 8px rgba(220, 38, 38, 0.4));
+    }
+
+    .info-text {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000000;
+    }
+
+    .social-icons-compact {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+
+    .social-icon-link {
+      transition: all 0.3s ease;
+      display: block;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .social-icon-link:hover {
+      transform: translateY(-5px) scale(1.1);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Products Section */
+    .products-section {
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, 
+        rgba(255, 255, 255, 0.95) 0%,
+        rgba(248, 250, 252, 0.95) 100%
+      );
+      display: none;
+    }
+
+    .products-section.active {
+      display: block;
+    }
+
+    .products-header {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .products-header h2 {
+      font-size: 3rem;
+      font-weight: 900;
+      margin: 0 0 1rem 0;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2.5rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .product-card {
+      background: #ffffff;
+      border: 3px solid #e5e7eb;
+      border-radius: 25px;
+      padding: 2rem;
+      transition: all 0.4s ease;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .product-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(90deg, #dc2626 0%, #000000 100%);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .product-card:hover {
+      border-color: #dc2626;
+      transform: translateY(-10px);
+      box-shadow: 0 15px 50px rgba(220, 38, 38, 0.3);
+    }
+
+    .product-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .product-icon {
+      font-size: 5rem;
+      text-align: center;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 15px rgba(220, 38, 38, 0.2));
+    }
+
+    .product-name {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: #000000;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    .product-specs {
+      text-align: center;
+      color: #6b7280;
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+      font-weight: 500;
+    }
+
+    .product-price {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #dc2626;
+      text-align: center;
+      margin-bottom: 2rem;
+      text-shadow: 0 2px 10px rgba(220, 38, 38, 0.2);
+    }
+
+    .product-options {
+      margin-bottom: 2rem;
+    }
+
+    .product-options-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .product-options-group label {
+      display: block;
+      margin-bottom: 0.75rem;
+      color: #000000;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .product-options-group select {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #ffffff;
+      color: #000000;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .product-options-group select:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+    }
+
+    .battery-group {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .battery-group.show {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .add-to-cart-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      color: #ffffff;
+      border: none;
+      padding: 1.25rem;
+      border-radius: 15px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 20px rgba(220, 38, 38, 0.3);
+      letter-spacing: 1px;
+    }
+
+    .add-to-cart-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 8px 30px rgba(220, 38, 38, 0.5);
+    }
+
+    .add-to-cart-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    /* Cart Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #ffffff;
+      border: 4px solid #dc2626;
+      border-radius: 30px;
+      max-width: 900px;
+      width: 100%;
+      max-height: 90%;
+      overflow-y: auto;
+      box-shadow: 0 25px 80px rgba(220, 38, 38, 0.5);
+      position: relative;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      padding: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 26px 26px 0 0;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 900;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+
+    .close-modal {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: #ffffff;
+      font-size: 2rem;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-weight: 700;
+    }
+
+    .close-modal:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+
+    .modal-body {
+      padding: 2.5rem;
+    }
+
+    .cart-items-list {
+      margin-bottom: 2rem;
+    }
+
+    .cart-item {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
+      border: 2px solid #e5e7eb;
+      border-radius: 20px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .cart-item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      margin-bottom: 1rem;
+    }
+
+    .cart-item-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #000000;
+      margin: 0;
+    }
+
+    .cart-item-price {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: #dc2626;
+    }
+
+    .cart-item-details {
+      color: #6b7280;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .cart-item-details div {
+      margin-bottom: 0.25rem;
+    }
+
+    .remove-item-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-weight: 700;
+    }
+
+    .remove-item-btn:hover {
+      background: #dc2626;
+      transform: scale(1.1);
+    }
+
+    .order-form {
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.05) 0%, rgba(0, 0, 0, 0.05) 100%);
+      border: 3px solid #dc2626;
+      border-radius: 20px;
+      padding: 2rem;
+    }
+
+    .order-form h4 {
+      margin: 0 0 2rem 0;
+      font-size: 1.75rem;
+      color: #000000;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.75rem;
+      color: #000000;
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 1rem 1.25rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #ffffff;
+      color: #000000;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.1);
+    }
+
+    .submit-order-btn {
+      width: 100%;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      color: #ffffff;
+      border: none;
+      padding: 1.5rem;
+      border-radius: 15px;
+      font-weight: 900;
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      letter-spacing: 1px;
+    }
+
+    .submit-order-btn:hover:not(:disabled) {
+      transform: scale(1.03);
+      box-shadow: 0 8px 35px rgba(220, 38, 38, 0.6);
+    }
+
+    .submit-order-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .cart-total {
+      text-align: center;
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%);
+      border-radius: 15px;
+      border: 2px solid #dc2626;
+    }
+
+    .cart-total-label {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #000000;
+      margin-bottom: 0.5rem;
+    }
+
+    .cart-total-amount {
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: #dc2626;
+    }
+
+    /* Success Message */
+    .success-message {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      padding: 2.5rem;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+    }
+
+    .success-message h4 {
+      margin: 0 0 1rem 0;
+      font-size: 2rem;
+      font-weight: 900;
+    }
+
+    .success-message p {
+      margin: 0.5rem 0;
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(200%);
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      color: #ffffff;
+      padding: 1.25rem 2.5rem;
+      border-radius: 50px;
+      box-shadow: 0 10px 40px rgba(220, 38, 38, 0.5);
+      z-index: 3000;
+      transition: transform 0.4s ease;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Spinner */
+    .spinner {
+      display: inline-block;
+      width: 22px;
+      height: 22px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Mobile Menu */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+      z-index: 999;
+      background: linear-gradient(135deg, #dc2626 0%, #000000 100%);
+      color: #ffffff;
+      border: none;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      font-size: 1.75rem;
+      cursor: pointer;
+      box-shadow: 0 6px 25px rgba(220, 38, 38, 0.5);
+      transition: all 0.3s ease;
+    }
+
+    .mobile-menu-btn:hover {
+      transform: scale(1.1);
+    }
+
+    .mobile-menu-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: #ffffff;
+      color: #dc2626;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 900;
+      box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
+      border: 3px solid #dc2626;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .tech-sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.4s ease;
+      }
+
+      .tech-sidebar.mobile-open {
+        transform: translateX(0);
+      }
+
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .mobile-menu-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.5rem;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+
+      .hero-icon {
+        font-size: 5rem;
+      }
+
+      .products-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .tech-sidebar {
+        width: 100%;
+      }
+
+      .question-form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .store-info-compact {
+        flex-direction: column;
+        gap: 1.5rem;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Animated Particles -->
+  <div class="particles-container" id="particles"></div>
+  <div class="app-wrapper"><!-- Sidebar -->
+   <aside class="tech-sidebar" id="sidebar">
+    <div class="sidebar-header">
+     <div class="sidebar-logo">
+      📱
+     </div>
+     <h2 class="sidebar-brand">ROLLA</h2>
+     <p class="sidebar-tagline">MARQUE VETEMENT</p>
+    </div>
+    <nav class="sidebar-nav">
+     <div class="nav-item"><a href="#" class="nav-link" id="nav-home"> <span class="nav-icon">��</span> <span>Home</span> </a>
+     </div>
+     <div class="nav-item"><a href="#" class="nav-link" id="nav-products"> <span class="nav-icon">📱</span> <span>Products</span> </a>
+     </div>
+     <div class="nav-item"><a href="#" class="nav-link" id="nav-accessories"> <span class="nav-icon">🎧</span> <span>Accessories</span> </a>
+     </div>
+     <div class="nav-item"><a href="#" class="nav-link" id="nav-cart"> <span class="nav-icon">🛒</span> <span>Cart</span> <span class="cart-badge" id="cart-badge">0</span> </a>
+     </div>
+    </nav>
+   </aside><!-- Mobile Menu Button --> <button class="mobile-menu-btn" id="mobile-menu-btn"> ☰ <span class="mobile-menu-badge" id="mobile-cart-badge">0</span> </button> <!-- Main Content -->
+   <div class="main-content"><!-- Hero Section -->
+    <section class="hero-section" id="hero-section">
+     <div class="hero-content">
+      <div class="hero-icon">
+       📱
+      </div>
+      <h1 class="hero-title" id="hero-title">ROLLA MARQUE</h1>
+      <h2 class="hero-subtitle" id="hero-subtitle">Advanced Technology</h2>
+      <p class="hero-description" id="hero-description">Your first destination for original iPhone devices with the latest technology and best prices</p><button class="hero-button" id="hero-cta"> <span id="hero-button-text">Order Now</span> </button> <!-- Question Form -->
+      <div class="question-form-wrapper">
+       <h3 class="question-form-title" id="question-title">Have a Question?</h3>
+       <form class="question-form" id="question-form">
+        <div class="question-form-row">
+         <div class="question-input-group"><label for="question-name" id="question-name-label">Name</label> <input type="text" id="question-name" required placeholder="Your full name">
+         </div>
+         <div class="question-input-group"><label for="question-email" id="question-email-label">Email</label> <input type="email" id="question-email" required placeholder="example@email.com">
+         </div>
+        </div>
+        <div class="question-input-group"><label for="question-message" id="question-message-label">Your Question</label> <textarea id="question-message" required placeholder="Write your question here..." rows="4"></textarea>
+        </div><button type="submit" class="question-submit-btn" id="question-submit-btn"> <span id="question-submit-text">Send Question</span> </button>
+       </form><!-- Contact Info Below Form -->
+       <div class="contact-info-below">
+        <div class="store-info-compact">
+         <div class="info-item"><span class="info-icon">📍</span> <span class="info-text" id="store-location">Downtown - New York</span>
+         </div>
+         <div class="info-item"><span class="info-icon">📞</span> <span class="info-text" id="store-phone">+1 XXX XXX XXXX</span>
+         </div>
+        </div>
+        <div class="social-icons-compact"><a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="Instagram">
+          <svg width="44" height="44" viewbox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" fill="url(#instagram-gradient)" stroke="black" stroke-width="2" /> <circle cx="12" cy="12" r="4" stroke="black" stroke-width="2" /> <circle cx="17.5" cy="6.5" r="1.5" fill="black" /> <defs>
+            <lineargradient id="instagram-gradient" x1="2" y1="22" x2="22" y2="2">
+             <stop offset="0%" stop-color="#dc2626" />
+             <stop offset="100%" stop-color="#000000" />
+            </lineargradient>
+           </defs>
+          </svg></a> <a href="https://www.tiktok.com" target="_blank" rel="noopener noreferrer" class="social-icon-link" title="TikTok">
+          <svg width="44" height="44" viewbox="0 0 24 24" fill="none"><rect width="24" height="24" rx="5" fill="#000000" /> <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z" fill="#ffffff" />
+          </svg></a>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- Products Section -->
+    <section class="products-section" id="products-section">
+     <div class="products-header">
+      <h2 id="products-title">Choose Your Device</h2>
+     </div>
+     <div class="products-grid" id="products-grid"></div>
+    </section><!-- Accessories Section -->
+    <section class="products-section" id="accessories-section">
+     <div class="products-header">
+      <h2>🎧 Accessories</h2>
+     </div>
+     <div class="products-grid" id="accessories-grid"></div>
+    </section>
+   </div><!-- Cart Modal -->
+   <div class="modal-overlay" id="cart-modal">
+    <div class="modal-content">
+     <div class="modal-header">
+      <h3>🛒 Shopping Cart</h3><button class="close-modal" id="close-cart">×</button>
+     </div>
+     <div class="modal-body" id="modal-body"></div>
+    </div>
+   </div><!-- Toast -->
+   <div class="toast" id="toast"></div>
+  </div>
+  <script>
+    const defaultConfig = {
+      hero_title: "Bane Phone",
+      hero_subtitle: "Advanced Technology",
+      hero_description: "Your first destination for original iPhone devices with the latest technology and best prices",
+      hero_button: "Order Now",
+      store_location: "Downtown - New York",
+      store_phone: "+1 XXX XXX XXXX",
+      question_title: "Have a Question?",
+      question_name_label: "Name",
+      question_email_label: "Email",
+      question_message_label: "Your Question",
+      question_submit_text: "Send Question",
+      products_title: "Choose Your Device",
+      color_label: "Choose Color",
+      battery_label: "Battery Type",
+      name_label: "Full Name",
+      email_label: "Email Address",
+      phone_label: "Phone Number",
+      state_label: "State",
+      payment_label: "Payment Method",
+      submit_button: "Confirm Order"
+    };
+
+    const products = [
+      { id: 'xs', name: 'iPhone XS', price: 2500, specs: '5.8" Display | A12 Bionic | 64GB' },
+      { id: '11', name: 'iPhone 11', price: 3200, specs: '6.1" Display | A13 Bionic | 128GB' },
+      { id: '12', name: 'iPhone 12', price: 4000, specs: '6.1" Display | A14 Bionic | 5G' },
+      { id: '13', name: 'iPhone 13', price: 4800, specs: '6.1" Display | A15 Bionic | 256GB' },
+      { id: '14', name: 'iPhone 14', price: 5500, specs: '6.1" Display | A15 Bionic | Dynamic Island' },
+      { id: '15', name: 'iPhone 15', price: 6200, specs: '6.1" Display | A16 Bionic | USB-C' },
+      { id: '15pro', name: 'iPhone 15 Pro', price: 7500, specs: '6.1" Display | A17 Pro | Titanium' },
+      { id: '16', name: 'iPhone 16', price: 7000, specs: '6.3" Display | A18 | Camera Control' },
+      { id: '16pro', name: 'iPhone 16 Pro Max', price: 8500, specs: '6.9" Display | A18 Pro | 1TB' }
+    ];
+
+    const accessories = [
+      { 
+        id: 'charger', 
+        name: 'Charger', 
+        icon: '🔌',
+        basePrice: 0,
+        specs: 'Fast Charging Support'
+      },
+      { 
+        id: 'headphones', 
+        name: 'Headphones', 
+        icon: '🎧',
+        basePrice: 0,
+        specs: 'Premium Sound Quality'
+      },
+      { 
+        id: 'bluetooth', 
+        name: 'Bluetooth Speaker', 
+        icon: '🔊',
+        basePrice: 0,
+        specs: 'Wireless Connection'
+      },
+      { 
+        id: 'case', 
+        name: 'Phone Case', 
+        icon: '���',
+        basePrice: 0,
+        specs: 'Full Protection'
+      }
+    ];
+
+    const chargerTypes = [
+      { value: '', label: 'Select Type', price: 0 },
+      { value: 'original_5w', label: 'Original 5W', price: 50 },
+      { value: 'original_20w', label: 'Original 20W Fast Charge', price: 80 },
+      { value: 'original_magsafe', label: 'Original MagSafe', price: 120 },
+      { value: 'copy_5w', label: 'Copy 5W', price: 15 },
+      { value: 'copy_20w', label: 'Copy 20W Fast Charge', price: 25 },
+      { value: 'copy_wireless', label: 'Copy Wireless', price: 35 }
+    ];
+
+    const headphoneTypes = [
+      { value: '', label: 'Select Type', price: 0 },
+      { value: 'airpods_2', label: 'AirPods 2nd Gen', price: 180 },
+      { value: 'airpods_3', label: 'AirPods 3rd Gen', price: 250 },
+      { value: 'airpods_pro', label: 'AirPods Pro', price: 350 },
+      { value: 'airpods_max', label: 'AirPods Max', price: 750 },
+      { value: 'wired_original', label: 'Wired Original', price: 50 },
+      { value: 'wired_copy', label: 'Wired Copy', price: 15 }
+    ];
+
+    const bluetoothTypes = [
+      { value: '', label: 'Select Type', price: 0 },
+      { value: 'small', label: 'Small Speaker', price: 80 },
+      { value: 'medium', label: 'Medium Speaker', price: 150 },
+      { value: 'large', label: 'Large Speaker', price: 250 },
+      { value: 'premium', label: 'Premium Speaker', price: 400 }
+    ];
+
+    const caseTypes = [
+      { value: '', label: 'Select Type', price: 0 },
+      { value: 'silicone', label: 'Silicone Case', price: 25 },
+      { value: 'leather', label: 'Leather Case', price: 45 },
+      { value: 'clear', label: 'Clear Case', price: 20 },
+      { value: 'magsafe', label: 'MagSafe Case', price: 60 },
+      { value: 'tough', label: 'Tough Armor', price: 50 }
+    ];
+
+    const phoneModels = [
+      { value: '', label: 'Select Phone Model' },
+      { value: 'xs', label: 'iPhone XS' },
+      { value: '11', label: 'iPhone 11' },
+      { value: '12', label: 'iPhone 12' },
+      { value: '13', label: 'iPhone 13' },
+      { value: '14', label: 'iPhone 14' },
+      { value: '15', label: 'iPhone 15' },
+      { value: '15pro', label: 'iPhone 15 Pro' },
+      { value: '16', label: 'iPhone 16' },
+      { value: '16pro', label: 'iPhone 16 Pro Max' }
+    ];
+
+    const accessoryColors = [
+      { value: '', label: 'Choose Color', priceAdd: 0 },
+      { value: 'black', label: 'Black', priceAdd: 0 },
+      { value: 'white', label: 'White', priceAdd: 0 },
+      { value: 'red', label: 'Red', priceAdd: 5 },
+      { value: 'blue', label: 'Blue', priceAdd: 5 },
+      { value: 'pink', label: 'Pink', priceAdd: 5 },
+      { value: 'green', label: 'Green', priceAdd: 5 },
+      { value: 'purple', label: 'Purple', priceAdd: 5 },
+      { value: 'gold', label: 'Gold', priceAdd: 10 }
+    ];
+
+    const colors = [
+      { value: '', label: 'Choose Color' },
+      { value: 'black', label: 'Black' },
+      { value: 'white', label: 'White' },
+      { value: 'red', label: 'Red' },
+      { value: 'blue', label: 'Blue' },
+      { value: 'gold', label: 'Gold' }
+    ];
+
+    const batteries = [
+      { value: 'standard', label: 'Standard Battery' },
+      { value: 'fast', label: 'Fast Charging 20W' },
+      { value: 'wireless', label: 'MagSafe Wireless Charging' },
+      { value: 'premium', label: 'Premium Battery + Fast Charging' }
+    ];
+
+    const states = [
+      { name: "Adrar", officePrice: 800, homePrice: 1000 },
+      { name: "Chlef", officePrice: 600, homePrice: 800 },
+      { name: "Laghouat", officePrice: 700, homePrice: 900 },
+      { name: "Oum El Bouaghi", officePrice: 600, homePrice: 800 },
+      { name: "Batna", officePrice: 600, homePrice: 800 },
+      { name: "Béjaïa", officePrice: 600, homePrice: 800 },
+      { name: "Biskra", officePrice: 700, homePrice: 900 },
+      { name: "Béchar", officePrice: 900, homePrice: 1200 },
+      { name: "Blida", officePrice: 400, homePrice: 600 },
+      { name: "Bouira", officePrice: 500, homePrice: 700 },
+      { name: "Tamanrasset", officePrice: 1500, homePrice: 2000 },
+      { name: "Tébessa", officePrice: 700, homePrice: 900 },
+      { name: "Tlemcen", officePrice: 700, homePrice: 900 },
+      { name: "Tiaret", officePrice: 600, homePrice: 800 },
+      { name: "Tizi Ouzou", officePrice: 500, homePrice: 700 },
+      { name: "Algiers", officePrice: 300, homePrice: 500 },
+      { name: "Djelfa", officePrice: 600, homePrice: 800 },
+      { name: "Jijel", officePrice: 600, homePrice: 800 },
+      { name: "Sétif", officePrice: 600, homePrice: 800 },
+      { name: "Saïda", officePrice: 700, homePrice: 900 },
+      { name: "Skikda", officePrice: 600, homePrice: 800 },
+      { name: "Sidi Bel Abbès", officePrice: 700, homePrice: 900 },
+      { name: "Annaba", officePrice: 600, homePrice: 800 },
+      { name: "Guelma", officePrice: 600, homePrice: 800 },
+      { name: "Constantine", officePrice: 600, homePrice: 800 },
+      { name: "Médéa", officePrice: 500, homePrice: 700 },
+      { name: "Mostaganem", officePrice: 600, homePrice: 800 },
+      { name: "M'Sila", officePrice: 600, homePrice: 800 },
+      { name: "Mascara", officePrice: 600, homePrice: 800 },
+      { name: "Ouargla", officePrice: 800, homePrice: 1000 },
+      { name: "Oran", officePrice: 600, homePrice: 800 },
+      { name: "El Bayadh", officePrice: 800, homePrice: 1000 },
+      { name: "Illizi", officePrice: 1200, homePrice: 1500 },
+      { name: "Bordj Bou Arreridj", officePrice: 600, homePrice: 800 },
+      { name: "Boumerdès", officePrice: 400, homePrice: 600 },
+      { name: "El Tarf", officePrice: 700, homePrice: 900 },
+      { name: "Tindouf", officePrice: 1200, homePrice: 1500 },
+      { name: "Tissemsilt", officePrice: 600, homePrice: 800 },
+      { name: "El Oued", officePrice: 700, homePrice: 900 },
+      { name: "Khenchela", officePrice: 700, homePrice: 900 },
+      { name: "Souk Ahras", officePrice: 700, homePrice: 900 },
+      { name: "Tipaza", officePrice: 400, homePrice: 600 },
+      { name: "Mila", officePrice: 600, homePrice: 800 },
+      { name: "Aïn Defla", officePrice: 500, homePrice: 700 },
+      { name: "Naâma", officePrice: 800, homePrice: 1000 },
+      { name: "Aïn Témouchent", officePrice: 700, homePrice: 900 },
+      { name: "Ghardaïa", officePrice: 800, homePrice: 1000 },
+      { name: "Relizane", officePrice: 600, homePrice: 800 },
+      { name: "Timimoun", officePrice: 1000, homePrice: 1300 },
+      { name: "Bordj Badji Mokhtar", officePrice: 1500, homePrice: 2000 },
+      { name: "Ouled Djellal", officePrice: 700, homePrice: 900 },
+      { name: "Béni Abbès", officePrice: 1000, homePrice: 1300 },
+      { name: "In Salah", officePrice: 1200, homePrice: 1500 },
+      { name: "In Guezzam", officePrice: 1500, homePrice: 2000 },
+      { name: "Touggourt", officePrice: 800, homePrice: 1000 },
+      { name: "Djanet", officePrice: 1500, homePrice: 2000 },
+      { name: "El M'Ghair", officePrice: 800, homePrice: 1000 },
+      { name: "El Meniaa", officePrice: 900, homePrice: 1200 }
+    ];
+
+    const paymentMethods = [
+      { value: 'cash', label: 'Cash on Delivery' },
+      { value: 'cib', label: 'CIB Card (Algerie Poste)' },
+      { value: 'baridimob', label: 'BaridiMob' },
+      { value: 'bank_transfer', label: 'Bank Transfer' },
+      { value: 'western_union', label: 'Western Union' },
+      { value: 'money_gram', label: 'MoneyGram' }
+    ];
+
+    let cart = [];
+    let currentRecordCount = 0;
+
+    function createParticles() {
+      const container = document.getElementById('particles');
+      const particleCount = 30;
+      
+      for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        
+        const size = Math.random() * 6 + 3;
+        const left = Math.random() * 100;
+        const duration = Math.random() * 10 + 15;
+        const delay = Math.random() * 5;
+        const isRed = Math.random() > 0.5;
+        
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
+        particle.style.left = `${left}%`;
+        particle.style.background = isRed ? '#dc2626' : '#000000';
+        particle.style.animationDuration = `${duration}s`;
+        particle.style.animationDelay = `${delay}s`;
+        
+        container.appendChild(particle);
+      }
+    }
+
+    const dataHandler = {
+      onDataChanged(data) {
+        currentRecordCount = data.length;
+      }
+    };
+
+    async function initApp() {
+      createParticles();
+      
+      if (window.dataSdk) {
+        const initResult = await window.dataSdk.init(dataHandler);
+        if (!initResult.isOk) {
+          console.error("Failed to initialize data system");
+        }
+      }
+      
+      setupEventListeners();
+      renderProducts();
+      renderAccessories();
+    }
+
+    function setupEventListeners() {
+      document.getElementById('hero-cta').addEventListener('click', showProducts);
+      document.getElementById('nav-home').addEventListener('click', (e) => {
+        e.preventDefault();
+        showHome();
+      });
+      document.getElementById('nav-products').addEventListener('click', (e) => {
+        e.preventDefault();
+        showProducts();
+      });
+      document.getElementById('nav-accessories').addEventListener('click', (e) => {
+        e.preventDefault();
+        showAccessories();
+      });
+      document.getElementById('nav-cart').addEventListener('click', (e) => {
+        e.preventDefault();
+        openCart();
+      });
+      document.getElementById('close-cart').addEventListener('click', closeCart);
+      document.getElementById('cart-modal').addEventListener('click', (e) => {
+        if (e.target.id === 'cart-modal') closeCart();
+      });
+      document.getElementById('question-form').addEventListener('submit', handleQuestionSubmit);
+      document.getElementById('mobile-menu-btn').addEventListener('click', toggleSidebar);
+      
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth <= 1024) {
+            document.getElementById('sidebar').classList.remove('mobile-open');
+          }
+        });
+      });
+    }
+
+    function toggleSidebar() {
+      document.getElementById('sidebar').classList.toggle('mobile-open');
+    }
+
+    function showHome() {
+      document.getElementById('hero-section').style.display = 'flex';
+      document.getElementById('products-section').classList.remove('active');
+      document.getElementById('accessories-section').classList.remove('active');
+    }
+
+    function showProducts() {
+      document.getElementById('hero-section').style.display = 'none';
+      document.getElementById('products-section').classList.add('active');
+      document.getElementById('accessories-section').classList.remove('active');
+    }
+
+    function showAccessories() {
+      document.getElementById('hero-section').style.display = 'none';
+      document.getElementById('products-section').classList.remove('active');
+      document.getElementById('accessories-section').classList.add('active');
+    }
+
+    function renderProducts() {
+      const grid = document.getElementById('products-grid');
+      grid.innerHTML = products.map(product => `
+        <div class="product-card">
+          <div class="product-icon">📱</div>
+          <div class="product-name">${product.name}</div>
+          <div class="product-specs">${product.specs}</div>
+          <div class="product-price">$${product.price.toLocaleString()}</div>
+          
+          <div class="product-options">
+            <div class="product-options-group">
+              <label for="color-${product.id}" id="color-label-${product.id}">${defaultConfig.color_label}</label>
+              <select id="color-${product.id}" onchange="handleColorChange('${product.id}')">
+                ${colors.map(c => `<option value="${c.value}">${c.label}</option>`).join('')}
+              </select>
+            </div>
+            
+            <div class="product-options-group battery-group" id="battery-group-${product.id}">
+              <label for="battery-${product.id}" id="battery-label-${product.id}">${defaultConfig.battery_label}</label>
+              <select id="battery-${product.id}">
+                ${batteries.map(b => `<option value="${b.value}">${b.label}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          
+          <button class="add-to-cart-btn" id="add-btn-${product.id}" onclick="addToCart('${product.id}')" disabled>
+            Add to Cart 🛒
+          </button>
+        </div>
+      `).join('');
+    }
+
+    function renderAccessories() {
+      const grid = document.getElementById('accessories-grid');
+      grid.innerHTML = accessories.map(accessory => {
+        let optionsHTML = '';
+        
+        if (accessory.id === 'charger') {
+          optionsHTML = `
+            <div class="product-options-group">
+              <label for="type-${accessory.id}">Charger Type</label>
+              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${chargerTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
+              <label for="color-${accessory.id}">Color</label>
+              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        } else if (accessory.id === 'headphones') {
+          optionsHTML = `
+            <div class="product-options-group">
+              <label for="type-${accessory.id}">Headphone Type</label>
+              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${headphoneTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
+              <label for="color-${accessory.id}">Color</label>
+              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        } else if (accessory.id === 'bluetooth') {
+          optionsHTML = `
+            <div class="product-options-group">
+              <label for="type-${accessory.id}">Speaker Type</label>
+              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${bluetoothTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
+              <label for="color-${accessory.id}">Color</label>
+              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        } else if (accessory.id === 'case') {
+          optionsHTML = `
+            <div class="product-options-group">
+              <label for="model-${accessory.id}">Phone Model</label>
+              <select id="model-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${phoneModels.map(m => `<option value="${m.value}">${m.label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="product-options-group battery-group" id="type-group-${accessory.id}">
+              <label for="type-${accessory.id}">Case Type</label>
+              <select id="type-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${caseTypes.map(t => `<option value="${t.value}" data-price="${t.price}">${t.label}</option>`).join('')}
+              </select>
+            </div>
+            <div class="product-options-group battery-group" id="color-group-${accessory.id}">
+              <label for="color-${accessory.id}">Color</label>
+              <select id="color-${accessory.id}" onchange="handleAccessoryChange('${accessory.id}')">
+                ${accessoryColors.map(c => `<option value="${c.value}" data-price-add="${c.priceAdd}">${c.label}</option>`).join('')}
+              </select>
+            </div>
+          `;
+        }
+        
+        return `
+          <div class="product-card">
+            <div class="product-icon">${accessory.icon}</div>
+            <div class="product-name">${accessory.name}</div>
+            <div class="product-specs">${accessory.specs}</div>
+            <div class="product-price" id="price-${accessory.id}">Select Options</div>
+            
+            <div class="product-options">
+              ${optionsHTML}
+            </div>
+            
+            <button class="add-to-cart-btn" id="add-btn-${accessory.id}" onclick="addAccessoryToCart('${accessory.id}')" disabled>
+              Add to Cart 🛒
+            </button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function handleColorChange(productId) {
+      const colorSelect = document.getElementById(`color-${productId}`);
+      const batteryGroup = document.getElementById(`battery-group-${productId}`);
+      const addBtn = document.getElementById(`add-btn-${productId}`);
+      
+      if (colorSelect.value) {
+        batteryGroup.classList.add('show');
+        addBtn.disabled = false;
+      } else {
+        batteryGroup.classList.remove('show');
+        addBtn.disabled = true;
+      }
+    }
+
+    function handleAccessoryChange(accessoryId) {
+      const accessory = accessories.find(a => a.id === accessoryId);
+      const priceDisplay = document.getElementById(`price-${accessoryId}`);
+      const addBtn = document.getElementById(`add-btn-${accessoryId}`);
+      
+      let totalPrice = 0;
+      let canAdd = false;
+      
+      if (accessoryId === 'charger') {
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        if (typeSelect.value) {
+          colorGroup.classList.add('show');
+          const selectedType = typeSelect.options[typeSelect.selectedIndex];
+          const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+          
+          const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+          const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+          
+          totalPrice = typePrice + colorAdd;
+          
+          if (colorSelect.value) {
+            canAdd = true;
+          }
+        } else {
+          colorGroup.classList.remove('show');
+        }
+        
+      } else if (accessoryId === 'headphones') {
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        if (typeSelect.value) {
+          colorGroup.classList.add('show');
+          const selectedType = typeSelect.options[typeSelect.selectedIndex];
+          const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+          
+          const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+          const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+          
+          totalPrice = typePrice + colorAdd;
+          
+          if (colorSelect.value) {
+            canAdd = true;
+          }
+        } else {
+          colorGroup.classList.remove('show');
+        }
+        
+      } else if (accessoryId === 'bluetooth') {
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        if (typeSelect.value) {
+          colorGroup.classList.add('show');
+          const selectedType = typeSelect.options[typeSelect.selectedIndex];
+          const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+          
+          const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+          const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+          
+          totalPrice = typePrice + colorAdd;
+          
+          if (colorSelect.value) {
+            canAdd = true;
+          }
+        } else {
+          colorGroup.classList.remove('show');
+        }
+        
+      } else if (accessoryId === 'case') {
+        const modelSelect = document.getElementById(`model-${accessoryId}`);
+        const typeGroup = document.getElementById(`type-group-${accessoryId}`);
+        const colorGroup = document.getElementById(`color-group-${accessoryId}`);
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        if (modelSelect.value) {
+          typeGroup.classList.add('show');
+          
+          if (typeSelect.value) {
+            colorGroup.classList.add('show');
+            
+            const selectedType = typeSelect.options[typeSelect.selectedIndex];
+            const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+            
+            const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+            const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+            
+            totalPrice = typePrice + colorAdd;
+            
+            if (colorSelect.value) {
+              canAdd = true;
+            }
+          } else {
+            colorGroup.classList.remove('show');
+          }
+        } else {
+          typeGroup.classList.remove('show');
+          colorGroup.classList.remove('show');
+        }
+      }
+      
+      if (totalPrice > 0) {
+        priceDisplay.textContent = `$${totalPrice.toLocaleString()}`;
+        priceDisplay.style.color = '#dc2626';
+      } else {
+        priceDisplay.textContent = 'Select Options';
+        priceDisplay.style.color = '#6b7280';
+      }
+      
+      addBtn.disabled = !canAdd;
+    }
+
+    function addToCart(productId) {
+      const product = products.find(p => p.id === productId);
+      const colorSelect = document.getElementById(`color-${productId}`);
+      const batterySelect = document.getElementById(`battery-${productId}`);
+      
+      const colorValue = colorSelect.value;
+      const batteryValue = batterySelect.value;
+      
+      if (!colorValue) {
+        showToast('⚠️ Please choose a color');
+        return;
+      }
+      
+      const colorLabel = colors.find(c => c.value === colorValue)?.label || '';
+      const batteryLabel = batteries.find(b => b.value === batteryValue)?.label || '';
+      
+      cart.push({
+        ...product,
+        color: colorLabel,
+        battery: batteryLabel,
+        cartId: Date.now(),
+        itemType: 'phone'
+      });
+      
+      updateCartCount();
+      showToast('✅ Added to cart successfully');
+      
+      // Reset selections
+      colorSelect.value = '';
+      document.getElementById(`battery-group-${productId}`).classList.remove('show');
+      document.getElementById(`add-btn-${productId}`).disabled = true;
+    }
+
+    function addAccessoryToCart(accessoryId) {
+      const accessory = accessories.find(a => a.id === accessoryId);
+      
+      let itemDetails = {
+        name: accessory.name,
+        price: 0,
+        cartId: Date.now(),
+        itemType: 'accessory',
+        icon: accessory.icon
+      };
+      
+      if (accessoryId === 'charger') {
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        const selectedType = typeSelect.options[typeSelect.selectedIndex];
+        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+        const typeLabel = selectedType.text;
+        
+        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+        const colorLabel = selectedColor.text;
+        
+        itemDetails.price = typePrice + colorAdd;
+        itemDetails.type = typeLabel;
+        itemDetails.color = colorLabel;
+        
+      } else if (accessoryId === 'headphones') {
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        const selectedType = typeSelect.options[typeSelect.selectedIndex];
+        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+        const typeLabel = selectedType.text;
+        
+        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+        const colorLabel = selectedColor.text;
+        
+        itemDetails.price = typePrice + colorAdd;
+        itemDetails.type = typeLabel;
+        itemDetails.color = colorLabel;
+        
+      } else if (accessoryId === 'bluetooth') {
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        const selectedType = typeSelect.options[typeSelect.selectedIndex];
+        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+        const typeLabel = selectedType.text;
+        
+        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+        const colorLabel = selectedColor.text;
+        
+        itemDetails.price = typePrice + colorAdd;
+        itemDetails.type = typeLabel;
+        itemDetails.color = colorLabel;
+        
+      } else if (accessoryId === 'case') {
+        const modelSelect = document.getElementById(`model-${accessoryId}`);
+        const typeSelect = document.getElementById(`type-${accessoryId}`);
+        const colorSelect = document.getElementById(`color-${accessoryId}`);
+        
+        const modelLabel = modelSelect.options[modelSelect.selectedIndex].text;
+        
+        const selectedType = typeSelect.options[typeSelect.selectedIndex];
+        const typePrice = parseInt(selectedType.getAttribute('data-price')) || 0;
+        const typeLabel = selectedType.text;
+        
+        const selectedColor = colorSelect.options[colorSelect.selectedIndex];
+        const colorAdd = parseInt(selectedColor.getAttribute('data-price-add')) || 0;
+        const colorLabel = selectedColor.text;
+        
+        itemDetails.price = typePrice + colorAdd;
+        itemDetails.model = modelLabel;
+        itemDetails.type = typeLabel;
+        itemDetails.color = colorLabel;
+      }
+      
+      cart.push(itemDetails);
+      updateCartCount();
+      showToast('✅ Added to cart successfully');
+      
+      // Reset selections based on accessory type
+      if (accessoryId === 'case') {
+        document.getElementById(`model-${accessoryId}`).value = '';
+        document.getElementById(`type-group-${accessoryId}`).classList.remove('show');
+        document.getElementById(`color-group-${accessoryId}`).classList.remove('show');
+      } else {
+        document.getElementById(`type-${accessoryId}`).value = '';
+        document.getElementById(`color-group-${accessoryId}`).classList.remove('show');
+      }
+      
+      document.getElementById(`price-${accessoryId}`).textContent = 'Select Options';
+      document.getElementById(`add-btn-${accessoryId}`).disabled = true;
+    }
+
+    function removeFromCart(cartId) {
+      cart = cart.filter(item => item.cartId !== cartId);
+      updateCartCount();
+      
+      if (cart.length === 0) {
+        renderEmptyCart();
+      } else {
+        renderCartWithItems();
+      }
+      
+      showToast('🗑️ Removed from cart');
+    }
+
+    function handleStateChange() {
+      const stateSelect = document.getElementById('customer-state');
+      const deliveryGroup = document.getElementById('delivery-group');
+      const deliveryTypeSelect = document.getElementById('delivery-type');
+      const deliveryCostDisplay = document.getElementById('delivery-cost-display');
+      const finalTotalDisplay = document.getElementById('final-total-display');
+      
+      if (stateSelect.value) {
+        const selectedOption = stateSelect.options[stateSelect.selectedIndex];
+        const officePrice = selectedOption.getAttribute('data-office-price');
+        const homePrice = selectedOption.getAttribute('data-home-price');
+        
+        // Update delivery options with prices
+        const officeOption = deliveryTypeSelect.querySelector('option[value="office"]');
+        const homeOption = deliveryTypeSelect.querySelector('option[value="home"]');
+        
+        officeOption.textContent = `Office Delivery (+${officePrice} DA)`;
+        officeOption.setAttribute('data-price', officePrice);
+        
+        homeOption.textContent = `Home Delivery (+${homePrice} DA)`;
+        homeOption.setAttribute('data-price', homePrice);
+        
+        deliveryGroup.style.display = 'block';
+        deliveryTypeSelect.value = '';
+        deliveryCostDisplay.style.display = 'none';
+        finalTotalDisplay.style.display = 'none';
+      } else {
+        deliveryGroup.style.display = 'none';
+        deliveryCostDisplay.style.display = 'none';
+        finalTotalDisplay.style.display = 'none';
+      }
+    }
+
+    function handleDeliveryChange() {
+      const deliveryTypeSelect = document.getElementById('delivery-type');
+      const deliveryCostDisplay = document.getElementById('delivery-cost-display');
+      const deliveryCostAmount = document.getElementById('delivery-cost-amount');
+      const finalTotalDisplay = document.getElementById('final-total-display');
+      const finalTotalAmount = document.getElementById('final-total-amount');
+      
+      if (deliveryTypeSelect.value) {
+        const selectedOption = deliveryTypeSelect.options[deliveryTypeSelect.selectedIndex];
+        const deliveryPrice = parseInt(selectedOption.getAttribute('data-price')) || 0;
+        
+        deliveryCostAmount.textContent = `${deliveryPrice.toLocaleString()} DA`;
+        deliveryCostDisplay.style.display = 'block';
+        
+        // Calculate final total
+        const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+        const finalTotal = cartTotal + deliveryPrice;
+        finalTotalAmount.textContent = `$${finalTotal.toLocaleString()}`;
+        finalTotalDisplay.style.display = 'block';
+      } else {
+        deliveryCostDisplay.style.display = 'none';
+        finalTotalDisplay.style.display = 'none';
+      }
+    }
+
+    function updateCartCount() {
+      document.getElementById('cart-badge').textContent = cart.length;
+      document.getElementById('mobile-cart-badge').textContent = cart.length;
+    }
+
+    function openCart() {
+      document.getElementById('cart-modal').classList.add('active');
+      
+      if (cart.length === 0) {
+        renderEmptyCart();
+      } else {
+        renderCartWithItems();
+      }
+    }
+
+    function closeCart() {
+      document.getElementById('cart-modal').classList.remove('active');
+    }
+
+    function renderEmptyCart() {
+      const modalBody = document.getElementById('modal-body');
+      modalBody.innerHTML = `
+        <div style="text-align: center; padding: 3rem; color: #6b7280;">
+          <div style="font-size: 5rem; margin-bottom: 1rem;">🛒</div>
+          <p style="font-size: 1.25rem;">Your cart is empty</p>
+        </div>
+      `;
+    }
+
+    function renderCartWithItems() {
+      const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+      
+      const modalBody = document.getElementById('modal-body');
+      modalBody.innerHTML = `
+        <div class="cart-items-list">
+          ${cart.map(item => {
+            let detailsHTML = '';
+            
+            if (item.itemType === 'phone') {
+              detailsHTML = `
+                <div><strong>Color:</strong> ${item.color}</div>
+                <div><strong>Battery:</strong> ${item.battery}</div>
+              `;
+            } else if (item.itemType === 'accessory') {
+              if (item.model) {
+                detailsHTML = `
+                  <div><strong>Model:</strong> ${item.model}</div>
+                  <div><strong>Type:</strong> ${item.type}</div>
+                  <div><strong>Color:</strong> ${item.color}</div>
+                `;
+              } else {
+                detailsHTML = `
+                  <div><strong>Type:</strong> ${item.type}</div>
+                  <div><strong>Color:</strong> ${item.color}</div>
+                `;
+              }
+            }
+            
+            return `
+              <div class="cart-item">
+                <button class="remove-item-btn" onclick="removeFromCart(${item.cartId})">×</button>
+                <div class="cart-item-header">
+                  <h4 class="cart-item-name">${item.icon || '📱'} ${item.name}</h4>
+                  <div class="cart-item-price">$${item.price.toLocaleString()}</div>
+                </div>
+                <div class="cart-item-details">
+                  ${detailsHTML}
+                </div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+        
+        <div class="cart-total">
+          <div class="cart-total-label">Cart Total:</div>
+          <div class="cart-total-amount">$${totalPrice.toLocaleString()}</div>
+        </div>
+        
+        <div class="cart-total" id="final-total-display" style="display: none;">
+          <div class="cart-total-label">Final Total (with Delivery):</div>
+          <div class="cart-total-amount" id="final-total-amount">$${totalPrice.toLocaleString()}</div>
+        </div>
+        
+        <form class="order-form" id="order-form">
+          <h4>Complete Your Order</h4>
+          
+          <div class="form-group">
+            <label for="customer-name" id="name-label">${defaultConfig.name_label}</label>
+            <input type="text" id="customer-name" required placeholder="Full name">
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customer-email" id="email-label">${defaultConfig.email_label}</label>
+              <input type="email" id="customer-email" required placeholder="example@email.com">
+            </div>
+            
+            <div class="form-group">
+              <label for="customer-phone" id="phone-label">${defaultConfig.phone_label}</label>
+              <input type="tel" id="customer-phone" required placeholder="+1 XXX XXX XXXX">
+            </div>
+          </div>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="customer-state" id="state-label">${defaultConfig.state_label}</label>
+              <select id="customer-state" required onchange="handleStateChange()">
+                <option value="">Select State</option>
+                ${states.map(s => `<option value="${s.name}" data-office-price="${s.officePrice}" data-home-price="${s.homePrice}">${s.name}</option>`).join('')}
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="payment-method" id="payment-label">${defaultConfig.payment_label}</label>
+              <select id="payment-method" required>
+                ${paymentMethods.map(p => `<option value="${p.value}">${p.label}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+          
+          <div class="form-group" id="delivery-group" style="display: none;">
+            <label for="delivery-type">Delivery Type</label>
+            <select id="delivery-type" onchange="handleDeliveryChange()">
+              <option value="">Choose Delivery Type</option>
+              <option value="office" data-price="0">Office Delivery (+0 DA)</option>
+              <option value="home" data-price="0">Home Delivery (+0 DA)</option>
+            </select>
+          </div>
+          
+          <div id="delivery-cost-display" style="display: none; text-align: center; margin: 1.5rem 0; padding: 1rem; background: linear-gradient(135deg, rgba(220, 38, 38, 0.1) 0%, rgba(0, 0, 0, 0.1) 100%); border-radius: 15px; border: 2px solid #dc2626;">
+            <div style="font-size: 1rem; font-weight: 700; color: #000000; margin-bottom: 0.5rem;">Delivery Cost:</div>
+            <div id="delivery-cost-amount" style="font-size: 1.75rem; font-weight: 900; color: #dc2626;">0 DA</div>
+          </div>
+          
+          <button type="submit" class="submit-order-btn" id="submit-btn">
+            <span id="submit-text">${defaultConfig.submit_button}</span>
+          </button>
+        </form>
+      `;
+
+      document.getElementById('order-form').addEventListener('submit', handleOrderSubmit);
+    }
+
+    async function handleOrderSubmit(e) {
+      e.preventDefault();
+
+      if (currentRecordCount >= 999) {
+        showToast('⚠️ Maximum order limit reached (999)');
+        return;
+      }
+
+      const submitBtn = document.getElementById('submit-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+      const customerName = document.getElementById('customer-name').value;
+      const customerEmail = document.getElementById('customer-email').value;
+      const customerPhone = document.getElementById('customer-phone').value;
+      const customerState = document.getElementById('customer-state').value;
+      const paymentMethod = document.getElementById('payment-method').value;
+      const deliveryType = document.getElementById('delivery-type').value;
+
+      if (!deliveryType) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        showToast('⚠️ Please select delivery type');
+        return;
+      }
+
+      const deliveryTypeSelect = document.getElementById('delivery-type');
+      const selectedDeliveryOption = deliveryTypeSelect.options[deliveryTypeSelect.selectedIndex];
+      const deliveryPrice = parseInt(selectedDeliveryOption.getAttribute('data-price')) || 0;
+      const deliveryLabel = deliveryType === 'office' ? 'Office Delivery' : 'Home Delivery';
+
+      const paymentLabel = paymentMethods.find(p => p.value === paymentMethod)?.label || paymentMethod;
+
+      // Save each cart item as a separate order
+      if (window.dataSdk) {
+        let allSuccess = true;
+        
+        for (const item of cart) {
+          let orderData;
+          
+          if (item.itemType === 'phone') {
+            orderData = {
+              product_name: item.name,
+              color_choice: item.color,
+              battery_type: item.battery,
+              customer_name: customerName,
+              customer_email: customerEmail,
+              customer_phone: customerPhone,
+              state: customerState,
+              payment_method: paymentLabel,
+              delivery_type: deliveryLabel,
+              delivery_cost: deliveryPrice,
+              total_price: item.price,
+              order_date: new Date().toISOString(),
+              order_type: "Phone Order"
+            };
+          } else if (item.itemType === 'accessory') {
+            orderData = {
+              product_name: item.name,
+              color_choice: item.color || '',
+              battery_type: item.type || '',
+              customer_name: customerName,
+              customer_email: customerEmail,
+              customer_phone: customerPhone,
+              state: customerState,
+              payment_method: paymentLabel,
+              delivery_type: deliveryLabel,
+              delivery_cost: deliveryPrice,
+              total_price: item.price,
+              order_date: new Date().toISOString(),
+              order_type: item.model ? `Accessory: ${item.model}` : "Accessory Order"
+            };
+          }
+
+          const result = await window.dataSdk.create(orderData);
+          
+          if (!result.isOk) {
+            allSuccess = false;
+            break;
+          }
+        }
+        
+        if (allSuccess) {
+          const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
+          const finalTotal = cartTotal + deliveryPrice;
+          
+          const modalBody = document.getElementById('modal-body');
+          modalBody.innerHTML = `
+            <div class="success-message">
+              <h4>✅ Order Confirmed Successfully!</h4>
+              <p>Number of Items: ${cart.length}</p>
+              <p>Cart Total: $${cartTotal.toLocaleString()}</p>
+              <p>Delivery (${deliveryLabel}): ${deliveryPrice.toLocaleString()} DA</p>
+              <p><strong>Final Total: $${finalTotal.toLocaleString()}</strong></p>
+              <p style="margin-top: 1rem;">Thank you for choosing Bane Phone</p>
+              <p>We'll contact you soon at ${customerPhone}</p>
+            </div>
+          `;
+          
+          cart = [];
+          updateCartCount();
+          
+          setTimeout(() => {
+            closeCart();
+            showToast('Order saved successfully! 🎉');
+          }, 3000);
+        } else {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+          showToast('⚠️ An error occurred. Please try again');
+        }
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    async function handleQuestionSubmit(e) {
+      e.preventDefault();
+
+      if (currentRecordCount >= 999) {
+        showToast('⚠️ Maximum message limit reached (999)');
+        return;
+      }
+
+      const submitBtn = document.getElementById('question-submit-btn');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<span class="spinner"></span> Sending...';
+
+      const questionData = {
+        product_name: "General Inquiry",
+        color_choice: "",
+        battery_type: "",
+        customer_name: document.getElementById('question-name').value,
+        customer_email: document.getElementById('question-email').value,
+        customer_phone: document.getElementById('question-message').value,
+        state: "",
+        payment_method: "",
+        total_price: 0,
+        order_date: new Date().toISOString(),
+        order_type: "Question"
+      };
+
+      if (window.dataSdk) {
+        const result = await window.dataSdk.create(questionData);
+        
+        if (result.isOk) {
+          showToast('✅ Question sent successfully! We\'ll reply soon');
+          document.getElementById('question-form').reset();
+        } else {
+          showToast('⚠️ Sending error. Please try again');
+        }
+      }
+
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    }
+
+    async function onConfigChange(config) {
+      document.getElementById('hero-title').textContent = config.hero_title || defaultConfig.hero_title;
+      document.getElementById('hero-subtitle').textContent = config.hero_subtitle || defaultConfig.hero_subtitle;
+      document.getElementById('hero-description').textContent = config.hero_description || defaultConfig.hero_description;
+      document.getElementById('hero-button-text').textContent = config.hero_button || defaultConfig.hero_button;
+      document.getElementById('store-location').textContent = config.store_location || defaultConfig.store_location;
+      document.getElementById('store-phone').textContent = config.store_phone || defaultConfig.store_phone;
+      document.getElementById('question-title').textContent = config.question_title || defaultConfig.question_title;
+      document.getElementById('question-name-label').textContent = config.question_name_label || defaultConfig.question_name_label;
+      document.getElementById('question-email-label').textContent = config.question_email_label || defaultConfig.question_email_label;
+      document.getElementById('question-message-label').textContent = config.question_message_label || defaultConfig.question_message_label;
+      document.getElementById('question-submit-text').textContent = config.question_submit_text || defaultConfig.question_submit_text;
+      document.getElementById('products-title').textContent = config.products_title || defaultConfig.products_title;
+      
+      products.forEach(product => {
+        const colorLabel = document.getElementById(`color-label-${product.id}`);
+        if (colorLabel) colorLabel.textContent = config.color_label || defaultConfig.color_label;
+        
+        const batteryLabel = document.getElementById(`battery-label-${product.id}`);
+        if (batteryLabel) batteryLabel.textContent = config.battery_label || defaultConfig.battery_label;
+      });
+      
+      const nameLabel = document.getElementById('name-label');
+      if (nameLabel) nameLabel.textContent = config.name_label || defaultConfig.name_label;
+      
+      const emailLabel = document.getElementById('email-label');
+      if (emailLabel) emailLabel.textContent = config.email_label || defaultConfig.email_label;
+      
+      const phoneLabel = document.getElementById('phone-label');
+      if (phoneLabel) phoneLabel.textContent = config.phone_label || defaultConfig.phone_label;
+      
+      const stateLabel = document.getElementById('state-label');
+      if (stateLabel) stateLabel.textContent = config.state_label || defaultConfig.state_label;
+      
+      const paymentLabel = document.getElementById('payment-label');
+      if (paymentLabel) paymentLabel.textContent = config.payment_label || defaultConfig.payment_label;
+      
+      const submitText = document.getElementById('submit-text');
+      if (submitText) submitText.textContent = config.submit_button || defaultConfig.submit_button;
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities: (config) => ({
+          recolorables: [],
+          borderables: [],
+          fontEditable: undefined,
+          fontSizeable: undefined
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ["hero_title", config.hero_title || defaultConfig.hero_title],
+          ["hero_subtitle", config.hero_subtitle || defaultConfig.hero_subtitle],
+          ["hero_description", config.hero_description || defaultConfig.hero_description],
+          ["hero_button", config.hero_button || defaultConfig.hero_button],
+          ["store_location", config.store_location || defaultConfig.store_location],
+          ["store_phone", config.store_phone || defaultConfig.store_phone],
+          ["question_title", config.question_title || defaultConfig.question_title],
+          ["question_name_label", config.question_name_label || defaultConfig.question_name_label],
+          ["question_email_label", config.question_email_label || defaultConfig.question_email_label],
+          ["question_message_label", config.question_message_label || defaultConfig.question_message_label],
+          ["question_submit_text", config.question_submit_text || defaultConfig.question_submit_text],
+          ["products_title", config.products_title || defaultConfig.products_title],
+          ["color_label", config.color_label || defaultConfig.color_label],
+          ["battery_label", config.battery_label || defaultConfig.battery_label],
+          ["name_label", config.name_label || defaultConfig.name_label],
+          ["email_label", config.email_label || defaultConfig.email_label],
+          ["phone_label", config.phone_label || defaultConfig.phone_label],
+          ["state_label", config.state_label || defaultConfig.state_label],
+          ["payment_label", config.payment_label || defaultConfig.payment_label],
+          ["submit_button", config.submit_button || defaultConfig.submit_button]
+        ])
+      });
+    }
+
+    initApp();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9a834be7c352294d',t:'MTc2NDc2NzM0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
