@@ -1,746 +1,126 @@
-<!doctype html>
-<html lang="ar" dir="rtl" class="h-full">
- <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لعبة الكلمات المتقاطعة</title>
-  <script src="/_sdk/data_sdk.js"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ramadan pen</title>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
   <style>
-        body {
-            box-sizing: border-box;
-        }
-        
-        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        
-        * {
-            font-family: 'Cairo', Arial, sans-serif;
-        }
-        
-        @keyframes pop-in {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .letter-tile {
-            transition: all 0.2s ease;
-            cursor: grab;
-            user-select: none;
-            background: #1a1f3a;
-            border: 2px solid #00ff9d;
-            box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);
-        }
-        
-        .letter-tile:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 255, 157, 0.3);
-        }
-        
-        .letter-tile:active {
-            cursor: grabbing;
-            transform: scale(0.95);
-        }
-        
-        .drop-zone {
-            transition: all 0.2s ease;
-            background: rgba(26, 31, 58, 0.5);
-            border: 2px dashed rgba(0, 255, 157, 0.4);
-        }
-        
-        .drop-zone.drag-over {
-            background: rgba(0, 255, 157, 0.15);
-            border-color: #00ff9d;
-            border-style: solid;
-        }
-        
-        .drop-zone.filled {
-            background: #00ff9d;
-            border-color: #00ff9d;
-        }
-        
-        .word-complete {
-            animation: pop-in 0.4s ease;
-        }
-        
-        .game-container {
-            background: radial-gradient(ellipse at top, #0a0e27 0%, #000000 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .tech-panel {
-            background: rgba(26, 31, 58, 0.8);
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(0, 255, 157, 0.3);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-        }
-        
-        .neon-text {
-            color: #00ff9d;
-            text-shadow: 0 0 10px rgba(0, 255, 157, 0.5);
-        }
-        
-        .neon-text-blue {
-            color: #00ccff;
-            text-shadow: 0 0 8px rgba(0, 204, 255, 0.4);
-        }
-        
-        .neon-text-purple {
-            color: #cc00ff;
-            text-shadow: 0 0 8px rgba(204, 0, 255, 0.4);
-        }
-        
-        .loading-spinner {
-            border: 3px solid rgba(0, 255, 157, 0.2);
-            border-top: 3px solid #00ff9d;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        @keyframes fade-in {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        
-        @keyframes bounce-in {
-            0% { transform: scale(0); opacity: 0; }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        
-        .info-panel {
-            background: linear-gradient(135deg, rgba(0, 255, 157, 0.1) 0%, rgba(0, 204, 255, 0.1) 100%);
-            border: 2px solid rgba(0, 255, 157, 0.3);
-            margin-top: 16px;
-            padding: 16px;
-            border-radius: 16px;
-            animation: fade-in 0.5s ease;
-        }
-        
-        .info-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #00ff9d;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .info-content {
-            font-size: 14px;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.8);
-        }
-    </style>
-  <style>@view-transition { navigation: auto; }</style>
- </head>
- <body class="h-full m-0 p-0"><!-- Welcome Screen -->
-  <div id="welcomeScreen" class="game-container welcome-screen w-full h-full flex flex-col items-center justify-center p-6 relative overflow-auto">
-   <div class="tech-panel rounded-3xl p-12 max-w-3xl text-center relative z-10">
-    <div class="mb-8">
-     <div class="text-8xl mb-4">
-      💻
-     </div>
-     <h1 id="welcomeTitle" class="text-7xl font-black neon-text mb-4">لعبة الكلمات المتقاطعة</h1>
-     <p id="welcomeDescription" class="text-2xl mb-4 neon-text-blue">اختبر ذكاءك وكوّن الكلمات</p>
-     <div class="text-sm neon-text-purple">
-      ⚡ أكثر من 100 لغز تقني متنوع ⚡
-     </div>
-    </div>
-    <div class="tech-panel rounded-2xl p-6 mb-8">
-     <h3 class="text-xl font-bold mb-6 neon-text">✨ فئات الألغاز</h3>
-     <div class="grid grid-cols-2 gap-4 mb-6">
-      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-       <div class="text-4xl mb-2">
-        🐍
-       </div>
-       <div class="font-bold neon-text-blue">
-        لغات البرمجة
-       </div>
-       <div class="text-xs" style="color: #888;">
-        Python, Java, JavaScript
-       </div>
-      </div>
-      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-       <div class="text-4xl mb-2">
-        ⚙️
-       </div>
-       <div class="font-bold neon-text-blue">
-        مصطلحات تقنية
-       </div>
-       <div class="text-xs" style="color: #888;">
-        خوارزميات، قواعد بيانات
-       </div>
-      </div>
-      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-       <div class="text-4xl mb-2">
-        👨‍💻
-       </div>
-       <div class="font-bold neon-text-blue">
-        شخصيات تقنية
-       </div>
-       <div class="text-xs" style="color: #888;">
-        Gates, Jobs, Musk
-       </div>
-      </div>
-      <div class="tech-panel rounded-xl p-4 hover:scale-105 transition-transform">
-       <div class="text-4xl mb-2">
-        🤖
-       </div>
-       <div class="font-bold neon-text-blue">
-        تقنيات متقدمة
-       </div>
-       <div class="text-xs" style="color: #888;">
-        AI, Blockchain, Cloud
-       </div>
-      </div>
-     </div><button id="startGameBtn" style="width: 100%; padding: 24px 32px; border-radius: 16px; font-weight: 900; font-size: 32px; background: #ffffff; color: #000000; border: 3px solid #ffffff; box-shadow: 0 8px 24px rgba(255, 255, 255, 0.4); cursor: pointer; transition: all 0.3s ease; display: block; margin: 0 auto;"> <span id="startButtonText">🚀 ابدأ اللعبة</span> </button>
-    </div>
-    <div class="tech-panel rounded-2xl p-6 mb-8">
-     <h3 class="text-lg font-bold mb-4 neon-text">🎮 مستويات الصعوبة</h3>
-     <div class="flex justify-center gap-4">
-      <div class="difficulty-badge difficulty-easy" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(0, 255, 157, 0.2); border-color: #00ff9d; color: #00ff9d;">
-       ⭐ سهل (35 لغز)
-      </div>
-      <div class="difficulty-badge difficulty-medium" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(255, 133, 0, 0.2); border-color: #ff8500; color: #ff8500;">
-       ⭐⭐ متوسط (50 لغز)
-      </div>
-      <div class="difficulty-badge difficulty-hard" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(255, 0, 110, 0.2); border-color: #ff006e; color: #ff006e;">
-       ⭐⭐⭐ صعب (38 لغز)
-      </div>
-     </div>
-    </div>
-   </div>
-  </div><!-- Game Screen -->
-  <div id="gameScreen" class="game-container game-screen w-full h-full flex flex-col items-center justify-center p-6 relative overflow-auto" style="display: none;"><!-- Header -->
-   <div class="tech-panel rounded-3xl p-6 mb-6 w-full max-w-5xl relative z-10 word-complete">
-    <h1 id="gameTitle" class="text-5xl font-black text-center neon-text mb-2">لعبة الكلمات المتقاطعة</h1>
-    <p id="instructionText" class="text-center text-lg neon-text-blue">اسحب الحروف لتكوين الكلمات</p><!-- Score and Level -->
-    <div class="grid grid-cols-4 gap-4 mt-6">
-     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">النقاط</span>
-      <div id="score" class="text-3xl font-black neon-text">
-       0
-      </div>
-     </div>
-     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">المستوى</span>
-      <div id="level" class="text-3xl font-black neon-text">
-       1
-      </div>
-     </div>
-     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">الكلمات</span>
-      <div id="wordsCompleted" class="text-3xl font-black neon-text">
-       0
-      </div>
-     </div>
-     <div class="tech-panel px-6 py-3 rounded-2xl"><span class="text-xs neon-text-blue">الصعوبة</span>
-      <div id="currentDifficulty" class="text-3xl font-black neon-text">
-       ⭐
-      </div>
-     </div>
-    </div>
-   </div><!-- Game Board -->
-   <div class="tech-panel rounded-3xl p-8 w-full max-w-5xl relative z-10 mb-6">
-    <div id="targetWord" class="text-center mb-8">
-     <div class="flex justify-center items-center gap-3 mb-3"><span id="difficultyBadge" class="difficulty-badge difficulty-easy" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(0, 255, 157, 0.2); border-color: #00ff9d; color: #00ff9d;">⭐ سهل</span> <span id="categoryBadge" class="category-badge" style="display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; background: rgba(0, 204, 255, 0.2); border: 1px solid #00ccff; color: #00ccff; margin-left: 8px;">لغات</span>
-     </div>
-     <div id="wordHint" class="text-3xl font-black neon-text mb-6"></div>
-     <div id="dropZones" class="flex justify-center gap-3 flex-wrap"></div>
-    </div>
-    <div id="letterBank" class="flex justify-center gap-3 flex-wrap mt-8"></div>
-    <div class="flex gap-4 mt-8"><button id="checkBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden border-2 border-[#00ff9d]" style="background: #1a1f3a; color: #00ff9d; box-shadow: 0 2px 8px rgba(0, 255, 157, 0.2);"> <span class="relative z-10">✓ تحقق</span> </button> <button id="resetBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff006e]" style="background: #1a1f3a; color: #ff006e; box-shadow: 0 2px 8px rgba(255, 0, 110, 0.2);"> 🔄 إعادة </button> <button id="skipBtn" class="flex-1 py-4 px-6 rounded-2xl font-bold text-xl transition-all duration-300 transform hover:scale-105 border-2 border-[#ff8500]" style="background: #1a1f3a; color: #ff8500; box-shadow: 0 2px 8px rgba(255, 133, 0, 0.2);"> ⏭️ تخطي </button>
-    </div><!-- Info Panel -->
-    <div id="infoPanel" class="info-panel" style="display: none;">
-     <div class="info-title"><span>📚</span> <span id="infoTitle">معلومة تقنية</span>
-     </div>
-     <div class="info-content" id="infoContent"></div>
-    </div>
-   </div><!-- Message Area -->
-   <div id="message" class="tech-panel rounded-2xl px-8 py-4 text-center font-bold text-xl relative z-10" style="color: #00ff9d; display: none;"></div>
-  </div>
+    body { margin: 0; background: #050301; overflow: hidden; }
+    video { display: none; }
+    canvas { width: 100%; height: 100%; transform: scaleX(-1); position: absolute; z-index: 1; }
+  </style>
+</head>
+<body>
+  <video id="vid"></video>
+  <canvas id="c"></canvas>
   <script>
-        const defaultConfig = {
-            game_title: "لعبة الكلمات المتقاطعة",
-            welcome_description: "اختبر ذكاءك وكوّن الكلمات",
-            start_button_text: "ابدأ اللعبة",
-            instruction_text: "اسحب الحروف لتكوين الكلمات",
-            primary_color: "#00ff9d",
-            secondary_color: "#0a0e27",
-            text_color: "#00ff9d",
-            accent_color: "#00ccff",
-            success_color: "#00ff9d"
-        };
+    var vid = document.getElementById('vid');
+    var c = document.getElementById('c');
+    var ctx = c.getContext('2d');
+    var arr = [];
+    var cur = [];
+    var shift = false;
+    var draw = false;
+    var sx = null;
+    var sy = null;
 
-        let currentScore = 0;
-        let currentLevel = 1;
-        let wordsCompleted = 0;
-        let currentWord = '';
-        let currentWordData = null;
-        let currentLetters = [];
-        let draggedElement = null;
-        let isLoading = false;
-        let gameData = [];
-        let currentDifficulty = 1;
-        let usedWords = [];
-        
-        const words = [
-            // لغات البرمجة بالإنجليزي - سهل (15)
-            { word: "python", hint: "🐍 لغة سهلة للمبتدئين والذكاء الاصطناعي", difficulty: 1, category: "لغات", isEnglish: true, info: "Python لغة عالية المستوى أنشأها Guido van Rossum عام 1991. تستخدم في تطوير الويب، الذكاء الاصطناعي، وتحليل البيانات. بساطتها تجعلها الأولى للمبتدئين." },
-            { word: "java", hint: "☕ لغة شعارها فنجان قهوة", difficulty: 1, category: "لغات", isEnglish: true, info: "Java طورتها Sun Microsystems عام 1995. تعمل على أي جهاز (Write Once, Run Anywhere) وتستخدم في تطبيقات أندرويد والمؤسسات الكبرى." },
-            { word: "swift", hint: "🍎 لغة آبل الحديثة لآيفون", difficulty: 1, category: "لغات", isEnglish: true, info: "Swift أطلقتها Apple عام 2014 لتحل محل Objective-C. سريعة وآمنة وسهلة القراءة، تستخدم لتطوير تطبيقات iOS وmacOS." },
-            { word: "kotlin", hint: "📱 لغة أندرويد الرسمية الجديدة", difficulty: 1, category: "لغات", isEnglish: true, info: "Kotlin طورتها JetBrains وأصبحت اللغة الرسمية لأندرويد عام 2019. أكثر أماناً وإنتاجية من Java وتتوافق معها بالكامل." },
-            { word: "ruby", hint: "💎 لغة جميلة للمبرمجين السعداء", difficulty: 1, category: "لغات", isEnglish: true, info: "Ruby صممها Yukihiro Matsumoto عام 1995 لتكون ممتعة للمبرمجين. إطار Rails الشهير مبني عليها ويستخدم في Twitter وGitHub." },
-            { word: "php", hint: "🐘 لغة الويب الديناميكي الشهيرة", difficulty: 1, category: "لغات", isEnglish: true, info: "PHP أنشأها Rasmus Lerdorf عام 1994. تشغل 77% من مواقع الويب العالمية وتستخدم في WordPress وFacebook." },
-            { word: "rust", hint: "🦀 لغة آمنة بدون أخطاء ذاكرة", difficulty: 1, category: "لغات", isEnglish: true, info: "Rust طورتها Mozilla عام 2010. تضمن أمان الذاكرة بدون garbage collector. تستخدم في Discord وDropbox وأجزاء من Windows." },
-            { word: "go", hint: "🔷 لغة جوجل البسيطة والسريعة", difficulty: 1, category: "لغات", isEnglish: true, info: "Go صممها مهندسو Google عام 2009. سريعة وبسيطة ومثالية للخوادم والأنظمة الموزعة. تستخدم في Docker وKubernetes." },
-            { word: "dart", hint: "🎯 لغة فلاتر من جوجل", difficulty: 1, category: "لغات", isEnglish: true, info: "Dart أنشأتها Google عام 2011 وهي اللغة الرسمية لإطار Flutter. تستخدم لبناء تطبيقات متعددة المنصات من كود واحد." },
-            { word: "lua", hint: "🌙 لغة صغيرة للألعاب", difficulty: 1, category: "لغات", isEnglish: true, info: "Lua لغة برازيلية خفيفة أنشئت عام 1993. تستخدم كلغة سكريبتينج في الألعاب مثل World of Warcraft وRoblox." },
-            { word: "perl", hint: "🐪 لغة معالجة النصوص القوية", difficulty: 1, category: "لغات", isEnglish: true, info: "Perl صممها Larry Wall عام 1987. قوية في معالجة النصوص والتعابير النمطية. شعارها: هناك أكثر من طريقة لفعلها." },
-            { word: "scala", hint: "🎭 لغة وظيفية على JVM", difficulty: 1, category: "لغات", isEnglish: true, info: "Scala دمجت البرمجة الكائنية والوظيفية عام 2004. تعمل على JVM وتستخدم في Twitter وLinkedIn لمعالجة البيانات الضخمة." },
-            { word: "haskell", hint: "λ لغة وظيفية نقية للرياضيين", difficulty: 1, category: "لغات", isEnglish: true, info: "Haskell لغة وظيفية نقية أنشئت عام 1990. تستخدم في البحث الأكاديمي والتطبيقات المالية لضمان الصحة الرياضية." },
-            { word: "elixir", hint: "💧 لغة حديثة على Erlang VM", difficulty: 1, category: "لغات", isEnglish: true, info: "Elixir بنيت على Erlang VM عام 2011. ممتازة للتطبيقات الموزعة والموثوقة. تستخدم في Discord وPinterest." },
-            { word: "clojure", hint: "🔧 لغة Lisp حديثة على JVM", difficulty: 1, category: "لغات", isEnglish: true, info: "Clojure لهجة Lisp أنشأها Rich Hickey عام 2007. وظيفية ومتزامنة، تعمل على JVM وتستخدم في Netflix وNubank." },
-            
-            // مصطلحات عربية - سهل (20)
-            { word: "متغير", hint: "📦 حاوية لتخزين البيانات", difficulty: 1, category: "مصطلحات", info: "المتغير يخزن قيمة في الذاكرة ويمكن تغييرها أثناء التنفيذ. مثل صندوق يحمل اسماً ويمكن وضع أشياء مختلفة فيه." },
-            { word: "ثابت", hint: "🔒 قيمة لا تتغير أبداً", difficulty: 1, category: "مصطلحات", info: "الثابت قيمة محددة لا تتغير طوال تشغيل البرنامج، مثل PI = 3.14 أو سرعة الضوء." },
-            { word: "دالة", hint: "⚙️ كتلة كود قابلة لإعادة الاستخدام", difficulty: 1, category: "مصطلحات", info: "الدالة مجموعة تعليمات تنفذ مهمة محددة. يمكن استدعاؤها مرات عديدة بدون تكرار الكود." },
-            { word: "حلقة", hint: "🔄 تكرار تنفيذ كود معين", difficulty: 1, category: "مصطلحات", info: "الحلقة تكرر تنفيذ مجموعة أوامر عدة مرات. أشهرها for و while و do-while." },
-            { word: "شرط", hint: "❓ قرار يعتمد على صحة عبارة", difficulty: 1, category: "مصطلحات", info: "الشرط يتحقق من صحة عبارة ما وينفذ كوداً مختلفاً حسب النتيجة. أساس المنطق في البرمجة." },
-            { word: "مصفوفة", hint: "📊 مجموعة عناصر مرتبة", difficulty: 1, category: "مصطلحات", info: "المصفوفة تخزن عدة قيم من نفس النوع في متغير واحد. الوصول للعناصر عبر الفهرس (Index)." },
-            { word: "كائن", hint: "🎯 وحدة برمجية تحتوي بيانات", difficulty: 1, category: "مصطلحات", info: "الكائن نسخة من فئة (Class) تحتوي بيانات ودوال. أساس البرمجة الكائنية (OOP)." },
-            { word: "فئة", hint: "📋 مخطط لإنشاء كائنات", difficulty: 1, category: "مصطلحات", info: "الفئة (Class) قالب يحدد خصائص وسلوكيات الكائنات. مثل مخطط المنزل الذي يُبنى منه عدة منازل." },
-            { word: "وراثة", hint: "👨‍👦 فئة تأخذ خصائص من أخرى", difficulty: 1, category: "مصطلحات", info: "الوراثة تسمح لفئة جديدة بأخذ خصائص ودوال من فئة موجودة. تقلل تكرار الكود وتنظم التسلسل الهرمي." },
-            { word: "تغليف", hint: "📦 إخفاء التفاصيل الداخلية", difficulty: 1, category: "مصطلحات", info: "التغليف يخفي البيانات الداخلية ويظهر فقط الواجهات اللازمة. يحمي البيانات من التعديل الخاطئ." },
-            { word: "تعددية", hint: "🎭 شكل واحد أفعال متعددة", difficulty: 1, category: "مصطلحات", info: "التعددية الشكلية تسمح باستخدام نفس الواجهة لأنواع مختلفة. مثل دالة print تطبع أي نوع بيانات." },
-            { word: "نص", hint: "📝 بيانات حروف وكلمات", difficulty: 1, category: "مصطلحات", info: "النص (String) سلسلة من الحروف. في بعض اللغات مصفوفة من الحروف، وفي أخرى نوع بيانات خاص." },
-            { word: "رقم", hint: "🔢 بيانات عددية", difficulty: 1, category: "مصطلحات", info: "الرقم نوع بيانات للأعداد. منه الصحيح (Integer) والعشري (Float/Double) حسب الدقة المطلوبة." },
-            { word: "منطقي", hint: "✓❌ صح أو خطأ فقط", difficulty: 1, category: "مصطلحات", info: "المنطقي (Boolean) يحمل قيمتين فقط: true أو false. أساسي للشروط والقرارات المنطقية." },
-            { word: "قائمة", hint: "📝 مجموعة عناصر ديناميكية", difficulty: 1, category: "مصطلحات", info: "القائمة (List) تخزن عناصر متعددة ويمكن إضافة وحذف عناصر ديناميكياً. أكثر مرونة من المصفوفة." },
-            { word: "قاموس", hint: "🔑 تخزين بمفاتيح وقيم", difficulty: 1, category: "مصطلحات", info: "القاموس (Dictionary/Map) يخزن أزواج مفتاح-قيمة. الوصول السريع للقيم عبر المفاتيح الفريدة." },
-            { word: "مجموعة", hint: "🎯 عناصر فريدة بدون تكرار", difficulty: 1, category: "مصطلحات", info: "المجموعة (Set) تخزن قيم فريدة فقط بدون تكرار. مفيدة لإزالة التكرارات والعمليات الرياضية." },
-            { word: "روبوت", hint: "🦾 آلة قابلة للبرمجة", difficulty: 1, category: "مصطلحات", info: "الروبوت آلة تنفذ مهام معقدة. من الصناعة للجراحة للاستكشاف الفضائي. يتحكم به برامج حاسوبية." },
-            { word: "شبكة", hint: "🌐 اتصال بين أجهزة", difficulty: 1, category: "مصطلحات", info: "الشبكة ربط أجهزة لتبادل البيانات. من LAN المحلية إلى الإنترنت العالمي." },
-            { word: "نسخة", hint: "📌 إصدار محدد من البرنامج", difficulty: 1, category: "مصطلحات", info: "النسخة (Version) رقم يميز إصدار البرنامج. Semantic Versioning: MAJOR.MINOR.PATCH مثل 2.1.5." },
-            
-            // لغات متقدمة بالإنجليزي - متوسط (15)
-            { word: "javascript", hint: "🌐 لغة المتصفحات رقم واحد", difficulty: 2, category: "لغات", isEnglish: true, info: "JavaScript أنشأها Brendan Eich في 10 أيام فقط عام 1995. تعمل في كل متصفح وتستخدم الآن في الخوادم عبر Node.js. أساس تطوير الويب الحديث." },
-            { word: "typescript", hint: "📘 JavaScript مع أنواع البيانات", difficulty: 2, category: "لغات", isEnglish: true, info: "TypeScript من Microsoft عام 2012 تضيف الأنواع الثابتة لـ JavaScript. تساعد في اكتشاف الأخطاء مبكراً وتحسين الإنتاجية في المشاريع الكبيرة." },
-            { word: "csharp", hint: "🎮 لغة مايكروسوفت للألعاب", difficulty: 2, category: "لغات", isEnglish: true, info: "C# طورتها Microsoft عام 2000 كمنافس لـ Java. تستخدم في Unity لتطوير الألعاب وفي تطبيقات Windows وخدمات الويب." },
-            { word: "cplusplus", hint: "⚡ C مع الكائنات والأداء العالي", difficulty: 2, category: "لغات", isEnglish: true, info: "C++ طورها Bjarne Stroustrup عام 1985. تجمع قوة C مع البرمجة الكائنية. تستخدم في الألعاب والمتصفحات ونظام Windows." },
-            { word: "objectivec", hint: "🍎 لغة آبل القديمة", difficulty: 2, category: "لغات", isEnglish: true, info: "Objective-C كانت اللغة الرئيسية لتطوير iOS قبل Swift. تجمع C مع رسائل Smalltalk وما زالت تستخدم في الكود القديم." },
-            { word: "assembly", hint: "⚙️ لغة منخفضة المستوى جداً", difficulty: 2, category: "لغات", isEnglish: true, info: "Assembly لغة قريبة جداً من لغة الآلة. كل معالج له لهجته الخاصة. تستخدم في البرامج التي تحتاج أقصى سرعة والأنظمة المدمجة." },
-            { word: "fortran", hint: "📐 أول لغة برمجة عالية المستوى", difficulty: 2, category: "لغات", isEnglish: true, info: "FORTRAN أنشئت عام 1957 للحسابات العلمية. أول لغة برمجة عالية المستوى وما زالت تستخدم في العلوم والهندسة والفيزياء." },
-            { word: "cobol", hint: "🏦 لغة الأنظمة المصرفية القديمة", difficulty: 2, category: "لغات", isEnglish: true, info: "COBOL من 1959 تشغل 95% من أجهزة الصراف الآلي و80% من المعاملات المالية. مازالت البنوك تعتمد عليها!" },
-            { word: "lisp", hint: "🧠 لغة الذكاء الاصطناعي الأولى", difficulty: 2, category: "لغات", isEnglish: true, info: "Lisp ثاني أقدم لغة برمجة (1958). استخدمت في أبحاث الذكاء الاصطناعي المبكرة. Reddit كتب أولاً بلهجة منها." },
-            { word: "prolog", hint: "🔮 لغة البرمجة المنطقية", difficulty: 2, category: "لغات", isEnglish: true, info: "Prolog من 1972 تعتمد على المنطق الرياضي. تستخدم في الذكاء الاصطناعي والأنظمة الخبيرة ومعالجة اللغات الطبيعية." },
-            { word: "erlang", hint: "📡 لغة الاتصالات الموثوقة", difficulty: 2, category: "لغات", isEnglish: true, info: "Erlang أنشأتها Ericsson عام 1986 لأنظمة الاتصالات. تدعم التزامن الهائل وتستخدم في WhatsApp وT-Mobile." },
-            { word: "racket", hint: "🎨 لغة تعليمية قوية", difficulty: 2, category: "لغات", isEnglish: true, info: "Racket لهجة Lisp مصممة للتعليم والبحث. تأتي مع بيئة تطوير ممتازة وتستخدم في الجامعات العالمية لتعليم علوم الحاسوب." },
-            { word: "ocaml", hint: "🐫 لغة وظيفية صارمة وسريعة", difficulty: 2, category: "لغات", isEnglish: true, info: "OCaml لغة وظيفية قوية من عائلة ML. تستخدم في Facebook لتحليل الكود وفي الأنظمة المالية للموثوقية." },
-            { word: "nim", hint: "👑 لغة سريعة وبسيطة كبايثون", difficulty: 2, category: "لغات", isEnglish: true, info: "Nim لغة حديثة تجمع بساطة Python مع سرعة C. تترجم للغة C وتدعم البرمجة متعددة الأنماط." },
-            { word: "zig", hint: "⚡ لغة بديلة لـ C بدون مخاطر", difficulty: 2, category: "لغات", isEnglish: true, info: "Zig لغة حديثة تهدف لاستبدال C. تركز على البساطة والأداء وأمان الذاكرة بدون تكلفة إضافية في وقت التشغيل." },
-            
-            // مصطلحات متوسطة (35)
-            { word: "مؤشر", hint: "👉 عنوان موقع في الذاكرة", difficulty: 2, category: "مصطلحات", info: "المؤشر (Pointer) متغير يحتوي عنوان ذاكرة متغير آخر. قوي ولكن خطير إذا استخدم خطأ. أساسي في C وC++." },
-            { word: "مرجع", hint: "🔗 اسم بديل لمتغير موجود", difficulty: 2, category: "مصطلحات", info: "المرجع (Reference) اسم آخر لمتغير موجود. تغيير المرجع يغير المتغير الأصلي. أكثر أماناً من المؤشرات." },
-            { word: "استثناء", hint: "⚠️ خطأ أثناء تشغيل البرنامج", difficulty: 2, category: "مصطلحات", info: "الاستثناء (Exception) حدث غير متوقع يعطل التنفيذ الطبيعي. يُعالج بكتل try-catch لمنع توقف البرنامج." },
-            { word: "خوارزمية", hint: "🧮 خطوات منطقية لحل مشكلة", difficulty: 2, category: "مصطلحات", info: "الخوارزمية سلسلة خطوات محددة لحل مشكلة. مثل وصفة طبخ ولكن للحاسوب. الكفاءة والصحة مهمتان." },
-            { word: "تعقيد", hint: "⏱️ قياس كفاءة الخوارزمية", difficulty: 2, category: "مصطلحات", info: "التعقيد الحسابي يقيس الوقت والذاكرة التي تحتاجها خوارزمية. يُكتب بالرمز O() مثل O(n) أو O(log n)." },
-            { word: "ترتيب", hint: "🔢 ترتيب عناصر حسب قاعدة", difficulty: 2, category: "مصطلحات", info: "الترتيب (Sorting) إعادة ترتيب العناصر. خوارزميات مشهورة: QuickSort, MergeSort, BubbleSort. لكل منها تعقيد وحالات استخدام." },
-            { word: "بحث", hint: "🔍 إيجاد عنصر في مجموعة", difficulty: 2, category: "مصطلحات", info: "البحث (Search) إيجاد عنصر محدد. البحث الخطي O(n) أو الثنائي O(log n) في قوائم مرتبة." },
-            { word: "تكرار", hint: "🔁 دالة تنادي نفسها", difficulty: 2, category: "مصطلحات", info: "التكرار (Recursion) دالة تنادي نفسها لحل مشاكل قابلة للتجزئة. جميل ولكن قد يسبب Stack Overflow إذا لم يُستخدم بحذر." },
-            { word: "مكتبة", hint: "📚 مجموعة دوال جاهزة", difficulty: 2, category: "مصطلحات", info: "المكتبة (Library) كود جاهز يحل مشاكل شائعة. توفر الوقت وتقلل الأخطاء. مثل NumPy وReact وBootstrap." },
-            { word: "اطارعمل", hint: "🏗️ بنية تحتية للتطوير", difficulty: 2, category: "مصطلحات", info: "إطار العمل (Framework) هيكل جاهز لبناء التطبيقات. يفرض بنية معينة ويوفر أدوات مساعدة. مثل Django وAngular." },
-            { word: "واجهةبرمجية", hint: "🔌 نقطة اتصال بين البرامج", difficulty: 2, category: "مصطلحات", info: "واجهة برمجة التطبيقات (API) تحدد كيف تتفاعل البرامج مع بعضها. كالقائمة في المطعم - تعرف ما يمكن طلبه." },
-            { word: "قاعدةبيانات", hint: "🗄️ مخزن منظم للمعلومات", difficulty: 2, category: "مصطلحات", info: "قاعدة البيانات تخزن البيانات بشكل منظم. علائقية مثل MySQL أو غير علائقية مثل MongoDB. أساس أي تطبيق يخزن بيانات." },
-            { word: "استعلام", hint: "📋 طلب بيانات من قاعدة", difficulty: 2, category: "مصطلحات", info: "الاستعلام (Query) أمر لجلب أو تعديل بيانات في قاعدة بيانات. SQL أشهر لغة استعلام مع أوامر SELECT وINSERT وUPDATE." },
-            { word: "فهرس", hint: "🗂️ تسريع البحث في قاعدة البيانات", difficulty: 2, category: "مصطلحات", info: "الفهرس (Index) بنية بيانات تسرع البحث في الجداول. كفهرس الكتاب الذي يسهل إيجاد المواضيع بدون قراءة كل الصفحات." },
-            { word: "معاملة", hint: "💼 مجموعة عمليات كوحدة واحدة", difficulty: 2, category: "مصطلحات", info: "المعاملة (Transaction) مجموعة عمليات تنفذ كلها أو لا تنفذ أبداً. تضمن تناسق البيانات في حالات الفشل." },
-            { word: "خادم", hint: "🖥️ حاسوب يقدم خدمات للشبكة", difficulty: 2, category: "مصطلحات", info: "الخادم (Server) حاسوب يقدم موارد وخدمات للأجهزة الأخرى. مثل خوادم الويب والبيانات والبريد." },
-            { word: "عميل", hint: "💻 جهاز يطلب خدمات من الخادم", difficulty: 2, category: "مصطلحات", info: "العميل (Client) جهاز يرسل طلبات للخادم. متصفحك عميل يطلب صفحات من خوادم الويب." },
-            { word: "بروتوكول", hint: "📜 قواعد الاتصال بين الأجهزة", difficulty: 2, category: "مصطلحات", info: "البروتوكول مجموعة قواعد للاتصال. HTTP للويب، TCP/IP للشبكات، FTP لنقل الملفات. كلغة مشتركة بين الأجهزة." },
-            { word: "تشفير", hint: "🔐 حماية البيانات بالترميز", difficulty: 2, category: "مصطلحات", info: "التشفير تحويل البيانات لشكل غير مقروء. يحمي الخصوصية والأمان. AES وRSA من أشهر الأنواع." },
-            { word: "مفتاح", hint: "🔑 رمز لتشفير أو فك تشفير", difficulty: 2, category: "مصطلحات", info: "المفتاح رمز سري للتشفير. المتماثل يستخدم نفس المفتاح، واللامتماثل يستخدم مفتاحين (عام وخاص)." },
-            { word: "توكن", hint: "🎟️ رمز للمصادقة والتحقق", difficulty: 2, category: "مصطلحات", info: "التوكن رمز يثبت هويتك بعد تسجيل الدخول. JWT أشهر الأنواع، يُرسل مع كل طلب للتحقق من الهوية." },
-            { word: "جلسة", hint: "⏲️ فترة تفاعل مستخدم مع النظام", difficulty: 2, category: "مصطلحات", info: "الجلسة (Session) تتبع تفاعل المستخدم لفترة. تبدأ بتسجيل الدخول وتنتهي بالخروج أو انتهاء الوقت." },
-            { word: "كوكيز", hint: "🍪 بيانات صغيرة مخزنة في المتصفح", difficulty: 2, category: "مصطلحات", info: "الكوكيز ملفات صغيرة يخزنها الموقع في متصفحك. تحفظ تفضيلاتك وجلستك. بعضها ضروري والبعض للإعلانات." },
-            { word: "اختبار", hint: "🧪 فحص جودة الكود", difficulty: 2, category: "مصطلحات", info: "الاختبار يتحقق من عمل الكود بشكل صحيح. وحدات (Unit)، تكامل (Integration)، شامل (E2E). مهم لمنع الأخطاء." },
-            { word: "تصحيح", hint: "🐛 إصلاح الأخطاء في الكود", difficulty: 2, category: "مصطلحات", info: "التصحيح (Debugging) عملية إيجاد وإصلاح الأخطاء. استخدم نقاط التوقف والطباعة والمصححات. فن يحتاج صبر!" },
-            { word: "مستودع", hint: "📦 مخزن كود مع تتبع التغييرات", difficulty: 2, category: "مصطلحات", info: "المستودع (Repository) مخزن الكود مع سجل كل التعديلات. Git أشهر نظام، GitHub وGitLab للاستضافة." },
-            { word: "فرع", hint: "🌿 نسخة منفصلة من الكود", difficulty: 2, category: "مصطلحات", info: "الفرع (Branch) خط تطوير منفصل. يسمح بالعمل على ميزات جديدة دون تعطيل الكود الرئيسي." },
-            { word: "دمج", hint: "🔀 جمع التغييرات من فروع", difficulty: 2, category: "مصطلحات", info: "الدمج (Merge) جمع تغييرات فرع في آخر. قد يسبب تعارضات تحتاج حل يدوي بعناية." },
-            { word: "واجهة", hint: "🖼️ تصميم التفاعل مع المستخدم", difficulty: 2, category: "مصطلحات", info: "واجهة المستخدم (UI) ما يراه ويتفاعل معه المستخدم. الأزرار، القوائم، النصوص كلها جزء منها." },
-            { word: "تجربة", hint: "😊 شعور المستخدم مع المنتج", difficulty: 2, category: "مصطلحات", info: "تجربة المستخدم (UX) كيف يشعر المستخدم أثناء الاستخدام. سهولة، سرعة، جمال - كلها مهمة للنجاح." },
-            { word: "استجابة", hint: "📱 تصميم يتكيف مع كل الشاشات", difficulty: 2, category: "مصطلحات", info: "التصميم المستجيب يتكيف مع أحجام الشاشات المختلفة. من الهاتف للكمبيوتر بنفس الكود. ضروري اليوم." },
-            { word: "خامسجي", hint: "📶 الجيل الخامس للاتصالات", difficulty: 2, category: "مصطلحات", info: "5G أسرع بـ 100 مرة من 4G. يمكن السيارات ذاتية القيادة والعمليات الجراحية عن بعد." },
-            { word: "طباعةثلاثية", hint: "🖨️ بناء أشياء طبقة فوق طبقة", difficulty: 2, category: "مصطلحات", info: "الطباعة ثلاثية الأبعاد تبني أشياء حقيقية من ملفات رقمية. تستخدم في النماذج، الأعضاء الصناعية، والبناء." },
-            { word: "قرصنة", hint: "🏴‍☠️ اختراق الأنظمة", difficulty: 2, category: "مصطلحات", info: "القرصنة اختراق الأنظمة. القرصنة الأخلاقية تكتشف الثغرات لإصلاحها، والسوداء للضرر." },
-            { word: "تصيد", hint: "🎣 خداع لسرقة معلومات", difficulty: 2, category: "مصطلحات", info: "التصيد (Phishing) إيهامك بموقع وهمي لسرقة بياناتك. احذر الرسائل المشبوهة وتحقق من العناوين دائماً." },
-            
-            // شخصيات (15)
-            { word: "جيتس", hint: "💻 مؤسس مايكروسوفت", difficulty: 1, category: "شخصيات", info: "Bill Gates أسس Microsoft عام 1975 مع Paul Allen. جعل الحاسوب الشخصي في كل منزل. الآن يركز على العمل الخيري عبر مؤسسته." },
-            { word: "جوبز", hint: "🍎 مؤسس آبل العبقري", difficulty: 1, category: "شخصيات", info: "Steve Jobs أسس Apple عام 1976. غير عالم الهواتف بالآيفون والحواسيب بالماك. مات 2011 وترك إرثاً عظيماً في التصميم والابتكار." },
-            { word: "ماسك", hint: "🚀 مؤسس تسلا وسبيس إكس", difficulty: 1, category: "شخصيات", info: "Elon Musk قاد ثورة السيارات الكهربائية ويحلم بالمريخ. أيضاً اشترى Twitter وغير اسمه لـ X. شخصية مثيرة للجدل." },
-            { word: "زوكربيرج", hint: "👤 مؤسس فيسبوك الشاب", difficulty: 2, category: "شخصيات", info: "Mark Zuckerberg أنشأ Facebook من غرفة سكنه عام 2004 عندما كان طالباً. الآن يركز على الميتافيرس عبر Meta." },
-            { word: "بيزوس", hint: "📦 مؤسس أمازون العملاق", difficulty: 2, category: "شخصيات", info: "Jeff Bezos أسس Amazon كمتجر كتب عام 1994 من مرآب منزله. الآن أكبر متجر إلكتروني وشركة سحابية (AWS)." },
-            { word: "بيتشاي", hint: "🔍 الرئيس التنفيذي لجوجل", difficulty: 2, category: "شخصيات", info: "Sundar Pichai قاد تطوير Chrome ثم أصبح CEO لـ Google عام 2015. يقود الآن Alphabet بالكامل وتطوير الذكاء الاصطناعي." },
-            { word: "تورفالدز", hint: "🐧 مبتكر نظام لينكس", difficulty: 2, category: "شخصيات", info: "Linus Torvalds أنشأ Linux kernel عام 1991 كطالب فنلندي. الآن يشغل 96% من خوادم الإنترنت وأنظمة أندرويد." },
-            { word: "وزنياك", hint: "🍎 مؤسس آبل مع جوبز", difficulty: 2, category: "شخصيات", info: "Steve Wozniak المهندس العبقري الذي صمم أول حواسيب Apple. ترك الشركة 1985 لكن ظل صديقاً لها ولجوبز." },
-            { word: "تورينج", hint: "🧮 أبو علم الحاسوب الحديث", difficulty: 3, category: "شخصيات", info: "Alan Turing كسر شيفرة إنجما في الحرب العالمية الثانية وأنقذ ملايين الأرواح. اختبار تورينج لقياس ذكاء الآلات سمي باسمه." },
-            { word: "كنوث", hint: "📚 أبو تحليل الخوارزميات", difficulty: 3, category: "شخصيات", info: "Donald Knuth كتب 'The Art of Computer Programming' السلسلة الأسطورية. أنشأ TeX لتنسيق الرياضيات. أسطورة حية." },
-            { word: "هوبر", hint: "👩‍💻 مخترعة أول مترجم برمجي", difficulty: 3, category: "شخصيات", info: "Grace Hopper أميرالة بحرية وعالمة حاسوب. أنشأت أول مترجم برمجي وصاغت مصطلح 'bug' للأخطاء بعد إيجاد حشرة حقيقية في حاسوب." },
-            { word: "بيرنرزلي", hint: "🌐 مخترع الويب", difficulty: 3, category: "شخصيات", info: "Tim Berners-Lee اخترع الويب عام 1989 في CERN. ابتكر HTTP وHTML وأول متصفح وخادم ويب. غير العالم للأبد." },
-            { word: "ستروستروب", hint: "⚡ مبتكر لغة C++", difficulty: 3, category: "شخصيات", info: "Bjarne Stroustrup طور C++ عام 1985 في مختبرات Bell. أضاف البرمجة الكائنية للغة C وأثر في لغات عديدة." },
-            { word: "ريتشي", hint: "🔧 مبتكر لغة C ونظام Unix", difficulty: 3, category: "شخصيات", info: "Dennis Ritchie أنشأ لغة C عام 1972. ساهم في تطوير Unix. أثر في كل أنظمة التشغيل الحديثة من Windows لـ Linux." },
-            { word: "ثومبسون", hint: "🔨 مطور Unix المشارك", difficulty: 3, category: "شخصيات", info: "Ken Thompson شارك في إنشاء Unix ولغة B (أصل C). صمم ترميز UTF-8 ولعب دوراً في تطوير لغة Go." },
-            
-            // تقنيات متقدمة صعبة (23)
-            { word: "ذكاءاصطناعي", hint: "🤖 محاكاة الذكاء البشري", difficulty: 3, category: "متقدم", info: "الذكاء الاصطناعي يحاكي القدرات البشرية كالتعلم والاستنتاج. من التعرف على الوجوه للسيارات ذاتية القيادة. مجال يتطور بسرعة هائلة." },
-            { word: "تعلمآلي", hint: "🧠 تعلم الآلة من البيانات", difficulty: 3, category: "متقدم", info: "التعلم الآلي يمكّن الحواسيب من التعلم من التجربة بدون برمجة صريحة. يستخدم في التوصيات، الترجمة، والتنبؤات." },
-            { word: "تعلمعميق", hint: "🕸️ شبكات عصبية متعددة الطبقات", difficulty: 3, category: "متقدم", info: "التعلم العميق يستخدم شبكات عصبية عميقة محاكية للدماغ. قوي في الصور، الصوت، واللغة. أساس ChatGPT وDALL-E." },
-            { word: "شبكةعصبية", hint: "🧠 نموذج مستوحى من الدماغ", difficulty: 3, category: "متقدم", info: "الشبكات العصبية تحاكي عمل خلايا الدماغ. طبقات من العقد تتعلم الأنماط المعقدة. أساس التعلم العميق الحديث." },
-            { word: "معالجةطبيعية", hint: "💬 فهم اللغة البشرية بالآلة", difficulty: 3, category: "متقدم", info: "معالجة اللغة الطبيعية تمكن الآلات من فهم وتوليد اللغة البشرية. ChatGPT وSiri أمثلة. مجال معقد ومذهل." },
-            { word: "رؤيةحاسوبية", hint: "👁️ فهم الصور والفيديو", difficulty: 3, category: "متقدم", info: "الرؤية الحاسوبية تمكن الآلات من 'رؤية' وفهم الصور. تستخدم في التعرف على الوجوه، السيارات ذاتية القيادة، والتشخيص الطبي." },
-            { word: "بلوكتشين", hint: "⛓️ تقنية السجل الموزع", difficulty: 3, category: "متقدم", info: "البلوكتشين سجل موزع غير قابل للتعديل. كل كتلة مربوطة بالسابقة. أساس العملات الرقمية والعقود الذكية." },
-            { word: "عملةرقمية", hint: "💰 أموال رقمية لامركزية", difficulty: 3, category: "متقدم", info: "العملة الرقمية نقود رقمية بدون سلطة مركزية. Bitcoin أول عملة (2009)، Ethereum تدعم العقود الذكية." },
-            { word: "عقدذكي", hint: "📜 برنامج ذاتي التنفيذ على البلوكتشين", difficulty: 3, category: "متقدم", info: "العقد الذكي كود ينفذ تلقائياً عند تحقق الشروط على البلوكتشين. يلغي الحاجة للوسطاء في المعاملات." },
-            { word: "حوسبةسحابية", hint: "☁️ خدمات حاسوبية عبر الإنترنت", difficulty: 3, category: "متقدم", info: "الحوسبة السحابية توفر موارد حاسوبية عبر الإنترنت. AWS وAzure وGoogle Cloud أكبر المزودين. أساس الإنترنت الحديث." },
-            { word: "حوسبةكمية", hint: "⚛️ حوسبة بالجسيمات دون الذرية", difficulty: 3, category: "متقدم", info: "الحوسبة الكمية تستخدم الكيوبتات بدلاً من البتات. تستفيد من الظواهر الكمية. يمكنها حل مسائل مستحيلة على الحواسيب العادية." },
-            { word: "واقعافتراضي", hint: "🥽 عالم رقمي ثلاثي الأبعاد", difficulty: 3, category: "متقدم", info: "الواقع الافتراضي يغمرك في عالم رقمي كامل عبر النظارات. يستخدم في الألعاب، التدريب، والتعليم. المستقبل الميتافيرس." },
-            { word: "واقعمعزز", hint: "📱 إضافة عناصر رقمية للعالم الحقيقي", difficulty: 3, category: "متقدم", info: "الواقع المعزز يضيف طبقة رقمية فوق العالم الحقيقي عبر الكاميرا. Pokémon GO وفلاتر Snapchat أمثلة شهيرة." },
-            { word: "انترنتالاشياء", hint: "🌐 اتصال الأجهزة بالإنترنت", difficulty: 3, category: "متقدم", info: "إنترنت الأشياء يربط الأجهزة بالإنترنت. من الثلاجات الذكية للساعات وأجهزة الاستشعار الصناعية. مليارات الأجهزة متصلة." },
-            { word: "امنسيبراني", hint: "🛡️ حماية الأنظمة الرقمية", difficulty: 3, category: "متقدم", info: "الأمن السيبراني يحمي الأنظمة من الهجمات الإلكترونية. يشمل التشفير، الجدران النارية، والاختبارات الأمنية. مجال حيوي متنامي." },
-            { word: "بياناتضخمة", hint: "📊 كميات هائلة من المعلومات", difficulty: 3, category: "متقدم", info: "البيانات الضخمة كميات هائلة من المعلومات يصعب معالجتها بالطرق التقليدية. تحليلها يكشف أنماط مخفية ويساعد في القرارات." },
-            { word: "حوسبةطرفية", hint: "📡 معالجة البيانات قرب المصدر", difficulty: 3, category: "متقدم", info: "الحوسبة الطرفية تعالج البيانات قرب مصدرها بدلاً من إرسالها للسحابة. أسرع وأقل استهلاكاً للنطاق الترددي. مهمة للـ IoT." },
-            { word: "اتمتة", hint: "🤖 تنفيذ مهام بدون تدخل بشري", difficulty: 3, category: "متقدم", info: "الأتمتة استخدام التكنولوجيا لإنجاز مهام تلقائياً بدون تدخل بشري. من المصانع للبرمجة، توفر الوقت والجهد لكن تثير قلق وظائف." },
-            { word: "حوسبةموزعة", hint: "🌐 توزيع المعالجة على أجهزة متعددة", difficulty: 3, category: "متقدم", info: "الحوسبة الموزعة توزع المعالجة على عدة أجهزة متصلة بشبكة. أساس الخدمات السحابية والتطبيقات الضخمة." },
-            { word: "معماريةخدمية", hint: "🧩 تقسيم التطبيق لخدمات صغيرة", difficulty: 3, category: "متقدم", info: "المعمارية الخدمية (Microservices) تقسم التطبيق لخدمات صغيرة مستقلة. أسهل للتطوير والصيانة لكن أعقد في الإدارة." },
-            { word: "حاوية", hint: "📦 بيئة معزولة لتشغيل التطبيقات", difficulty: 3, category: "متقدم", info: "الحاوية (Container) بيئة خفيفة معزولة لتشغيل التطبيقات. Docker أشهر تقنية. تسهل النشر والتطوير عبر بيئات مختلفة." },
-            { word: "تعلمتعزيزي", hint: "🎮 تعلم بالمكافأة والعقاب", difficulty: 3, category: "متقدم", info: "التعلم التعزيزي يتعلم الوكيل من التجربة والخطأ عبر المكافآت. استخدم في AlphaGo للفوز على بطل العالم في لعبة Go." },
-            { word: "تعلمفيدرالي", hint: "🔐 تعلم آلي بدون مشاركة البيانات", difficulty: 3, category: "متقدم", info: "التعلم الفيدرالي يدرب النماذج على أجهزة متعددة دون نقل البيانات الخام. يحمي الخصوصية ويستخدم في الهواتف." }
-        ];
+    window.onkeydown = function(e) {
+      if (e.key == 'Shift') shift = true;
+      if (e.code == 'Space') arr = [];
+    }
+    
+    window.onkeyup = function(e) {
+      if (e.key == 'Shift') shift = false;
+    }
 
-        const dataHandler = {
-            onDataChanged(data) {
-                gameData = data || [];
-                if (data && data.length > 0) {
-                    const latestGame = data[data.length - 1];
-                    if (latestGame.score !== undefined) {
-                        currentScore = latestGame.score;
-                        currentLevel = latestGame.level;
-                        wordsCompleted = latestGame.completedWords ? parseInt(latestGame.completedWords) : 0;
-                        currentDifficulty = latestGame.currentDifficulty || 1;
-                        updateDisplay();
-                    }
-                }
-            }
-        };
+    function run(res) {
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+      ctx.drawImage(res.image, 0, 0, c.width, c.height);
+      ctx.fillStyle = 'rgba(10, 6, 2, 0.85)';
+      ctx.fillRect(0, 0, c.width, c.height);
 
-        async function initializeGame() {
-            const initResult = await window.dataSdk.init(dataHandler);
-            if (!initResult.isOk) {
-                console.error("Failed to initialize data SDK");
-            }
-            
-            if (window.elementSdk) {
-                window.elementSdk.init({
-                    defaultConfig,
-                    onConfigChange: async (config) => {
-                        document.getElementById('welcomeTitle').textContent = config.game_title || defaultConfig.game_title;
-                        document.getElementById('welcomeDescription').textContent = config.welcome_description || defaultConfig.welcome_description;
-                        const startBtnText = document.getElementById('startButtonText');
-                        if (startBtnText) {
-                            startBtnText.textContent = '🚀 ' + (config.start_button_text || defaultConfig.start_button_text);
-                        }
-                        const gameTitle = document.getElementById('gameTitle');
-                        if (gameTitle) {
-                            gameTitle.textContent = config.game_title || defaultConfig.game_title;
-                        }
-                        const instructionText = document.getElementById('instructionText');
-                        if (instructionText) {
-                            instructionText.textContent = config.instruction_text || defaultConfig.instruction_text;
-                        }
-                    },
-                    mapToCapabilities: (config) => ({
-                        recolorables: [],
-                        borderables: [],
-                        fontEditable: undefined,
-                        fontSizeable: undefined
-                    }),
-                    mapToEditPanelValues: (config) => new Map([
-                        ["game_title", config.game_title || defaultConfig.game_title],
-                        ["welcome_description", config.welcome_description || defaultConfig.welcome_description],
-                        ["start_button_text", config.start_button_text || defaultConfig.start_button_text],
-                        ["instruction_text", config.instruction_text || defaultConfig.instruction_text]
-                    ])
-                });
-            }
+      ctx.shadowColor = '#F5D061';
+      ctx.shadowBlur = 15;
+      ctx.strokeStyle = '#F5D061';
+      ctx.lineWidth = 6;
+      ctx.lineCap = 'round';
+      ctx.lineJoin = 'round';
+
+      for (var i = 0; i < arr.length; i++) {
+        ctx.beginPath();
+        for (var j = 0; j < arr[i].length; j++) {
+          if (j == 0) ctx.moveTo(arr[i][j].x, arr[i][j].y);
+          else ctx.lineTo(arr[i][j].x, arr[i][j].y);
+        }
+        ctx.stroke();
+      }
+
+      if (res.multiHandLandmarks && res.multiHandLandmarks.length > 0) {
+        var lm = res.multiHandLandmarks[0];
+        drawConnectors(ctx, lm, HAND_CONNECTIONS, {color: 'rgba(245, 208, 97, 0.3)', lineWidth: 2});
+        drawLandmarks(ctx, lm, {color: '#FFFFFF', lineWidth: 1, radius: 2});
+
+        var ind = lm[8];
+        var rx = ind.x * c.width;
+        var ry = ind.y * c.height;
+
+        if (sx == null) {
+          sx = rx; 
+          sy = ry;
+        } else {
+          sx += (rx - sx) * 0.45;
+          sy += (ry - sy) * 0.45;
         }
 
-        function startGame() {
-            document.getElementById('welcomeScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'flex';
-            loadNewWord();
+        ctx.beginPath();
+        ctx.arc(sx, sy, 6, 0, 2 * Math.PI);
+        if (shift) { 
+          ctx.fillStyle = '#FFFFFF'; 
+        } else { 
+          ctx.fillStyle = 'rgba(245, 208, 97, 0.4)'; 
         }
+        ctx.fill();
 
-        function getAvailableWords() {
-            return words.filter(w => w.difficulty <= currentDifficulty && !usedWords.includes(w.word));
+        if (shift) {
+          if (!draw) {
+            draw = true;
+            cur = [];
+            arr.push(cur);
+          }
+          cur.push({x: sx, y: sy});
+        } else {
+          draw = false;
         }
+      } else {
+        draw = false;
+        sx = null;
+      }
+    }
 
-        function loadNewWord() {
-            const availableWords = getAvailableWords();
-            
-            if (availableWords.length === 0) {
-                usedWords = [];
-                currentDifficulty = Math.min(currentDifficulty + 1, 3);
-            }
-            
-            const filteredWords = getAvailableWords();
-            currentWordData = filteredWords[Math.floor(Math.random() * filteredWords.length)];
-            currentWord = currentWordData.word;
-            usedWords.push(currentWord);
-            
-            currentLetters = shuffleArray(currentWord.split(''));
-            
-            document.getElementById('wordHint').textContent = currentWordData.hint;
-            
-            const difficultyBadge = document.getElementById('difficultyBadge');
-            const categoryBadge = document.getElementById('categoryBadge');
-            
-            if (currentWordData.difficulty === 1) {
-                difficultyBadge.className = 'difficulty-badge difficulty-easy';
-                difficultyBadge.style.cssText = 'display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(0, 255, 157, 0.2); border-color: #00ff9d; color: #00ff9d;';
-                difficultyBadge.textContent = '⭐ سهل';
-            } else if (currentWordData.difficulty === 2) {
-                difficultyBadge.className = 'difficulty-badge difficulty-medium';
-                difficultyBadge.style.cssText = 'display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(255, 133, 0, 0.2); border-color: #ff8500; color: #ff8500;';
-                difficultyBadge.textContent = '⭐⭐ متوسط';
-            } else {
-                difficultyBadge.className = 'difficulty-badge difficulty-hard';
-                difficultyBadge.style.cssText = 'display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid; background: rgba(255, 0, 110, 0.2); border-color: #ff006e; color: #ff006e;';
-                difficultyBadge.textContent = '⭐⭐⭐ صعب';
-            }
-            
-            categoryBadge.textContent = currentWordData.category;
-            
-            const dropZones = document.getElementById('dropZones');
-            dropZones.innerHTML = '';
-            for (let i = 0; i < currentWord.length; i++) {
-                const zone = document.createElement('div');
-                zone.className = 'drop-zone w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black';
-                zone.dataset.index = i;
-                zone.style.color = '#0a0e27';
-                zone.addEventListener('dragover', handleDragOver);
-                zone.addEventListener('drop', handleDrop);
-                zone.addEventListener('dragleave', handleDragLeave);
-                dropZones.appendChild(zone);
-            }
-            
-            const letterBank = document.getElementById('letterBank');
-            letterBank.innerHTML = '';
-            currentLetters.forEach((letter, index) => {
-                const tile = document.createElement('div');
-                tile.className = 'letter-tile w-16 h-16 rounded-2xl flex items-center justify-center text-3xl font-black';
-                tile.style.color = '#ffffff';
-                tile.textContent = letter;
-                tile.draggable = true;
-                tile.dataset.letter = letter;
-                tile.dataset.originalIndex = index;
-                tile.addEventListener('dragstart', handleDragStart);
-                tile.addEventListener('dragend', handleDragEnd);
-                letterBank.appendChild(tile);
-            });
-            
-            document.getElementById('infoPanel').style.display = 'none';
-        }
+    var h = new Hands({
+      locateFile: (file) => {
+        return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
+      }
+    });
+    
+    h.setOptions({ 
+      maxNumHands: 1, 
+      modelComplexity: 1, 
+      minDetectionConfidence: 0.5, 
+      minTrackingConfidence: 0.5 
+    });
+    
+    h.onResults(run);
 
-        function shuffleArray(array) {
-            const newArray = [...array];
-            for (let i = newArray.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
-            }
-            return newArray;
-        }
-
-        function handleDragStart(e) {
-            draggedElement = e.target;
-            e.target.style.opacity = '0.5';
-        }
-
-        function handleDragEnd(e) {
-            e.target.style.opacity = '1';
-        }
-
-        function handleDragOver(e) {
-            e.preventDefault();
-            if (e.currentTarget.classList.contains('drop-zone') && !e.currentTarget.classList.contains('filled')) {
-                e.currentTarget.classList.add('drag-over');
-            }
-        }
-
-        function handleDragLeave(e) {
-            e.currentTarget.classList.remove('drag-over');
-        }
-
-        function handleDrop(e) {
-            e.preventDefault();
-            const dropZone = e.currentTarget;
-            dropZone.classList.remove('drag-over');
-            
-            if (!dropZone.classList.contains('filled') && draggedElement) {
-                dropZone.textContent = draggedElement.dataset.letter;
-                dropZone.classList.add('filled');
-                dropZone.style.color = '#0a0e27';
-                draggedElement.style.display = 'none';
-            }
-        }
-
-        async function checkWord() {
-            if (isLoading) return;
-            
-            const dropZones = document.querySelectorAll('.drop-zone');
-            let formedWord = '';
-            let allFilled = true;
-            
-            dropZones.forEach(zone => {
-                if (zone.textContent) {
-                    formedWord += zone.textContent;
-                } else {
-                    allFilled = false;
-                }
-            });
-            
-            if (!allFilled) {
-                showMessage('⚠️ أكمل جميع الحروف!', '#ff8500');
-                return;
-            }
-            
-            if (formedWord === currentWord) {
-                isLoading = true;
-                document.getElementById('checkBtn').innerHTML = '<div class="loading-spinner mx-auto"></div>';
-                
-                const points = currentWordData.difficulty === 1 ? 100 : currentWordData.difficulty === 2 ? 200 : 300;
-                currentScore += points * currentLevel;
-                wordsCompleted++;
-                
-                if (wordsCompleted % 3 === 0 && currentDifficulty < 3) {
-                    currentDifficulty++;
-                }
-                
-                if (wordsCompleted % 5 === 0) {
-                    currentLevel++;
-                }
-                
-                const gameDataObj = {
-                    id: Date.now().toString(),
-                    level: currentLevel,
-                    score: currentScore,
-                    completedWords: wordsCompleted.toString(),
-                    timestamp: new Date().toISOString(),
-                    lastSpinTime: '',
-                    currentDifficulty: currentDifficulty
-                };
-                
-                const result = await window.dataSdk.create(gameDataObj);
-                
-                if (result.isOk) {
-                    updateDisplay();
-                    showMessage(`🎉 رائع! +${points * currentLevel} نقطة!`, '#00ff9d');
-                    
-                    const infoPanel = document.getElementById('infoPanel');
-                    const infoTitle = document.getElementById('infoTitle');
-                    const infoContent = document.getElementById('infoContent');
-                    
-                    infoTitle.textContent = currentWordData.isEnglish ? `${currentWord.toUpperCase()} - معلومات` : 'معلومات تقنية';
-                    infoContent.textContent = currentWordData.info;
-                    infoPanel.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        loadNewWord();
-                        isLoading = false;
-                        document.getElementById('checkBtn').innerHTML = '<span class="relative z-10">✓ تحقق</span>';
-                    }, 5000);
-                } else {
-                    showMessage('❌ خطأ في حفظ البيانات', '#ff006e');
-                    isLoading = false;
-                    document.getElementById('checkBtn').innerHTML = '<span class="relative z-10">✓ تحقق</span>';
-                }
-            } else {
-                showMessage('❌ حاول مرة أخرى!', '#ff006e');
-            }
-        }
-
-        function resetWord() {
-            const dropZones = document.querySelectorAll('.drop-zone');
-            dropZones.forEach(zone => {
-                zone.textContent = '';
-                zone.classList.remove('filled', 'correct', 'incorrect');
-                zone.style.background = 'rgba(50, 50, 50, 0.5)';
-                zone.style.color = '#000000';
-            });
-            
-            const tiles = document.querySelectorAll('.letter-tile');
-            tiles.forEach(tile => {
-                tile.style.display = 'flex';
-            });
-            
-            hideMessage();
-        }
-
-        function skipWord() {
-            showMessage('⏭️ تم تخطي الكلمة', '#ff8500');
-            setTimeout(() => {
-                loadNewWord();
-                hideMessage();
-            }, 1000);
-        }
-
-        function updateDisplay() {
-            document.getElementById('score').textContent = currentScore;
-            document.getElementById('level').textContent = currentLevel;
-            document.getElementById('wordsCompleted').textContent = wordsCompleted;
-            
-            const difficultyDisplay = document.getElementById('currentDifficulty');
-            if (currentDifficulty === 1) {
-                difficultyDisplay.textContent = '⭐';
-            } else if (currentDifficulty === 2) {
-                difficultyDisplay.textContent = '⭐⭐';
-            } else {
-                difficultyDisplay.textContent = '⭐⭐⭐';
-            }
-        }
-
-        function showMessage(text, color) {
-            const message = document.getElementById('message');
-            message.textContent = text;
-            message.style.borderColor = color;
-            message.style.color = color;
-            message.style.boxShadow = `0 4px 16px ${color}30`;
-            message.style.display = 'block';
-            message.classList.add('word-complete');
-        }
-
-        function hideMessage() {
-            const message = document.getElementById('message');
-            message.style.display = 'none';
-        }
-
-        document.getElementById('startGameBtn').addEventListener('click', startGame);
-        document.getElementById('checkBtn').addEventListener('click', checkWord);
-        document.getElementById('resetBtn').addEventListener('click', resetWord);
-        document.getElementById('skipBtn').addEventListener('click', skipWord);
-
-        initializeGame();
-    </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9b40175415aea0e6',t:'MTc2Njc0NzAwMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+    var cam = new Camera(vid, {
+      onFrame: async () => { await h.send({image: vid}); },
+      width: 1280, 
+      height: 720
+    });
+    
+    cam.start();
+  </script>
+</body>
 </html>
