@@ -1,134 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>ELEGANZA – Admin Panel</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+<meta charset="UTF-8" />
+<title>Store Admin Panel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- نفس الخط -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    .font-playfair { font-family: 'Playfair Display', serif; }
+<style>
+  * { font-family: 'Inter', sans-serif; }
+  .title { font-family: 'Playfair Display', serif; }
 
-    .hover-lift {
-      transition: all .35s ease;
-    }
-    .hover-lift:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 20px 40px rgba(0,0,0,.15);
-    }
+  .fade { animation: fade .4s ease; }
+  @keyframes fade {
+    from { opacity:0; transform:translateY(10px); }
+    to { opacity:1; transform:none; }
+  }
 
-    .fade-in {
-      animation: fadeIn .6s ease-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity:0; transform:translateY(15px); }
-      to { opacity:1; transform:none; }
-    }
-  </style>
+  .lift { transition:.3s ease; }
+  .lift:hover { transform:translateY(-4px); box-shadow:0 15px 30px rgba(0,0,0,.12); }
+
+  .hidden-section { display:none; }
+</style>
 </head>
 
-<body class="bg-gray-50 text-gray-900">
+<body class="bg-gray-100">
 
-<!-- Mobile Button -->
-<button id="menuBtn"
-  class="md:hidden fixed top-4 left-4 z-50 bg-black text-white p-3 rounded-lg">
-  ☰
-</button>
+<!-- Mobile menu -->
+<button id="menuBtn" class="md:hidden fixed top-4 left-4 z-50 bg-black text-white px-4 py-2 rounded-lg">☰</button>
 
 <!-- Sidebar -->
 <aside id="sidebar"
-  class="fixed md:static inset-y-0 left-0 w-72 bg-white border-r border-gray-200
-         transform -translate-x-full md:translate-x-0 transition-transform duration-300 z-40">
+ class="fixed md:static inset-y-0 left-0 w-72 bg-white border-r transform -translate-x-full md:translate-x-0 transition z-40">
 
-  <div class="p-6 border-b border-gray-200 flex items-center gap-3">
-    <div class="w-10 h-10 bg-black rounded-full"></div>
-    <div>
-      <h2 class="font-playfair text-xl font-bold">ELEGANZA</h2>
-      <p class="text-xs text-gray-500 tracking-widest">ADMIN</p>
-    </div>
+  <div class="p-6 border-b">
+    <h2 class="title text-2xl font-bold">STORE</h2>
+    <p class="text-xs text-gray-500 tracking-widest">ADMIN PANEL</p>
   </div>
 
-  <nav class="p-4 space-y-2">
-    <a class="block px-4 py-3 rounded-lg bg-black text-white">Dashboard</a>
-    <a class="block px-4 py-3 rounded-lg hover:bg-gray-100">Products</a>
-    <a class="block px-4 py-3 rounded-lg hover:bg-gray-100">Categories</a>
-    <a class="block px-4 py-3 rounded-lg hover:bg-gray-100">Shipping</a>
-    <a class="block px-4 py-3 rounded-lg hover:bg-gray-100">Social Links</a>
-    <a class="block px-4 py-3 rounded-lg hover:bg-gray-100">Store Settings</a>
+  <nav class="p-4 space-y-2 text-sm">
+    <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-lg bg-black text-white">Dashboard</button>
+    <button onclick="showSection('products')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Products</button>
+    <button onclick="showSection('categories')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Categories</button>
+    <button onclick="showSection('shipping')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Shipping</button>
+    <button onclick="showSection('social')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Social Links</button>
+    <button onclick="showSection('settings')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Store Settings</button>
   </nav>
 </aside>
 
-<!-- Overlay -->
 <div id="overlay" class="fixed inset-0 bg-black/40 hidden z-30 md:hidden"></div>
 
 <!-- Main -->
-<main class="md:ml-72 p-6 fade-in">
+<main class="md:ml-72 p-8 space-y-10">
 
-  <!-- Header -->
-  <header class="mb-10 flex justify-between items-center">
-    <h1 class="font-playfair text-3xl font-bold">Dashboard</h1>
-    <button class="px-6 py-3 bg-black text-white rounded-lg hover-lift">
-      + Add Product
-    </button>
-  </header>
+<!-- DASHBOARD -->
+<section id="dashboard" class="section fade">
+  <h1 class="title text-3xl mb-6">Dashboard</h1>
+  <div class="grid md:grid-cols-3 gap-6">
+    <div class="bg-white p-6 rounded-lg lift">Products<br><b class="text-3xl">24</b></div>
+    <div class="bg-white p-6 rounded-lg lift">Categories<br><b class="text-3xl">6</b></div>
+    <div class="bg-white p-6 rounded-lg lift">Orders<br><b class="text-3xl">128</b></div>
+  </div>
+</section>
 
-  <!-- Cards -->
-  <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-    <div class="bg-white p-6 rounded-lg border hover-lift">
-      <p class="text-gray-500 text-sm">Products</p>
-      <h3 class="text-3xl font-bold mt-2">24</h3>
-    </div>
-    <div class="bg-white p-6 rounded-lg border hover-lift">
-      <p class="text-gray-500 text-sm">Categories</p>
-      <h3 class="text-3xl font-bold mt-2">6</h3>
-    </div>
-    <div class="bg-white p-6 rounded-lg border hover-lift">
-      <p class="text-gray-500 text-sm">Orders</p>
-      <h3 class="text-3xl font-bold mt-2">128</h3>
-    </div>
-  </section>
+<!-- PRODUCTS -->
+<section id="products" class="section hidden-section fade">
+  <h1 class="title text-3xl mb-6">Add Product</h1>
+  <div class="bg-white p-8 rounded-lg space-y-5">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Product Name">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Price">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Sizes (S, M, L)">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Colors (Black, White)">
+    <input type="file" class="w-full border px-4 py-3 rounded-lg">
+    <textarea class="w-full border px-4 py-3 rounded-lg" rows="4" placeholder="Description"></textarea>
+    <button class="bg-black text-white px-8 py-3 rounded-lg lift">Save Product</button>
+  </div>
+</section>
 
-  <!-- Product Form (UI) -->
-  <section class="bg-white border rounded-lg p-8">
-    <h2 class="font-playfair text-2xl mb-6">Add / Edit Product</h2>
+<!-- CATEGORIES -->
+<section id="categories" class="section hidden-section fade">
+  <h1 class="title text-3xl mb-6">Categories</h1>
+  <div class="bg-white p-8 rounded-lg space-y-4">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Category name">
+    <button class="bg-black text-white px-6 py-3 rounded-lg lift">Add Category</button>
+  </div>
+</section>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <input class="border px-4 py-3 rounded-lg" placeholder="Product name" />
-      <input class="border px-4 py-3 rounded-lg" placeholder="Price" />
+<!-- SHIPPING -->
+<section id="shipping" class="section hidden-section fade">
+  <h1 class="title text-3xl mb-6">Shipping Settings</h1>
+  <div class="bg-white p-8 rounded-lg space-y-4">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="ولاية">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="سعر التوصيل">
+    <button class="bg-black text-white px-6 py-3 rounded-lg lift">Save</button>
+  </div>
+</section>
 
-      <input class="border px-4 py-3 rounded-lg" placeholder="Sizes (S, M, L)" />
-      <input class="border px-4 py-3 rounded-lg" placeholder="Colors (Black, White)" />
+<!-- SOCIAL -->
+<section id="social" class="section hidden-section fade">
+  <h1 class="title text-3xl mb-6">Social Links</h1>
+  <div class="bg-white p-8 rounded-lg space-y-4">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Instagram URL">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Facebook URL">
+    <input class="w-full border px-4 py-3 rounded-lg" placeholder="TikTok URL">
+    <button class="bg-black text-white px-6 py-3 rounded-lg lift">Save Links</button>
+  </div>
+</section>
 
-      <input type="file" class="border px-4 py-3 rounded-lg md:col-span-2" />
-
-      <textarea class="border px-4 py-3 rounded-lg md:col-span-2" rows="4"
-        placeholder="Product description"></textarea>
-    </div>
-
-    <button class="mt-6 px-8 py-4 bg-black text-white rounded-lg hover-lift">
-      Save Product
-    </button>
-  </section>
+<!-- SETTINGS -->
+<section id="settings" class="section hidden-section fade">
+  <h1 class="title text-3xl mb-6">Store Settings</h1>
+  <div class="bg-white p-8 rounded-lg space-y-4">
+    <label class="block">Change Logo</label>
+    <input type="file" class="w-full border px-4 py-3 rounded-lg">
+  </div>
+</section>
 
 </main>
 
 <script>
-  const menuBtn = document.getElementById('menuBtn');
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
+const sections = document.querySelectorAll('.section');
+const navBtns = document.querySelectorAll('.nav-btn');
 
-  menuBtn.onclick = () => {
-    sidebar.classList.toggle('-translate-x-full');
-    overlay.classList.toggle('hidden');
-  };
-  overlay.onclick = () => {
-    sidebar.classList.add('-translate-x-full');
-    overlay.classList.add('hidden');
-  };
+function showSection(id){
+  sections.forEach(s => s.classList.add('hidden-section'));
+  document.getElementById(id).classList.remove('hidden-section');
+
+  navBtns.forEach(b => b.classList.remove('bg-black','text-white'));
+  event.target.classList.add('bg-black','text-white');
+}
+
+const menuBtn = document.getElementById('menuBtn');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.getElementById('overlay');
+
+menuBtn.onclick = () => {
+  sidebar.classList.toggle('-translate-x-full');
+  overlay.classList.toggle('hidden');
+};
+overlay.onclick = () => {
+  sidebar.classList.add('-translate-x-full');
+  overlay.classList.add('hidden');
+};
 </script>
 
 </body>
