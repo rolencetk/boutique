@@ -1,149 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<title>Store Admin Panel</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-<style>
-  * { font-family: 'Inter', sans-serif; }
-  .title { font-family: 'Playfair Display', serif; }
-
-  .fade { animation: fade .4s ease; }
-  @keyframes fade {
-    from { opacity:0; transform:translateY(10px); }
-    to { opacity:1; transform:none; }
-  }
-
-  .lift { transition:.3s ease; }
-  .lift:hover { transform:translateY(-4px); box-shadow:0 15px 30px rgba(0,0,0,.12); }
-
-  .hidden-section { display:none; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>متاجرنا - اصنع متجرك الآن</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+<body>
+    <!-- القائمة العلوية -->
+    <nav>
+        <div class="logo">🛒 متاجرنا</div>
+        <div class="nav-links">
+            <a href="#about">من نحن</a>
+            <a href="#features">مميزاتنا</a>
+            <a href="#register">سجل الآن</a>
+            <a href="dashboard.html" class="btn-login">دخول</a>
+        </div>
+    </nav>
 
-<body class="bg-gray-100">
+    <!-- Hero Section -->
+    <header class="hero">
+        <h1>اصنع متجرك الإلكتروني في دقائق</h1>
+        <p>تصاميم احترافية، أسعار مناسبة، وبدون تعقيد</p>
+        <a href="#register" class="btn-main">ابدأ الآن</a>
+    </header>
 
-<!-- Mobile menu -->
-<button id="menuBtn" class="md:hidden fixed top-4 left-4 z-50 bg-black text-white px-4 py-2 rounded-lg">☰</button>
+    <!-- من نحن -->
+    <section id="about" class="section">
+        <h2>من نحن</h2>
+        <p>فريق متخصص في إنشاء المتاجر الإلكترونية البسيطة والجميلة</p>
+    </section>
 
-<!-- Sidebar -->
-<aside id="sidebar"
- class="fixed md:static inset-y-0 left-0 w-72 bg-white border-r transform -translate-x-full md:translate-x-0 transition z-40">
+    <!-- المميزات -->
+    <section id="features" class="section">
+        <h2>مميزاتنا</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <span>🎨</span>
+                <h3>تصاميم جميلة</h3>
+                <p>تصاميم متجاوبة ومريحة للعين</p>
+            </div>
+            <div class="feature-card">
+                <span>📦</span>
+                <h3>إدارة سهلة</h3>
+                <p>وحة تحكم بسيطة وسهلة</p>
+            </div>
+            <div class="feature-card">
+                <span>💰</span>
+                <h3>أسعار مناسبة</h3>
+                <p>باقات تناسب الجميع</p>
+            </div>
+        </div>
+    </section>
 
-  <div class="p-6 border-b">
-    <h2 class="title text-2xl font-bold">STORE</h2>
-    <p class="text-xs text-gray-500 tracking-widest">ADMIN PANEL</p>
-  </div>
+    <!-- نموذج التسجيل -->
+    <section id="register" class="section">
+        <h2>سجل الآن</h2>
+        <form id="registerForm" class="register-form">
+            <input type="text" id="clientName" placeholder="الاسم" required>
+            <input type="text" id="clientPhone" placeholder="رقم الهاتف" required>
+            <input type="text" id="clientWhatsapp" placeholder="واتساب" required>
+            <input type="text" id="storeName" placeholder="اسم المتجر" required>
+            <button type="submit">إرسال الطلب</button>
+        </form>
+        <p id="registerStatus"></p>
+    </section>
 
-  <nav class="p-4 space-y-2 text-sm">
-    <button onclick="showSection('dashboard')" class="nav-btn w-full text-left px-4 py-3 rounded-lg bg-black text-white">Dashboard</button>
-    <button onclick="showSection('products')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Products</button>
-    <button onclick="showSection('categories')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Categories</button>
-    <button onclick="showSection('shipping')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Shipping</button>
-    <button onclick="showSection('social')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Social Links</button>
-    <button onclick="showSection('settings')" class="nav-btn w-full text-left px-4 py-3 rounded-lg hover:bg-gray-100">Store Settings</button>
-  </nav>
-</aside>
+    <!-- التذييل -->
+    <footer>
+        <p>© 2024 متاجرنا - جميع الحقوق محفوظة</p>
+    </footer>
 
-<div id="overlay" class="fixed inset-0 bg-black/40 hidden z-30 md:hidden"></div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // كود إرسال النموذج لـ Google Sheets
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('clientName').value,
+                phone: document.getElementById('clientPhone').value,
+                whatsapp: document.getElementById('clientWhatsapp').value,
+                storeName: document.getElementById('storeName').value,
+                date: new Date().toLocaleDateString('ar-SA')
+            };
 
-<!-- Main -->
-<main class="md:ml-72 p-8 space-y-10">
-
-<!-- DASHBOARD -->
-<section id="dashboard" class="section fade">
-  <h1 class="title text-3xl mb-6">Dashboard</h1>
-  <div class="grid md:grid-cols-3 gap-6">
-    <div class="bg-white p-6 rounded-lg lift">Products<br><b class="text-3xl">24</b></div>
-    <div class="bg-white p-6 rounded-lg lift">Categories<br><b class="text-3xl">6</b></div>
-    <div class="bg-white p-6 rounded-lg lift">Orders<br><b class="text-3xl">128</b></div>
-  </div>
-</section>
-
-<!-- PRODUCTS -->
-<section id="products" class="section hidden-section fade">
-  <h1 class="title text-3xl mb-6">Add Product</h1>
-  <div class="bg-white p-8 rounded-lg space-y-5">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Product Name">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Price">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Sizes (S, M, L)">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Colors (Black, White)">
-    <input type="file" class="w-full border px-4 py-3 rounded-lg">
-    <textarea class="w-full border px-4 py-3 rounded-lg" rows="4" placeholder="Description"></textarea>
-    <button class="bg-black text-white px-8 py-3 rounded-lg lift">Save Product</button>
-  </div>
-</section>
-
-<!-- CATEGORIES -->
-<section id="categories" class="section hidden-section fade">
-  <h1 class="title text-3xl mb-6">Categories</h1>
-  <div class="bg-white p-8 rounded-lg space-y-4">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Category name">
-    <button class="bg-black text-white px-6 py-3 rounded-lg lift">Add Category</button>
-  </div>
-</section>
-
-<!-- SHIPPING -->
-<section id="shipping" class="section hidden-section fade">
-  <h1 class="title text-3xl mb-6">Shipping Settings</h1>
-  <div class="bg-white p-8 rounded-lg space-y-4">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="ولاية">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="سعر التوصيل">
-    <button class="bg-black text-white px-6 py-3 rounded-lg lift">Save</button>
-  </div>
-</section>
-
-<!-- SOCIAL -->
-<section id="social" class="section hidden-section fade">
-  <h1 class="title text-3xl mb-6">Social Links</h1>
-  <div class="bg-white p-8 rounded-lg space-y-4">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Instagram URL">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="Facebook URL">
-    <input class="w-full border px-4 py-3 rounded-lg" placeholder="TikTok URL">
-    <button class="bg-black text-white px-6 py-3 rounded-lg lift">Save Links</button>
-  </div>
-</section>
-
-<!-- SETTINGS -->
-<section id="settings" class="section hidden-section fade">
-  <h1 class="title text-3xl mb-6">Store Settings</h1>
-  <div class="bg-white p-8 rounded-lg space-y-4">
-    <label class="block">Change Logo</label>
-    <input type="file" class="w-full border px-4 py-3 rounded-lg">
-  </div>
-</section>
-
-</main>
-
-<script>
-const sections = document.querySelectorAll('.section');
-const navBtns = document.querySelectorAll('.nav-btn');
-
-function showSection(id){
-  sections.forEach(s => s.classList.add('hidden-section'));
-  document.getElementById(id).classList.remove('hidden-section');
-
-  navBtns.forEach(b => b.classList.remove('bg-black','text-white'));
-  event.target.classList.add('bg-black','text-white');
-}
-
-const menuBtn = document.getElementById('menuBtn');
-const sidebar = document.getElementById('sidebar');
-const overlay = document.getElementById('overlay');
-
-menuBtn.onclick = () => {
-  sidebar.classList.toggle('-translate-x-full');
-  overlay.classList.toggle('hidden');
-};
-overlay.onclick = () => {
-  sidebar.classList.add('-translate-x-full');
-  overlay.classList.add('hidden');
-};
-</script>
-
+            // إرسال لـ Google Sheets (راح نشرح لاحقاً)
+            document.getElementById('registerStatus').innerHTML = 
+                '✅ تم إرسال طلبكِ! سنقوم بإنشاء متجركِ قريباً';
+            
+            this.reset();
+        });
+    </script>
 </body>
 </html>
