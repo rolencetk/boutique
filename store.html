@@ -1,1274 +1,140 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ELEGANZA - Premium Fashion Store</title>
-  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <script src="/_sdk/element_sdk.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    .font-playfair { font-family: 'Playfair Display', serif; }
-    
-    html { scroll-behavior: smooth; }
-    
-    .hover-lift {
-      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .hover-lift:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
-    }
-    
-    .fade-in {
-      animation: fadeIn 0.8s ease-out forwards;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .pulse-glow {
-      animation: pulseGlow 2s ease-in-out infinite;
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); }
-      50% { box-shadow: 0 0 40px rgba(0, 0, 0, 0.2); }
-    }
-    
-    .cart-badge-pop {
-      animation: pop 0.3s ease-out;
-    }
-    @keyframes pop {
-      0% { transform: scale(0); }
-      50% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-    
-    .input-focus:focus {
-      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-    }
-    
-    .social-icon {
-      transition: all 0.3s ease;
-    }
-    .social-icon:hover {
-      transform: scale(1.15);
-    }
-    
-    .scroll-indicator {
-      animation: bounce 2s infinite;
-    }
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-10px); }
-      60% { transform: translateY(-5px); }
-    }
-    
-    .modal-backdrop {
-      animation: fadeIn 0.3s ease-out;
-    }
-    
-    .modal-content {
-      animation: slideUp 0.3s ease-out;
-    }
-    @keyframes slideUp {
-      from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-    
-    .color-swatch {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 3px solid transparent;
-    }
-    .color-swatch.selected {
-      border-color: #000;
-      transform: scale(1.1);
-    }
-    .color-swatch:hover {
-      transform: scale(1.05);
-    }
-
-    .size-option {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid #d1d5db;
-    }
-    .size-option.selected {
-      border-color: #000;
-      background-color: #000;
-      color: white;
-    }
-    .size-option:hover {
-      border-color: #000;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="store-name-title">متجري التقني</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* تعريف متغير اللون الأساسي الذي سيتم تغييره من لوحة التحكم */
+        :root { --main-color: #000000; }
+        .bg-main { background-color: var(--main-color); }
+        .text-main { color: var(--main-color); }
+        .border-main { border-color: var(--main-color); }
+        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
 </head>
-<body class="h-full bg-white text-gray-900 overflow-x-hidden">
-  <div id="app-wrapper" class="w-full h-full overflow-auto">
-    
-    <!-- Navigation Bar -->
-    <nav class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
-          
-          <!-- Logo -->
-          <div class="flex items-center gap-3">
-            <div class="w-12 h-12 bg-black rounded-full flex items-center justify-center pulse-glow">
-              <svg class="w-7 h-7 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
+<body>
+
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4 space-x-reverse">
+                <img id="store-logo" src="https://via.placeholder.com/40" alt="Logo" class="h-10 w-10 object-contain">
+                <h1 id="store-name" class="text-2xl font-bold text-gray-800">تحميل...</h1>
             </div>
-            <div>
-              <h1 id="logo-text" class="font-playfair text-2xl font-bold tracking-wider text-black">ELEGANZA</h1>
-              <p class="text-xs text-gray-500 tracking-widest">PREMIUM</p>
-            </div>
-          </div>
-          
-          <!-- Navigation Links -->
-          <div class="hidden md:flex items-center gap-8">
-            <a href="#home" class="text-gray-900 hover:text-black transition-colors duration-300 text-sm font-medium">Home</a>
-            <a href="#section1" id="nav-section1" class="text-gray-600 hover:text-black transition-colors duration-300 text-sm font-medium">Category 1</a>
-            <a href="#section2" id="nav-section2" class="text-gray-600 hover:text-black transition-colors duration-300 text-sm font-medium">Category 2</a>
-            <a href="#contact" class="text-gray-600 hover:text-black transition-colors duration-300 text-sm font-medium">Contact</a>
-          </div>
-          
-          <!-- Cart -->
-          <div class="flex items-center gap-4">
-            <button id="cart-btn" class="relative p-3 hover:bg-gray-100 rounded-full transition-all duration-300 group">
-              <svg class="w-6 h-6 text-gray-900 group-hover:text-black transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-              </svg>
-              <span id="cart-count" class="absolute -top-1 -right-1 w-5 h-5 bg-black rounded-full text-xs font-bold text-white flex items-center justify-center cart-badge-pop">0</span>
-            </button>
             
-            <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-900">
-              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-              </svg>
-            </button>
-          </div>
+            <div class="relative cursor-pointer" onclick="toggleCart()">
+                <i class="fa-solid fa-cart-shopping text-2xl text-gray-700"></i>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-main text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            </div>
         </div>
-      </div>
-      
-      <!-- Mobile Menu -->
-      <div id="mobile-menu" class="hidden md:hidden border-t border-gray-200 bg-white">
-        <div class="px-4 py-4 space-y-3">
-          <a href="#home" class="block text-gray-900 py-2 font-medium">Home</a>
-          <a href="#section1" class="block text-gray-600 py-2 mobile-section1 font-medium">Category 1</a>
-          <a href="#section2" class="block text-gray-600 py-2 mobile-section2 font-medium">Category 2</a>
-          <a href="#contact" class="block text-gray-600 py-2 font-medium">Contact</a>
-        </div>
-      </div>
     </nav>
-    
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
-      <div class="absolute inset-0 bg-gray-50"></div>
-      
-      <div class="absolute top-20 right-10 w-64 h-64 bg-gray-200/20 rounded-full blur-3xl"></div>
-      <div class="absolute bottom-20 left-10 w-96 h-96 bg-gray-300/10 rounded-full blur-3xl"></div>
-      
-      <div class="relative z-10 text-center px-4 fade-in max-w-3xl">
-        <div class="mb-6">
-          <span class="inline-block px-6 py-2 border border-gray-300 rounded-full text-gray-700 text-sm tracking-widest">✨ Modern Elegance</span>
+
+    <header class="bg-black text-white py-20 px-6 text-center">
+        <h2 class="text-4xl md:text-6xl font-extrabold mb-4">اكتشف التكنولوجيا المستقبلية</h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">أفضل المنتجات التقنية المختارة بعناية لتناسب أسلوب حياتك العصري.</p>
+    </header>
+
+    <main class="container mx-auto px-6 py-12">
+        <h3 class="text-2xl font-bold text-gray-800 mb-8 border-r-4 border-main pr-4">أحدث المنتجات</h3>
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            <div class="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+            <div class="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+            <div class="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
         </div>
-        <h1 id="hero-title" class="font-playfair text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-black">
-          ELEGANZA
-        </h1>
-        <p id="hero-description" class="text-xl md:text-2xl text-gray-600 max-w-2xl mx-auto mb-10 leading-relaxed">
-          Discover our premium collection of fashion and accessories
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4 justify-center">
-          <a href="#section1" class="px-8 py-4 bg-black text-white font-bold rounded-lg hover-lift">
-            Shop Now
-          </a>
-          <a href="#section2" class="px-8 py-4 border-2 border-gray-900 text-black font-medium rounded-lg hover:bg-gray-50 transition-colors">
-            Explore Collections
-          </a>
-        </div>
-      </div>
-      
-      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 scroll-indicator">
-        <div class="w-8 h-12 border-2 border-gray-400 rounded-full flex justify-center pt-2">
-          <div class="w-1 h-3 bg-gray-600 rounded-full"></div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Section 1 -->
-    <section id="section1" class="py-24 px-4 relative bg-white">
-      <div class="max-w-7xl mx-auto relative z-10">
-        <div class="text-center mb-16 fade-in">
-          <span class="text-gray-500 text-sm tracking-widest mb-4 block">COLLECTION 01</span>
-          <h2 id="section1-title" class="font-playfair text-4xl md:text-5xl font-bold text-black mb-4">Category 1</h2>
-          <div class="w-24 h-1 bg-black mx-auto rounded-full"></div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div class="group hover-lift cursor-pointer" onclick="openProductModal(1, 'Premium Jacket', ['Black', 'Navy', 'Gray'], ['XS', 'S', 'M', 'L', 'XL'], 349.99, 'A timeless classic piece crafted with premium materials.')">
-            <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-              <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-                <svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                </svg>
-              </div>
-              <div class="p-6 bg-white">
-                <h3 class="font-playfair text-xl text-black mb-2">Premium Jacket</h3>
-                <p class="text-gray-600 text-sm mb-4">Premium quality</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-black font-bold text-lg">$349.99</span>
-                  <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
+    </main>
+
+    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[100] flex justify-end">
+        <div class="bg-white w-full max-w-md h-full shadow-xl p-6 overflow-y-auto">
+            <div class="flex justify-between items-center mb-8">
+                <h2 class="text-2xl font-bold">سلة التسوق</h2>
+                <button onclick="toggleCart()" class="text-gray-500 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <div id="cart-items" class="space-y-4">
                 </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="group hover-lift cursor-pointer" onclick="openProductModal(2, 'Classic Blazer', ['Black', 'Charcoal', 'Cream'], ['S', 'M', 'L', 'XL'], 299.99, 'Sophisticated blazer perfect for any occasion.')">
-            <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-              <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-                <svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2L4 5v6.09c0 5.05 3.41 9.76 8 10.91 4.59-1.15 8-5.86 8-10.91V5l-8-3z"/>
-                </svg>
-              </div>
-              <div class="p-6 bg-white">
-                <h3 class="font-playfair text-xl text-black mb-2">Classic Blazer</h3>
-                <p class="text-gray-600 text-sm mb-4">Elegant design</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-black font-bold text-lg">$299.99</span>
-                  <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
+            <div class="mt-8 border-t pt-6">
+                <div class="flex justify-between text-xl font-bold mb-6">
+                    <span>إجمالي المبلغ:</span>
+                    <span id="cart-total">0 $</span>
                 </div>
-              </div>
+                <button class="w-full bg-main text-white py-4 rounded-lg font-bold hover:opacity-90 transition">إتمام الطلب عبر واتساب</button>
             </div>
-          </div>
-          
-          <div class="group hover-lift cursor-pointer" onclick="openProductModal(3, 'Silk Shirt', ['White', 'Gray', 'Black'], ['XS', 'S', 'M', 'L'], 199.99, 'Luxurious silk shirt with premium finish.')">
-            <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-              <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-                <svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 14l-5-5 1.41-1.41L12 14.17l4.59-4.58L18 11l-6 6z"/>
-                </svg>
-              </div>
-              <div class="p-6 bg-white">
-                <h3 class="font-playfair text-xl text-black mb-2">Silk Shirt</h3>
-                <p class="text-gray-600 text-sm mb-4">Fine fabric</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-black font-bold text-lg">$199.99</span>
-                  <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
-    </section>
-    
-    <!-- Section 2 -->
-    <section id="section2" class="py-24 px-4 relative bg-gray-50">
-      <div class="max-w-7xl mx-auto relative z-10">
-        <div class="text-center mb-16 fade-in">
-          <span class="text-gray-500 text-sm tracking-widest mb-4 block">COLLECTION 02</span>
-          <h2 id="section2-title" class="font-playfair text-4xl md:text-5xl font-bold text-black mb-4">Category 2</h2>
-          <div class="w-24 h-1 bg-black mx-auto rounded-full"></div>
-        </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div class="group hover-lift cursor-pointer" onclick="openProductModal(4, 'Luxury Watch', ['Silver', 'Gold', 'Black'], ['One Size'], 599.99, 'Swiss-made luxury watch with premium craftsmanship.')">
-            <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-              <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-                <svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-                </svg>
-              </div>
-              <div class="p-6 bg-white">
-                <h3 class="font-playfair text-xl text-black mb-2">Luxury Watch</h3>
-                <p class="text-gray-600 text-sm mb-4">Swiss precision</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-black font-bold text-lg">$599.99</span>
-                  <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="group hover-lift cursor-pointer" onclick="openProductModal(5, 'Leather Bag', ['Black', 'Brown', 'Tan'], ['One Size'], 449.99, 'Premium leather bag with elegant design.')">
-            <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-              <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-                <svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
-                </svg>
-              </div>
-              <div class="p-6 bg-white">
-                <h3 class="font-playfair text-xl text-black mb-2">Leather Bag</h3>
-                <p class="text-gray-600 text-sm mb-4">Premium leather</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-black font-bold text-lg">$449.99</span>
-                  <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          <div class="group hover-lift cursor-pointer" onclick="openProductModal(6, 'Silk Scarf', ['Black', 'White', 'Gray'], ['One Size'], 149.99, 'Elegant silk scarf for any season.')">
-            <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-              <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-                <svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M21 16v-2l-8-5V3.5c0-.83-.67-1.5-1.5-1.5S10 2.67 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/>
-                </svg>
-              </div>
-              <div class="p-6 bg-white">
-                <h3 class="font-playfair text-xl text-black mb-2">Silk Scarf</h3>
-                <p class="text-gray-600 text-sm mb-4">Fine fabric</p>
-                <div class="flex items-center justify-between">
-                  <span class="text-black font-bold text-lg">$149.99</span>
-                  <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Contact Section -->
-    <section id="contact" class="py-24 px-4 relative bg-white">
-      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gray-200"></div>
-      
-      <div class="max-w-4xl mx-auto relative z-10">
-        <div class="text-center mb-16 fade-in">
-          <span class="text-gray-500 text-sm tracking-widest mb-4 block">GET IN TOUCH</span>
-          <h2 class="font-playfair text-4xl md:text-5xl font-bold text-black mb-4">Contact Us</h2>
-          <div class="w-24 h-1 bg-black mx-auto rounded-full"></div>
-        </div>
-        
-        <div class="border border-gray-200 rounded-lg p-8 md:p-12 bg-gray-50">
-          <form id="contact-form" class="space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label for="name" class="block text-gray-900 text-sm font-medium mb-2">Name</label>
-                <input type="text" id="name" name="name" required
-                  class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none input-focus transition-all duration-300"
-                  placeholder="Enter your name">
-              </div>
-              <div>
-                <label for="email" class="block text-gray-900 text-sm font-medium mb-2">Email</label>
-                <input type="email" id="email" name="email" required
-                  class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none input-focus transition-all duration-300"
-                  placeholder="example@email.com">
-              </div>
-            </div>
-            <div>
-              <label for="subject" class="block text-gray-900 text-sm font-medium mb-2">Subject</label>
-              <input type="text" id="subject" name="subject" required
-                class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none input-focus transition-all duration-300"
-                placeholder="Message subject">
-            </div>
-            <div>
-              <label for="message" class="block text-gray-900 text-sm font-medium mb-2">Message</label>
-              <textarea id="message" name="message" rows="5" required
-                class="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none input-focus transition-all duration-300 resize-none"
-                placeholder="Write your message here..."></textarea>
-            </div>
-            <div class="text-center">
-              <button type="submit"
-                class="px-10 py-4 bg-black text-white font-bold rounded-lg hover-lift text-lg">
-                Send Message ✉️
-              </button>
-            </div>
-          </form>
-          
-          <div id="success-message" class="hidden text-center py-8">
-            <div class="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-6 pulse-glow">
-              <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-              </svg>
-            </div>
-            <h3 class="font-playfair text-2xl text-black mb-2">Thank You!</h3>
-            <p class="text-gray-600">We'll get back to you soon</p>
-          </div>
-        </div>
-        
-        <!-- Social Media -->
-        <div class="mt-16 text-center">
-          <p class="text-gray-600 mb-6">Follow us on</p>
-          <div class="flex justify-center gap-4">
-            <a href="#" class="social-icon w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100">
-              <svg class="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100">
-              <svg class="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100">
-              <svg class="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
-              </svg>
-            </a>
-            <a href="#" class="social-icon w-14 h-14 border border-gray-300 rounded-full flex items-center justify-center hover:bg-gray-100">
-              <svg class="w-6 h-6 text-gray-900" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-              </svg>
-            </a>
-          </div>
-        </div>
-      </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer class="py-8 px-4 border-t border-gray-200 bg-gray-50">
-      <div class="max-w-7xl mx-auto text-center">
-        <div class="flex items-center justify-center gap-3 mb-4">
-          <div class="w-8 h-8 bg-black rounded-full flex items-center justify-center">
-            <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-            </svg>
-          </div>
-          <span class="font-playfair text-xl text-black">ELEGANZA</span>
-        </div>
-        <p class="text-gray-600 text-sm">© 2024 All rights reserved | Premium Fashion Store</p>
-      </div>
-    </footer>
-    
-    <!-- Product Modal -->
-    <div id="product-modal" class="fixed inset-0 bg-black/50 z-50 hidden modal-backdrop items-center justify-center p-4 overflow-y-auto">
-      <div class="bg-white rounded-lg p-8 max-w-3xl w-full my-8 modal-content">
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h2 id="modal-title" class="font-playfair text-3xl font-bold text-black mb-2">Product Name</h2>
-            <p id="modal-description" class="text-gray-600">Product description</p>
-          </div>
-          <button onclick="closeProductModal()" class="text-gray-500 hover:text-black transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-        
-        <!-- Colors -->
-        <div class="mb-6">
-          <label class="block text-gray-900 font-semibold mb-3">Select Color</label>
-          <div id="color-options" class="flex gap-4 flex-wrap">
-            <!-- Colors will be added here -->
-          </div>
-          <input type="hidden" id="selected-color" value="">
-        </div>
-        
-        <!-- Sizes -->
-        <div class="mb-6">
-          <label class="block text-gray-900 font-semibold mb-3">Select Size</label>
-          <div id="size-options" class="flex gap-3 flex-wrap">
-            <!-- Sizes will be added here -->
-          </div>
-          <input type="hidden" id="selected-size" value="">
-        </div>
-        
-        <!-- Price -->
-        <div class="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
-          <p class="text-gray-600 mb-1">Price</p>
-          <p id="modal-price" class="text-3xl font-bold text-black">$0.00</p>
-        </div>
-        
-        <!-- Add to Cart -->
-        <button onclick="addProductToCart()" class="w-full py-4 bg-black text-white font-bold rounded-lg hover-lift mb-4">
-          Add to Cart
-        </button>
-        <button onclick="closeProductModal()" class="w-full py-3 border-2 border-gray-300 text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-          Continue Shopping
-        </button>
-      </div>
     </div>
-    
-    <!-- Cart Sidebar -->
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-50 bg-white shadow-lg transform translate-x-full transition-transform duration-300">
-      <div class="p-6 h-full flex flex-col border-l border-gray-200">
-        <div class="flex items-center justify-between mb-6">
-          <h3 class="font-playfair text-2xl text-black">Shopping Cart</h3>
-          <button id="close-cart" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-        
-        <div id="cart-items-list" class="flex-1 overflow-auto space-y-4 mb-6">
-          <!-- Cart items will be added here -->
-        </div>
-        
-        <div id="cart-empty" class="flex-1 flex flex-col items-center justify-center text-center">
-          <svg class="w-16 h-16 text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
-          </svg>
-          <p class="text-gray-500">Your cart is empty</p>
-        </div>
-        
-        <div id="cart-footer" class="hidden border-t border-gray-200 pt-6 mt-6">
-          <div class="mb-4">
-            <div class="flex justify-between items-center mb-2">
-              <span class="text-gray-600">Subtotal</span>
-              <span id="subtotal" class="font-semibold text-gray-900">$0.00</span>
-            </div>
-            <div class="flex justify-between items-center mb-4">
-              <span class="text-gray-600">Shipping</span>
-              <span id="shipping-cost" class="font-semibold text-gray-900">$0.00</span>
-            </div>
-            <div class="flex justify-between items-center py-4 border-t border-gray-200">
-              <span class="font-bold text-gray-900">Total</span>
-              <span id="cart-total" class="font-bold text-lg text-black">$0.00</span>
-            </div>
-          </div>
-          <button onclick="proceedToCheckout()" class="w-full py-4 bg-black text-white font-bold rounded-lg hover-lift mb-3">
-            Proceed to Checkout
-          </button>
-          <button onclick="closeCartPanel()" class="w-full py-3 border-2 border-gray-300 text-gray-900 font-medium rounded-lg hover:bg-gray-50 transition-colors">
-            Continue Shopping
-          </button>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Checkout Modal -->
-    <div id="checkout-modal" class="fixed inset-0 bg-black/50 z-50 hidden modal-backdrop items-center justify-center p-4 overflow-y-auto">
-      <div class="bg-white rounded-lg p-8 max-w-2xl w-full my-8 modal-content">
-        <div class="flex justify-between items-start mb-6">
-          <h2 class="font-playfair text-3xl font-bold text-black">Checkout</h2>
-          <button onclick="closeCheckout()" class="text-gray-500 hover:text-black transition-colors">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-          </button>
-        </div>
-        
-        <!-- Tabs -->
-        <div class="flex gap-2 mb-6 border-b border-gray-200">
-          <button onclick="showCheckoutTab('info')" id="tab-info" class="px-4 py-2 border-b-2 border-black text-black font-semibold transition-colors">
-            Information
-          </button>
-          <button onclick="showCheckoutTab('shipping')" id="tab-shipping" class="px-4 py-2 border-b-2 border-transparent text-gray-600 font-semibold hover:text-black transition-colors">
-            Shipping
-          </button>
-          <button onclick="showCheckoutTab('payment')" id="tab-payment" class="px-4 py-2 border-b-2 border-transparent text-gray-600 font-semibold hover:text-black transition-colors">
-            Payment
-          </button>
-        </div>
-        
-        <!-- Info Tab -->
-        <div id="info-tab" class="space-y-6">
-          <div>
-            <label for="checkout-name" class="block text-gray-900 font-semibold mb-2">Full Name</label>
-            <input type="text" id="checkout-name" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-focus" placeholder="Enter your name">
-          </div>
-          <div>
-            <label for="checkout-phone" class="block text-gray-900 font-semibold mb-2">Phone Number</label>
-            <input type="tel" id="checkout-phone" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-focus" placeholder="Enter your phone number">
-          </div>
-          <button onclick="showCheckoutTab('shipping')" class="w-full py-4 bg-black text-white font-bold rounded-lg hover-lift">
-            Next: Shipping
-          </button>
-        </div>
-        
-        <!-- Shipping Tab -->
-        <div id="shipping-tab" class="hidden space-y-6">
-          <div>
-            <label for="provinces-select" class="block text-gray-900 font-semibold mb-2">Select Province</label>
-            <select id="provinces-select" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none input-focus">
-              <option value="">Choose a province...</option>
-            </select>
-          </div>
-          
-          <div id="shipping-options-container" class="hidden">
-            <label class="block text-gray-900 font-semibold mb-4">Shipping Method</label>
-            <div class="space-y-3">
-              <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                <input type="radio" name="shipping-method" value="home" class="w-5 h-5 text-black">
-                <div class="ml-4 flex-1">
-                  <p class="font-semibold text-gray-900">Home Delivery</p>
-                  <p id="home-price" class="text-sm text-gray-600">Price: $0.00</p>
-                </div>
-              </label>
-              <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors">
-                <input type="radio" name="shipping-method" value="office" class="w-5 h-5 text-black">
-                <div class="ml-4 flex-1">
-                  <p class="font-semibold text-gray-900">Office Pickup</p>
-                  <p id="office-price" class="text-sm text-gray-600">Price: $0.00</p>
-                </div>
-              </label>
-            </div>
-          </div>
-          
-          <div class="flex gap-3">
-            <button onclick="showCheckoutTab('info')" class="flex-1 py-4 border-2 border-gray-300 text-gray-900 font-bold rounded-lg hover:bg-gray-50 transition-colors">
-              Back
-            </button>
-            <button onclick="showCheckoutTab('payment')" class="flex-1 py-4 bg-black text-white font-bold rounded-lg hover-lift">
-              Next: Payment
-            </button>
-          </div>
-        </div>
-        
-        <!-- Payment Tab -->
-        <div id="payment-tab" class="hidden space-y-6">
-          <label class="block text-gray-900 font-semibold mb-4">Payment Method</label>
-          <div class="space-y-3">
-            <label class="flex items-center p-4 border-2 border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-all payment-option" data-method="credit-card">
-              <input type="radio" name="payment-method" value="credit-card" class="w-5 h-5 text-black" checked>
-              <div class="ml-4">
-                <p class="font-semibold text-gray-900">Credit Card</p>
-                <p class="text-sm text-gray-600">Visa, MasterCard, American Express</p>
-              </div>
-            </label>
-            <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-all payment-option" data-method="bank-transfer">
-              <input type="radio" name="payment-method" value="bank-transfer" class="w-5 h-5 text-black">
-              <div class="ml-4">
-                <p class="font-semibold text-gray-900">Bank Transfer</p>
-                <p class="text-sm text-gray-600">Direct bank deposit</p>
-              </div>
-            </label>
-            <label class="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition-all payment-option" data-method="cod">
-              <input type="radio" name="payment-method" value="cod" class="w-5 h-5 text-black">
-              <div class="ml-4">
-                <p class="font-semibold text-gray-900">Cash on Delivery</p>
-                <p class="text-sm text-gray-600">Pay when you receive your order</p>
-              </div>
-            </label>
-          </div>
-          
-          <!-- Order Summary -->
-          <div class="border-t border-gray-200 pt-6 mt-6">
-            <h3 class="font-semibold text-gray-900 mb-4">Order Summary</h3>
-            <div id="order-items-summary" class="space-y-2 mb-4 text-sm">
-              <!-- Items will be added here -->
-            </div>
-            <div class="space-y-2 border-t border-gray-200 pt-4">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Subtotal</span>
-                <span id="summary-subtotal" class="text-gray-900">$0.00</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Shipping</span>
-                <span id="summary-shipping" class="text-gray-900">$0.00</span>
-              </div>
-              <div class="flex justify-between font-bold text-lg pt-2 border-t border-gray-200">
-                <span class="text-gray-900">Total</span>
-                <span id="summary-total" class="text-black">$0.00</span>
-              </div>
-            </div>
-          </div>
-          
-          <div class="flex gap-3">
-            <button onclick="showCheckoutTab('shipping')" class="flex-1 py-4 border-2 border-gray-300 text-gray-900 font-bold rounded-lg hover:bg-gray-50 transition-colors">
-              Back
-            </button>
-            <button onclick="completeOrder()" class="flex-1 py-4 bg-black text-white font-bold rounded-lg hover-lift">
-              Complete Order
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    
-    <!-- Success Modal -->
-    <div id="success-modal" class="fixed inset-0 bg-black/50 z-50 hidden modal-backdrop items-center justify-center p-4">
-      <div class="bg-white rounded-lg p-8 max-w-md w-full text-center modal-content">
-        <div class="w-20 h-20 bg-black rounded-full flex items-center justify-center mx-auto mb-6 pulse-glow">
-          <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-          </svg>
-        </div>
-        <h3 class="font-playfair text-2xl font-bold text-black mb-2">Order Confirmed!</h3>
-        <p class="text-gray-600 mb-6">Thank you for your purchase. Your order has been received.</p>
-        <button onclick="resetAfterOrder()" class="w-full py-4 bg-black text-white font-bold rounded-lg hover-lift">
-          Continue Shopping
-        </button>
-      </div>
-    </div>
-    
-    <!-- Toast -->
-    <div id="toast" class="fixed bottom-6 right-6 px-6 py-3 bg-black text-white rounded-lg transform translate-y-20 opacity-0 transition-all duration-300 z-50">
-      <span id="toast-message">Added to cart ✓</span>
-    </div>
-    
-  </div>
 
-  <script>
-    // Configuration
-    const defaultConfig = {
-      store_name: 'ELEGANZA',
-      store_description: 'Discover our premium collection of fashion and accessories',
-      section_one_name: 'Category 1',
-      section_two_name: 'Category 2'
-    };
+    <script>
+        // --- إعدادات Firebase (ضع إعداداتك هنا) ---
+        const firebaseConfig = { /* انسخ إعداداتك هنا */ };
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    let config = { ...defaultConfig };
+        // --- جلب إعدادات المتجر (اسم، لون، شعار) ---
+        db.collection("settings").doc("store_info").onSnapshot((doc) => {
+            if (doc.exists) {
+                const data = doc.data();
+                document.getElementById("store-name").innerText = data.name;
+                document.getElementById("store-name-title").innerText = data.name;
+                document.getElementById("store-logo").src = data.logo;
+                document.documentElement.style.setProperty('--main-color', data.themeColor);
+            }
+        });
 
-    // Provinces data with pricing
-    const provinces = [
-      { name: 'Riyadh', home: 50, office: 30 },
-      { name: 'Jeddah', home: 60, office: 35 },
-      { name: 'Dammam', home: 65, office: 40 },
-      { name: 'Mecca', home: 55, office: 32 },
-      { name: 'Medina', home: 70, office: 45 },
-      { name: 'Qassim', home: 75, office: 48 },
-      { name: 'Eastern Region', home: 65, office: 40 },
-      { name: 'Asir', home: 80, office: 50 },
-      { name: 'Hail', home: 85, office: 55 },
-      { name: 'Northern Region', home: 90, office: 60 },
-      { name: 'Jizan', home: 70, office: 45 },
-      { name: 'Najran', home: 85, office: 55 },
-      { name: 'Tabuk', home: 95, office: 65 },
-      { name: 'Baha', home: 75, office: 48 },
-      { name: 'Sharqiyah', home: 60, office: 35 },
-      { name: 'Al Madinah', home: 70, office: 45 },
-      { name: 'Abha', home: 78, office: 50 },
-      { name: 'Khobar', home: 62, office: 37 },
-      { name: 'Alkharj', home: 52, office: 32 },
-      { name: 'Yanbu', home: 68, office: 42 },
-      { name: 'Arar', home: 100, office: 70 },
-      { name: 'Jubail', home: 65, office: 40 },
-      { name: 'Safwa', home: 65, office: 40 },
-      { name: 'Al Qatif', home: 62, office: 37 },
-      { name: 'Dhahran', home: 62, office: 37 },
-      { name: 'Hofuf', home: 70, office: 45 },
-      { name: 'Bukayriyah', home: 80, office: 52 },
-      { name: 'Unayzah', home: 82, office: 53 },
-      { name: 'Sakaka', home: 98, office: 68 },
-      { name: 'Durma', home: 100, office: 70 },
-      { name: 'Turaif', home: 102, office: 72 },
-      { name: 'Rafha', home: 105, office: 75 },
-      { name: 'Sharurah', home: 90, office: 60 },
-      { name: 'Khash', home: 95, office: 65 },
-      { name: 'Namas', home: 82, office: 52 },
-      { name: 'Ad Dawadimi', home: 60, office: 35 },
-      { name: 'Ruwaidah', home: 85, office: 55 },
-      { name: 'Hafar Al Batin', home: 75, office: 48 },
-      { name: 'Ras Tanura', home: 65, office: 40 },
-      { name: 'Uqlat As-Suq', home: 85, office: 55 },
-      { name: 'Birk', home: 90, office: 60 },
-      { name: 'Tubarjal', home: 98, office: 68 },
-      { name: 'Saturation', home: 87, office: 57 },
-      { name: 'Hazm Al Jalamid', home: 100, office: 70 },
-      { name: 'Uyun Al Jiwa', home: 105, office: 75 },
-      { name: 'Al Ula', home: 92, office: 62 },
-      { name: 'Khaybar', home: 88, office: 58 },
-      { name: 'Wadi Al Qura', home: 90, office: 60 },
-      { name: 'Magna', home: 95, office: 65 },
-      { name: 'Taif', home: 58, office: 33 },
-      { name: 'Riyadh (New)', home: 48, office: 28 },
-      { name: 'Makkah', home: 55, office: 32 },
-      { name: 'Yasaman', home: 75, office: 48 },
-      { name: 'Um Lajj', home: 72, office: 46 }
-    ];
+        // --- جلب المنتجات بتصميم عصري ---
+        db.collection("products").onSnapshot((snapshot) => {
+            const container = document.getElementById("products-container");
+            container.innerHTML = "";
+            snapshot.forEach((doc) => {
+                const p = doc.data();
+                container.innerHTML += `
+                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 border border-gray-100 group">
+                        <div class="relative overflow-hidden rounded-lg mb-4">
+                            <img src="${p.image}" alt="${p.name}" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h4 class="text-lg font-bold text-gray-800 mb-2">${p.name}</h4>
+                        <div class="flex justify-between items-center">
+                            <span class="text-main font-bold text-xl">${p.price} $</span>
+                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" 
+                                    class="bg-gray-100 p-2 rounded-full hover:bg-main hover:text-white transition">
+                                <i class="fa-solid fa-plus px-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+        });
 
-    let currentProduct = null;
-    let cartItems = [];
-    let selectedShipping = null;
-
-    // Initialize provinces dropdown
-    function initProvinces() {
-      const select = document.getElementById('provinces-select');
-      provinces.forEach(province => {
-        const option = document.createElement('option');
-        option.value = JSON.stringify({ name: province.name, home: province.home, office: province.office });
-        option.textContent = province.name;
-        select.appendChild(option);
-      });
-    }
-
-    // Handle province selection
-    document.addEventListener('DOMContentLoaded', () => {
-      initProvinces();
-      
-      document.getElementById('provinces-select').addEventListener('change', function() {
-        if (this.value) {
-          const province = JSON.parse(this.value);
-          document.getElementById('home-price').textContent = `Price: $${province.home}.00`;
-          document.getElementById('office-price').textContent = `Price: $${province.office}.00`;
-          document.getElementById('shipping-options-container').classList.remove('hidden');
-          selectedShipping = null;
-          document.querySelectorAll('input[name="shipping-method"]').forEach(el => el.checked = false);
-        } else {
-          document.getElementById('shipping-options-container').classList.add('hidden');
+        // --- نظام سلة التسوق البسيط ---
+        let cart = [];
+        function addToCart(id, name, price, img) {
+            cart.push({id, name, price, img});
+            updateCartUI();
         }
-      });
-      
-      // Handle shipping method change
-      document.querySelectorAll('input[name="shipping-method"]').forEach(radio => {
-        radio.addEventListener('change', function() {
-          const province = JSON.parse(document.getElementById('provinces-select').value);
-          selectedShipping = {
-            method: this.value,
-            price: this.value === 'home' ? province.home : province.office
-          };
-        });
-      });
-    });
 
-    // Open product modal
-    function openProductModal(id, name, colors, sizes, price, description) {
-      currentProduct = { id, name, colors, sizes, price, description };
-      document.getElementById('modal-title').textContent = name;
-      document.getElementById('modal-description').textContent = description;
-      document.getElementById('modal-price').textContent = `$${price.toFixed(2)}`;
-      
-      // Set colors
-      const colorContainer = document.getElementById('color-options');
-      colorContainer.innerHTML = '';
-      colors.forEach((color, index) => {
-        const colorDiv = document.createElement('div');
-        const colorMap = {
-          'Black': '#000000',
-          'White': '#FFFFFF',
-          'Gray': '#808080',
-          'Navy': '#001F3F',
-          'Charcoal': '#36454F',
-          'Cream': '#FFFDD0',
-          'Silver': '#C0C0C0',
-          'Gold': '#FFD700',
-          'Brown': '#8B4513',
-          'Tan': '#D2B48C'
-        };
-        const colorValue = colorMap[color] || '#808080';
-        colorDiv.innerHTML = `
-          <button type="button" class="color-swatch w-12 h-12 rounded-full border-2 transition-all" 
-            style="background-color: ${colorValue}; border-color: ${colorValue};"
-            onclick="selectColor('${color}', this)" title="${color}"></button>
-        `;
-        colorContainer.appendChild(colorDiv);
-      });
-      
-      // Set sizes
-      const sizeContainer = document.getElementById('size-options');
-      sizeContainer.innerHTML = '';
-      sizes.forEach(size => {
-        const sizeBtn = document.createElement('button');
-        sizeBtn.type = 'button';
-        sizeBtn.className = 'size-option px-6 py-2 rounded-lg font-medium transition-all';
-        sizeBtn.textContent = size;
-        sizeBtn.onclick = function() { selectSize(size, this); };
-        sizeContainer.appendChild(sizeBtn);
-      });
-      
-      document.getElementById('selected-color').value = '';
-      document.getElementById('selected-size').value = '';
-      
-      document.getElementById('product-modal').classList.remove('hidden');
-      document.getElementById('product-modal').classList.add('flex');
-    }
+        function updateCartUI() {
+            document.getElementById("cart-count").innerText = cart.length;
+            const cartItems = document.getElementById("cart-items");
+            let total = 0;
+            cartItems.innerHTML = cart.map((item, index) => {
+                total += item.price;
+                return `
+                    <div class="flex items-center space-x-4 space-x-reverse border-b pb-4">
+                        <img src="${item.img}" class="w-16 h-16 rounded object-cover">
+                        <div class="flex-1">
+                            <h5 class="font-bold">${item.name}</h5>
+                            <p class="text-main">${item.price} $</p>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById("cart-total").innerText = total + " $";
+        }
 
-    function closeProductModal() {
-      document.getElementById('product-modal').classList.add('hidden');
-      document.getElementById('product-modal').classList.remove('flex');
-      currentProduct = null;
-    }
-
-    function selectColor(color, element) {
-      document.querySelectorAll('.color-swatch').forEach(el => el.classList.remove('selected'));
-      element.classList.add('selected');
-      document.getElementById('selected-color').value = color;
-    }
-
-    function selectSize(size, element) {
-      document.querySelectorAll('.size-option').forEach(el => el.classList.remove('selected'));
-      element.classList.add('selected');
-      document.getElementById('selected-size').value = size;
-    }
-
-    function addProductToCart() {
-      const color = document.getElementById('selected-color').value;
-      const size = document.getElementById('selected-size').value;
-      
-      if (!color || !size) {
-        showToast('Please select color and size');
-        return;
-      }
-      
-      if (!currentProduct) return;
-      
-      cartItems.push({
-        id: Date.now(),
-        productId: currentProduct.id,
-        name: currentProduct.name,
-        color,
-        size,
-        price: currentProduct.price
-      });
-      
-      updateCartBadge();
-      showToast('Added to cart ✓');
-      closeProductModal();
-    }
-
-    function updateCartBadge() {
-      const badge = document.getElementById('cart-count');
-      badge.textContent = cartItems.length;
-      badge.classList.remove('cart-badge-pop');
-      void badge.offsetWidth;
-      badge.classList.add('cart-badge-pop');
-    }
-
-    function updateCartUI() {
-      const cartItemsList = document.getElementById('cart-items-list');
-      const cartEmpty = document.getElementById('cart-empty');
-      const cartFooter = document.getElementById('cart-footer');
-      
-      if (cartItems.length === 0) {
-        cartEmpty.classList.remove('hidden');
-        cartFooter.classList.add('hidden');
-        cartItemsList.innerHTML = '';
-      } else {
-        cartEmpty.classList.add('hidden');
-        cartFooter.classList.remove('hidden');
-        
-        cartItemsList.innerHTML = cartItems.map((item, index) => `
-          <div class="p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <div class="flex justify-between items-start mb-3">
-              <div class="flex-1">
-                <p class="font-semibold text-gray-900">${item.name}</p>
-                <p class="text-xs text-gray-600 mt-1">Color: <span class="font-medium">${item.color}</span></p>
-                <p class="text-xs text-gray-600">Size: <span class="font-medium">${item.size}</span></p>
-              </div>
-              <button onclick="removeFromCart(${index})" class="text-gray-400 hover:text-red-500 transition-colors">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                </svg>
-              </button>
-            </div>
-            <p class="text-right font-semibold text-gray-900">$${item.price.toFixed(2)}</p>
-          </div>
-        `).join('');
-        
-        const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
-        document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-        document.getElementById('cart-total').textContent = `$${subtotal.toFixed(2)}`;
-      }
-    }
-
-    function removeFromCart(index) {
-      cartItems.splice(index, 1);
-      updateCartBadge();
-      updateCartUI();
-      showToast('Removed from cart');
-    }
-
-    function openCartPanel() {
-      document.getElementById('cart-sidebar').classList.remove('translate-x-full');
-      updateCartUI();
-    }
-
-    function closeCartPanel() {
-      document.getElementById('cart-sidebar').classList.add('translate-x-full');
-    }
-
-    function proceedToCheckout() {
-      if (cartItems.length === 0) {
-        showToast('Your cart is empty');
-        return;
-      }
-      closeCartPanel();
-      document.getElementById('checkout-modal').classList.remove('hidden');
-      document.getElementById('checkout-modal').classList.add('flex');
-    }
-
-    function closeCheckout() {
-      document.getElementById('checkout-modal').classList.add('hidden');
-      document.getElementById('checkout-modal').classList.remove('flex');
-    }
-
-    function showCheckoutTab(tab) {
-      // Hide all tabs
-      document.getElementById('info-tab').classList.add('hidden');
-      document.getElementById('shipping-tab').classList.add('hidden');
-      document.getElementById('payment-tab').classList.add('hidden');
-      
-      // Remove active styling
-      document.getElementById('tab-info').classList.remove('border-black', 'text-black');
-      document.getElementById('tab-info').classList.add('border-transparent', 'text-gray-600');
-      document.getElementById('tab-shipping').classList.remove('border-black', 'text-black');
-      document.getElementById('tab-shipping').classList.add('border-transparent', 'text-gray-600');
-      document.getElementById('tab-payment').classList.remove('border-black', 'text-black');
-      document.getElementById('tab-payment').classList.add('border-transparent', 'text-gray-600');
-      
-      // Show selected tab
-      if (tab === 'info') {
-        document.getElementById('info-tab').classList.remove('hidden');
-        document.getElementById('tab-info').classList.add('border-black', 'text-black');
-      } else if (tab === 'shipping') {
-        document.getElementById('shipping-tab').classList.remove('hidden');
-        document.getElementById('tab-shipping').classList.add('border-black', 'text-black');
-      } else if (tab === 'payment') {
-        document.getElementById('payment-tab').classList.remove('hidden');
-        document.getElementById('tab-payment').classList.add('border-black', 'text-black');
-        updateOrderSummary();
-      }
-    }
-
-    function updateOrderSummary() {
-      const itemsSummary = document.getElementById('order-items-summary');
-      itemsSummary.innerHTML = cartItems.map(item => `
-        <div class="flex justify-between">
-          <span>${item.name} - ${item.color} ${item.size}</span>
-          <span>$${item.price.toFixed(2)}</span>
-        </div>
-      `).join('');
-      
-      const subtotal = cartItems.reduce((sum, item) => sum + item.price, 0);
-      const shippingCost = selectedShipping ? selectedShipping.price : 0;
-      const total = subtotal + shippingCost;
-      
-      document.getElementById('summary-subtotal').textContent = `$${subtotal.toFixed(2)}`;
-      document.getElementById('summary-shipping').textContent = `$${shippingCost}.00`;
-      document.getElementById('summary-total').textContent = `$${total.toFixed(2)}`;
-    }
-
-    function completeOrder() {
-      const name = document.getElementById('checkout-name').value;
-      const phone = document.getElementById('checkout-phone').value;
-      const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value;
-      
-      if (!name || !phone || !selectedShipping || !paymentMethod) {
-        showToast('Please fill all fields');
-        return;
-      }
-      
-      // Show success modal
-      document.getElementById('checkout-modal').classList.add('hidden');
-      document.getElementById('checkout-modal').classList.remove('flex');
-      document.getElementById('success-modal').classList.remove('hidden');
-      document.getElementById('success-modal').classList.add('flex');
-    }
-
-    function resetAfterOrder() {
-      cartItems = [];
-      document.getElementById('cart-count').textContent = '0';
-      updateCartUI();
-      closeCartPanel();
-      document.getElementById('success-modal').classList.add('hidden');
-      document.getElementById('success-modal').classList.remove('flex');
-      document.getElementById('checkout-name').value = '';
-      document.getElementById('checkout-phone').value = '';
-      showToast('Thank you for your order!');
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      document.getElementById('toast-message').textContent = message;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-      
-      setTimeout(() => {
-        toast.classList.add('translate-y-20', 'opacity-0');
-        toast.classList.remove('translate-y-0', 'opacity-100');
-      }, 2000);
-    }
-
-    // Event Listeners
-    document.getElementById('cart-btn').addEventListener('click', openCartPanel);
-    document.getElementById('close-cart').addEventListener('click', closeCartPanel);
-
-    document.getElementById('mobile-menu-btn').addEventListener('click', () => {
-      document.getElementById('mobile-menu').classList.toggle('hidden');
-    });
-
-    document.getElementById('contact-form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      document.getElementById('contact-form').classList.add('hidden');
-      document.getElementById('success-message').classList.remove('hidden');
-      
-      setTimeout(() => {
-        document.getElementById('contact-form').reset();
-        document.getElementById('contact-form').classList.remove('hidden');
-        document.getElementById('success-message').classList.add('hidden');
-      }, 3000);
-    });
-
-    // Element SDK integration
-    async function onConfigChange(newConfig) {
-      config = { ...config, ...newConfig };
-      
-      const logoText = document.getElementById('logo-text');
-      const heroTitle = document.getElementById('hero-title');
-      if (logoText) logoText.textContent = config.store_name || defaultConfig.store_name;
-      if (heroTitle) heroTitle.textContent = config.store_name || defaultConfig.store_name;
-      
-      const heroDescription = document.getElementById('hero-description');
-      if (heroDescription) heroDescription.textContent = config.store_description || defaultConfig.store_description;
-      
-      const section1Title = document.getElementById('section1-title');
-      const section2Title = document.getElementById('section2-title');
-      const navSection1 = document.getElementById('nav-section1');
-      const navSection2 = document.getElementById('nav-section2');
-      const mobileSection1 = document.querySelector('.mobile-section1');
-      const mobileSection2 = document.querySelector('.mobile-section2');
-      
-      if (section1Title) section1Title.textContent = config.section_one_name || defaultConfig.section_one_name;
-      if (section2Title) section2Title.textContent = config.section_two_name || defaultConfig.section_two_name;
-      if (navSection1) navSection1.textContent = config.section_one_name || defaultConfig.section_one_name;
-      if (navSection2) navSection2.textContent = config.section_two_name || defaultConfig.section_two_name;
-      if (mobileSection1) mobileSection1.textContent = config.section_one_name || defaultConfig.section_one_name;
-      if (mobileSection2) mobileSection2.textContent = config.section_two_name || defaultConfig.section_two_name;
-    }
-
-    function mapToCapabilities(config) {
-      return {
-        recolorables: [],
-        borderables: [],
-        fontEditable: undefined,
-        fontSizeable: undefined
-      };
-    }
-
-    function mapToEditPanelValues(config) {
-      return new Map([
-        ['store_name', config.store_name || defaultConfig.store_name],
-        ['store_description', config.store_description || defaultConfig.store_description],
-        ['section_one_name', config.section_one_name || defaultConfig.section_one_name],
-        ['section_two_name', config.section_two_name || defaultConfig.section_two_name]
-      ]);
-    }
-
-    if (window.elementSdk) {
-      window.elementSdk.init({
-        defaultConfig,
-        onConfigChange,
-        mapToCapabilities,
-        mapToEditPanelValues
-      });
-    }
-
-    // Payment method styling
-    document.querySelectorAll('.payment-option').forEach(option => {
-      option.addEventListener('click', () => {
-        document.querySelectorAll('.payment-option').forEach(o => {
-          o.classList.remove('border-2', 'border-black');
-          o.classList.add('border');
-        });
-        option.classList.remove('border');
-        option.classList.add('border-2', 'border-black');
-      });
-    });
-  </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d3f76d683c409ad',t:'MTc3MjEwOTEzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>
-let currentStoreCode = null;
-let storeData = null;
-let productsData = [];
-
-// جلب الكود من الرابط
-function getStoreCodeFromURL() {
-  const params = new URLSearchParams(window.location.search);
-  return params.get('code');
-}
-
-// تحميل بيانات المتجر والمنتجات
-async function loadStoreData() {
-  currentStoreCode = getStoreCodeFromURL();
-  
-  if (!currentStoreCode) {
-    console.log('No store code found');
-    return;
-  }
-  
-  try {
-    // جلب معلومات المتجر
-    storeData = await getStoreInfo(currentStoreCode);
-    
-    if (!storeData) {
-      console.log('Store not found');
-      return;
-    }
-    
-    // تحديث اسم المتجر
-    updateStoreInfo();
-    
-    // جلب المنتجات
-    productsData = await getProducts(currentStoreCode);
-    
-    // عرض المنتجات
-    renderProducts();
-    
-  } catch (error) {
-    console.error('Error loading store:', error);
-  }
-}
-
-// تحديث معلومات المتجر
-function updateStoreInfo() {
-  if (!storeData) return;
-  
-  const storeName = storeData.name || 'ELEGANZA';
-  const storeDesc = storeData.info?.description || 'Discover our premium collection';
-  
-  document.getElementById('logo-text').textContent = storeName;
-  document.getElementById('hero-title').textContent = storeName;
-  document.getElementById('hero-description').textContent = storeDesc;
-}
-
-// عرض المنتجات
-function renderProducts() {
-  if (productsData.length === 0) {
-    console.log('No products found');
-    return;
-  }
-  
-  // تقسيم المنتجات لقسمين ( Category 1 و Category 2 )
-  const section1Products = productsData.filter(p => !p.category || p.category === 'Category 1' || p.category === 'ملابس');
-  const section2Products = productsData.filter(p => p.category === 'Category 2' || p.category === 'إكسسوارات');
-  
-  // تحديث Section 1
-  const section1Container = document.querySelector('#section1 .grid');
-  if (section1Container && section1Products.length > 0) {
-    section1Container.innerHTML = section1Products.map((p, index) => createProductCard(p, index + 1)).join('');
-  }
-  
-  // تحديث Section 2
-  const section2Container = document.querySelector('#section2 .grid');
-  if (section2Container && section2Products.length > 0) {
-    section2Container.innerHTML = section2Products.map((p, index) => createProductCard(p, index + 4)).join('');
-  }
-}
-
-// إنشاء بطاقة منتج
-function createProductCard(product, id) {
-  const colors = product.colors ? product.colors.split(',').map(c => c.trim()) : ['Black'];
-  const sizes = product.sizes ? product.sizes.split(',').map(s => s.trim()) : ['One Size'];
-  const price = parseFloat(product.price) || 0;
-  const oldPrice = parseFloat(product.oldPrice) || 0;
-  
-  const colorArray = JSON.stringify(colors.map(c => c.charAt(0).toUpperCase() + c.slice(1).toLowerCase()));
-  const sizeArray = JSON.stringify(sizes.map(s => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase()));
-  
-  return `
-    <div class="group hover-lift cursor-pointer" onclick="openProductModal(${id}, '${product.name}', ${colorArray}, ${sizeArray}, ${price}, '${product.description || ''}')">
-      <div class="relative overflow-hidden rounded-lg bg-gray-100 border border-gray-200">
-        <div class="h-72 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center relative overflow-hidden">
-          ${product.image ? 
-            `<img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">` :
-            `<svg class="w-24 h-24 text-gray-400" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>`
-          }
-        </div>
-        <div class="p-6 bg-white">
-          <h3 class="font-playfair text-xl text-black mb-2">${product.name}</h3>
-          <p class="text-gray-600 text-sm mb-4">${product.category || 'Premium'}</p>
-          <div class="flex items-center justify-between">
-            <div>
-              <span class="text-black font-bold text-lg">$${price.toFixed(2)}</span>
-              ${oldPrice > 0 ? `<span class="text-gray-400 text-sm line-through mr-2">$${oldPrice.toFixed(2)}</span>` : ''}
-            </div>
-            <span class="text-xs text-gray-500 group-hover:text-black transition-colors">View Details →</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  `;
-}
-
-// تشغيل التحميل عند فتح الصفحة
-document.addEventListener('DOMContentLoaded', loadStoreData);
-</script></body>
+        function toggleCart() {
+            document.getElementById("cart-modal").classList.toggle("hidden");
+        }
+    </script>
+</body>
 </html>
