@@ -129,24 +129,173 @@ body { background: var(--bg); color: var(--text); line-height:1.6;}
 
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
-<script src="app.js"></script>
+
 <script>
-// Dynamic store colors
-async function loadStoreVisual(){
-  const urlParams=new URLSearchParams(window.location.search);
-  const storeCode=urlParams.get('code');
-  if(!storeCode){document.getElementById('productsGrid').innerHTML='<div class="loading"><p>Invalid store link</p></div>'; return;}
-  const doc = await db.collection('stores').doc(storeCode).get();
-  if(!doc.exists){document.getElementById('productsGrid').innerHTML='<div class="loading"><p>Store not found</p></div>'; return;}
-  const data=doc.data();
-  const root=document.documentElement;
-  if(data.colors){
-    root.style.setProperty('--primary', data.colors.primary || '#6366f1');
-    root.style.setProperty('--primary-dark', data.colors.primaryDark || '#4f46e5');
-    root.style.setProperty('--secondary', data.colors.secondary || '#10b981');
-  }
+// Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// Store & Cart
+let storeData=null, allProducts=[], cart=[];
+
+const urlParams = new URLSearchParams(window.location.search);
+const storeCode = urlParams.get('code');
+if(!storeCode){document.getElementById('productsGrid').innerHTML='<p>Invalid store link</p>';}
+
+// Load Store Data
+async function loadStore(){
+  try{
+    const doc = await db.collection('stores').doc(storeCode).get();
+    if(!doc.exists){document.getElementById('productsGrid').innerHTML='<p>Store not found</p>'; return;}
+    storeData = doc.data();
+
+    // Apply store visuals
+    const root = document.documentElement;
+    if(storeData.colors){
+      root.style.setProperty('--primary', storeData.colors.primary || '#6366f1');
+      root.style.setProperty('--primary-dark', storeData.colors.primaryDark || '#4f46e5');
+      root.style.setProperty('--secondary', storeData.colors.secondary || '#10b981');
+    }
+
+    // Header & Hero
+    document.title = storeData.name;
+    document.getElementById('storeName').textContent = storeData.name;
+    document.getElementById('storeTagline').textContent = storeData.info?.bio || '';
+    document.getElementById('heroTitle').textContent = storeData.name;
+    document.getElementById('heroDesc').textContent = storeData.info?.description || '';
+    document.getElementById('footerName').textContent = storeData.name;
+    document.getElementById('storeLogo').textContent = storeData.name.charAt(0).toUpperCase();
+
+    // Socials
+    const social = storeData.info?.social || {};
+    let socialHtml='';
+    if(social.facebook) socialHtml+=`<a href="${social.facebook}" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
+    if(social.instagram) socialHtml+=`<a href="${social.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>`;
+    if(social.tiktok) socialHtml+=`<a href="${social.tiktok}" target="_blank"><i class="fab fa-tiktok"></i></a>`;
+    document.getElementById('socialIcons').innerHTML=socialHtml;
+
+    // Categories
+    const catContainer = document.getElementById('categories');
+    catContainer.innerHTML='<button class="cat-btn active" onclick="filterProducts(\'all\')">All</button>';
+    (storeData.categories || []).forEach(c=>{
+      catContainer.innerHTML+=`<button class="cat-btn" onclick="filterProducts('${c}')">${c}</button>`;
+    });
+
+    // Products
+    const snapshot = await db.collection('stores').doc(storeCode).collection('products').get();
+    allProducts = snapshot.docs.map(d=>({id:d.id,...d.data()}));
+    displayProducts(allProducts);
+
+    // Delivery
+    loadDeliveryAreas();
+
+  }catch(err){console.error(err);}
 }
-loadStoreVisual();
+
+function displayProducts(products){
+  const grid=document.getElementById('productsGrid');
+  if(products.length===0){grid.innerHTML='<p>No products available</p>'; return;}
+  grid.innerHTML=products.map(p=>`
+    <div class="product-card">
+      <img src="${p.image || 'https://via.placeholder.com/260x220'}" class="product-image">
+      <div class="product-info">
+        <div class="product-name">${p.name}</div>
+        <div class="product-category">${p.category || 'General'}</div>
+        <div class="product-price">
+          ${p.oldPrice?`<span class="old-price">${p.oldPrice} SAR</span>`:''}
+          <span class="current-price">${p.price} SAR</span>
+        </div>
+        ${p.sizes || p.colors ? `<div class="product-meta">${p.sizes?'Sizes:'+p.sizes:''} ${p.colors?' | Colors:'+p.colors:''}</div>`:''}
+        <button class="btn-add-cart" onclick="addToCart('${p.id}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProducts(category){
+  document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  if(category==='all') displayProducts(allProducts);
+  else displayProducts(allProducts.filter(p=>p.category===category));
+}
+
+// Cart
+function addToCart(id){
+  const product = allProducts.find(p=>p.id===id);
+  if(!product) return;
+  const existing = cart.find(i=>i.id===id);
+  if(existing) existing.qty++;
+  else cart.push({...product, qty:1});
+  updateCartUI();
+}
+
+function updateCartUI(){
+  document.getElementById('cartCount').textContent=cart.reduce((s,i)=>s+i.qty,0);
+  const body = document.getElementById('cartBody');
+  if(cart.length===0) body.innerHTML='<div class="empty-cart"><p>Your cart is empty</p></div>';
+  else body.innerHTML=cart.map(i=>`
+    <div class="cart-item">
+      <img src="${i.image||'https://via.placeholder.com/70'}">
+      <div class="cart-item-info">
+        <div class="cart-item-name">${i.name}</div>
+        <div class="cart-item-price">${i.price} SAR</div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="changeQty('${i.id}',-1)">-</button>
+          <span>${i.qty}</span>
+          <button class="qty-btn" onclick="changeQty('${i.id}',1)">+</button>
+        </div>
+      </div>
+      <button class="remove-item" onclick="removeFromCart('${i.id}')">Remove</button>
+    </div>
+  `).join('');
+  updateTotal();
+}
+
+function changeQty(id,delta){
+  const item = cart.find(i=>i.id===id);
+  if(!item) return;
+  item.qty+=delta;
+  if(item.qty<=0) removeFromCart(id);
+  else updateCartUI();
+}
+
+function removeFromCart(id){ cart=cart.filter(i=>i.id!==id); updateCartUI(); }
+function openCart(){ document.getElementById('cartModal').classList.add('active'); }
+function closeCart(){ document.getElementById('cartModal').classList.remove('active'); }
+
+// Delivery
+function loadDeliveryAreas(){
+  const select=document.getElementById('deliverySelect');
+  const delivery = storeData.delivery || {};
+  select.innerHTML='<option value="">Select area</option>';
+  Object.entries(delivery).forEach(([area,fee])=>{ select.innerHTML+=`<option value="${fee}">${area} (+${fee} SAR)</option>`; });
+  updateTotal();
+}
+
+function updateTotal(){
+  const deliveryFee = parseFloat(document.getElementById('deliverySelect').value) || 0;
+  const subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+  document.getElementById('cartTotal').textContent=(subtotal+deliveryFee).toFixed(2);
+}
+
+function checkout(){
+  if(cart.length===0){alert('Cart is empty'); return;}
+  const delivery = document.getElementById('deliverySelect').value;
+  let text='Hello, I want to order:%0A';
+  cart.forEach(i=>{ text+=`${i.name} x${i.qty} - ${i.price} SAR%0A`; });
+  text+=`Delivery Fee: ${delivery || 0} SAR%0ATotal: ${document.getElementById('cartTotal').textContent} SAR`;
+  const whatsapp = storeData.info?.whatsapp || '';
+  if(!whatsapp){alert('WhatsApp number not set'); return;}
+  window.open(`https://wa.me/${whatsapp}?text=${text}`);
+}
+
+// Initialize
+loadStore();
 </script>
 </body>
 </html>
