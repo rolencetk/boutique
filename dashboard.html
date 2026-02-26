@@ -6,339 +6,157 @@
     <title>Store Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* ═══════════════════════════════════════════════════
-           Professional Dashboard - Black, White & Gray
-           ═══════════════════════════════════════════════════ */
-        
-        :root {
-            --black: #000000;
-            --dark-gray: #1a1a1a;
-            --gray: #4a4a4a;
-            --light-gray: #e5e5e5;
-            --white: #ffffff;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-gray);
-            color: var(--dark-gray);
-            line-height: 1.6;
-        }
-        
-        /* Header */
-        .dashboard-header {
-            background: var(--white);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .store-name {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--black);
-        }
-        
-        .store-code {
-            font-size: 0.8rem;
-            color: var(--gray);
-            background: var(--light-gray);
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            margin-right: 0.5rem;
-            font-family: monospace;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-        }
-        
-        .btn-orders {
-            background: var(--black);
-            color: var(--white);
-            padding: 0.6rem 1.2rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: 0.3s;
-            text-decoration: none;
-        }
-        
-        .btn-orders:hover {
-            background: var(--gray);
-        }
-        
-        .btn-logout {
-            background: transparent;
-            color: var(--gray);
-            padding: 0.6rem 1rem;
-            border: 1px solid var(--gray);
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: 0.3s;
-        }
-        
-        .btn-logout:hover {
-            background: var(--black);
-            color: var(--white);
-            border-color: var(--black);
-        }
-        
-        /* Container */
-        .dashboard-container {
-            display: flex;
-            min-height: 100vh;
-        }
-        
-        /* Sidebar */
-        .sidebar {
-            width: 240px;
-            background: var(--white);
-            padding: 2rem 1rem;
-            position: fixed;
-            height: 100vh;
-            border-left: 1px solid var(--light-gray);
-        }
-        
-        .sidebar-menu {
-            list-style: none;
-        }
-        
-        .sidebar-menu li {
-            margin-bottom: 0.3rem;
-        }
-        
-        .sidebar-menu a {
-            display: flex;
-            align-items: center;
-            padding: 0.8rem 1rem;
-            color: var(--gray);
-            text-decoration: none;
-            border-radius: 8px;
-            transition: 0.3s;
-            font-size: 0.95rem;
-        }
-        
-        .sidebar-menu a:hover,
-        .sidebar-menu a.active {
-            background: var(--black);
-            color: var(--white);
-        }
-        
-        .sidebar-menu a .icon {
-            margin-left: 0.8rem;
-            font-size: 1.1rem;
-        }
-        
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            margin-right: 240px;
-            padding: 2rem;
-            max-width: 1200px;
-        }
-        
-        .page-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 2rem;
-            color: var(--black);
-        }
-        
-        /* Cards */
-        .card {
-            background: var(--white);
-            padding: 2rem;
-            border-radius: 12px;
-            margin-bottom: 2rem;
-            border: 1px solid var(--light-gray);
-        }
-        
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .card-header h3 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--black);
-        }
-        
-        /* Forms */
-        .form-group {
-            margin-bottom: 1.2rem;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: var(--gray);
-        }
-        
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--light-gray);
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: 0.3s;
-            background: var(--white);
-        }
-        
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: var(--black);
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 0.8rem 1.5rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-        
-        .btn-primary {
-            background: var(--black);
-            color: var(--white);
-        }
-        
-        .btn-primary:hover {
-            background: var(--gray);
-        }
-        
-        .btn-secondary {
-            background: var(--light-gray);
-            color: var(--dark-gray);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--gray);
-            color: var(--white);
-        }
-        
-        .btn-danger {
-            background: #dc2626;
-            color: var(--white);
-        }
-        
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-        
-        .btn-small {
-            padding: 0.5rem 1rem;
-            font-size: 0.85rem;
-        }
-        
-        /* Products Table */
-        .products-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        .products-table th,
-        .products-table td {
-            padding: 1rem;
-            text-align: right;
-            border-bottom: 1px solid var(--light-gray);
-        }
-        
-        .products-table th {
-            background: var(--light-gray);
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-        
-        .products-table tr:hover {
-            background: #fafafa;
-        }
-        
-        .product-image {
-            width: 60px;
-            height: 60px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 1px solid var(--light-gray);
-        }
-        
-        .product-status {
-            padding: 0.3rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-        }
-        
-        .status-active {
-            background: #d1fae5;
-            color: #065f46;
-        }
-        
-        .status-out {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        /* Delivery Section */
-        .state-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 1rem;
-            align-items: center;
-            padding: 1rem;
-            background: #fafafa;
-            border-radius: 8px;
-            margin-bottom: 0.8rem;
-        }
-        
-        .state-row input {
-            padding: 0.6rem;
-            border: 1px solid var(--light-gray);
-            border-radius: 6px;
-        }
-        
-        /* Alerts */
-        .alert {
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            display: none;
-        }
-        
-        .alert-success {
-            background: #d1fae5;
-            color: #065f46;
-        }
+        :root { --black: #000; --dark: #1a1a1a; --gray: #6b6b6b; --light: #f5f5f5; --white: #fff; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
+        .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--white); }
+        .login-box { max-width: 400px; width: 90%; padding: 2.5rem; background: var(--white); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
+        .login-box h1 { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
+        .login-box p { text-align: center; color: var(--gray); margin-bottom: 2rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; border: 2px solid var(--light); border-radius: 8px; font-size: 1rem; }
+        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--black); }
+        .btn { width: 100%; padding: 0.9rem; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: var(--black); color: var(--white); }
+        .btn-primary:hover { background: var(--dark); }
+        .btn-back { display: block; text-align: center; margin-top: 1.5rem; color: var(--gray); text-decoration: none; }
+        .dashboard { display: none; }
+        .dashboard.active { display: block; }
+        .header { background: var(--white); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        .header-left { display: flex; align-items: center; gap: 1rem; }
+        .store-title { font-size: 1.2rem; font-weight: 600; }
+        .store-code { background: var(--light); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace; }
+        .header-right { display: flex; gap: 0.8rem; }
+        .btn-orders { background: var(--black); color: var(--white); padding: 0.6rem 1.2rem; border-radius: 6px; text-decoration: none; font-size: 0.9rem; }
+        .btn-logout { background: transparent; color: var(--gray); padding: 0.6rem 1rem; border: 1px solid var(--light); border-radius: 6px; cursor: pointer; }
+        .container { display: flex; min-height: calc(100vh - 70px); }
+        .sidebar { width: 250px; background: var(--white); padding: 1.5rem; border-left: 1px solid var(--light); }
+        .sidebar-menu { list-style: none; }
+        .sidebar-menu li { margin-bottom: 0.5rem; }
+        .sidebar-menu a { display: flex; align-items: center; padding: 0.8rem 1rem; color: var(--gray); text-decoration: none; border-radius: 8px; transition: 0.3s; }
+        .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--black); color: var(--white); }
+        .sidebar-menu .icon { margin-left: 0.8rem; }
+        .main { flex: 1; padding: 2rem; max-width: 1000px; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .page-header { margin-bottom: 2rem; }
+        .page-header h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .card { background: var(--white); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .card h3 { margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--light); }
+        .btn-save { background: var(--black); color: var(--white); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; margin-top: 1rem; }
+        .btn-add { background: var(--black); color: var(--white); padding: 0.6rem 1.2rem; border: none; border-radius: 6px; cursor: pointer; }
+        .btn-delete { background: #dc2626; color: var(--white); padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
+        .state-item { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.8rem; padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 0.8rem; align-items: center; }
+        .state-item input { padding: 0.6rem; border: 1px solid var(--light); border-radius: 6px; }
+        .product-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 0.8rem; }
+        .product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+        .product-info { flex: 1; }
+        .product-name { font-weight: 600; }
+        .product-cat { font-size: 0.85rem; color: var(--gray); }
+        .product-price { font-weight: 600; color: var(--black); }
+        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: none; }
+        .alert-success { background: #d1fae5; color: #065f46; }
+        .alert-error { background: #fee2e2; color: #991b1b; }
+        @media (max-width: 768px) { .sidebar { width: 100%; } .container { flex-direction: column; } .state-item { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+    <div id="loginPage" class="login-page">
+        <div class="login-box">
+            <h1>🛒</h1>
+            <p>Store Dashboard</p>
+            <div id="loginAlert" class="alert"></div>
+            <form id="loginForm">
+                <div class="form-group"><label>Username</label><input type="text" id="username" placeholder="Enter username" required></div>
+                <div class="form-group"><label>Store Code</label><input type="text" id="storeCode" placeholder="Enter store code" required></div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+            <a href="index.html" class="btn-back">← Back to Home</a>
+        </div>
+    </div>
+    <div id="dashboard" class="dashboard">
+        <header class="header">
+            <div class="header-left"><span class="store-title" id="displayName">My Store</span><span class="store-code" id="displayCode">STR-XXXX</span></div>
+            <div class="header-right"><a href="#" id="ordersLink" class="btn-orders" target="_blank">📦 Orders</a><button class="btn-logout" onclick="logout()">Logout</button></div>
+        </header>
+        <div class="container">
+            <aside class="sidebar">
+                <ul class="sidebar-menu">
+                    <li><a href="#" class="active" onclick="showSection('info')"><span class="icon">📋</span> Information</a></li>
+                    <li><a href="#" onclick="showSection('products')"><span class="icon">📦</span> Products</a></li>
+                    <li><a href="#" onclick="showSection('delivery')"><span class="icon">🚚</span> Delivery</a></li>
+                    <li><a href="#" onclick="showSection('social')"><span class="icon">📱</span> Social</a></li>
+                </ul>
+            </aside>
+            <main class="main">
+                <div id="info" class="section active">
+                    <div class="page-header"><h2>Store Information</h2></div>
+                    <div class="card"><h3>Basic Info</h3><div id="infoAlert" class="alert"></div><form id="infoForm">
+                        <div class="form-group"><label>Store Name</label><input type="text" id="infoName" placeholder="Your store name"></div>
+                        <div class="form-group"><label>Tagline / Bio</label><input type="text" id="infoBio" placeholder="Short description"></div>
+                        <div class="form-group"><label>Description</label><textarea id="infoDesc" rows="3" placeholder="Full description"></textarea></div>
+                        <div class="form-group"><label>Logo</label><input type="file" id="infoLogo" accept="image/*"></div>
+                        <button type="submit" class="btn-save">Save Changes</button>
+                    </form></div>
+                </div>
+                <div id="products" class="section">
+                    <div class="page-header"><h2>Products</h2></div>
+                    <div class="card"><h3>Add Category</h3><div style="display: flex; gap: 0.8rem;"><input type="text" id="newCat" placeholder="Category name" style="flex: 1; padding: 0.8rem; border: 1px solid var(--light); border-radius: 6px;"><button class="btn-add" onclick="addCategory()">Add</button></div></div>
+                    <div class="card"><h3>Add Product</h3><div id="productAlert" class="alert"></div><form id="productForm">
+                        <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required></div>
+                        <div class="form-group"><label>Category</label><select id="prodCat"><option value="">Select category</option></select></div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                            <div class="form-group"><label>Old Price</label><input type="number" id="prodOldPrice" placeholder="0.00"></div>
+                            <div class="form-group"><label>New Price</label><input type="number" id="prodPrice" required></div>
+                        </div>
+                        <div class="form-group"><label>Sizes (comma separated)</label><input type="text" id="prodSizes" placeholder="S, M, L, XL"></div>
+                        <div class="form-group"><label>Colors (comma separated)</label><input type="text" id="prodColors" placeholder="Red, Blue, Black"></div>
+                        <div class="form-group"><label>Description</label><textarea id="prodDesc" rows="2"></textarea></div>
+                        <div class="form-group"><label>Image</label><input type="file" id="prodImage" accept="image/*"></div>
+                        <button type="submit" class="btn-save">Add Product</button>
+                    </form></div>
+                    <div class="card"><h3>All Products</h3><div id="productsList"><p style="color: var(--gray);">No products yet</p></div></div>
+                </div>
+                <div id="delivery" class="section">
+                    <div class="page-header"><h2>Delivery Settings</h2></div>
+                    <div class="card"><h3>Add State</h3><div id="deliveryAlert" class="alert"></div><div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.8rem;"><input type="text" id="stateName" placeholder="State name"><input type="number" id="homePrice" placeholder="Home price"><input type="number" id="officePrice" placeholder="Office price"><button class="btn-add" onclick="addState()">Add</button></div></div>
+                    <div class="card"><h3>States List</h3><div id="statesList"></div></div>
+                </div>
+                <div id="social" class="section">
+                    <div class="page-header"><h2>Social Media</h2></div>
+                    <div class="card"><h3>Links</h3><div id="socialAlert" class="alert"></div><form id="socialForm">
+                        <div class="form-group"><label>Facebook</label><input type="text" id="facebook" placeholder="https://facebook.com/..."></div>
+                        <div class="form-group"><label>Instagram</label><input type="text" id="instagram" placeholder="https://instagram.com/..."></div>
+                        <div class="form-group"><label>TikTok</label><input type="text" id="tiktok" placeholder="https://tiktok.com/..."></div>
+                        <button type="submit" class="btn-save">Save Links</button>
+                    </form></div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let currentStore = null; let currentCode = ''; let categories = [];
+        async function login(e) { e.preventDefault(); const alert = document.getElementById('loginAlert'); try { alert.style.display = 'none'; const store = await login(document.getElementById('username').value, document.getElementById('storeCode').value); currentStore = store; currentCode = document.getElementById('storeCode').value; localStorage.setItem('storeCode', currentCode); localStorage.setItem('username', store.username); document.getElementById('displayName').textContent = store.name || 'My Store'; document.getElementById('displayCode').textContent = currentCode; document.getElementById('loginPage').style.display = 'none'; document.getElementById('dashboard').classList.add('active'); loadStoreData(); } catch(err) { alert.textContent = 'Invalid username or code'; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
+        function logout() { localStorage.removeItem('storeCode'); localStorage.removeItem('username'); location.reload(); }
+        function showSection(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active')); event.target.classList.add('active'); }
+        async function loadStoreData() { if(!currentStore) return; document.getElementById('infoName').value = currentStore.info?.name || ''; document.getElementById('infoBio').value = currentStore.info?.bio || ''; document.getElementById('infoDesc').value = currentStore.info?.description || ''; document.getElementById('facebook').value = currentStore.info?.social?.facebook || ''; document.getElementById('instagram').value = currentStore.info?.social?.instagram || ''; document.getElementById('tiktok').value = currentStore.info?.social?.tiktok || ''; categories = currentStore.categories || []; updateCategorySelect(); loadProducts(); loadStates(); }
+        function updateCategorySelect() { const sel = document.getElementById('prodCat'); sel.innerHTML = '<option value="">Select category</option>'; categories.forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; }); }
+        async function addCategory() { const cat = document.getElementById('newCat').value.trim(); if(cat && !categories.includes(cat)) { categories.push(cat); await db.collection('stores').doc(currentCode).update({categories: categories}); document.getElementById('newCat').value = ''; updateCategorySelect(); } }
+        async function saveInfo(e) { e.preventDefault(); const alert = document.getElementById('infoAlert'); try { await saveInfo(currentCode, { name: document.getElementById('infoName').value, bio: document.getElementById('infoBio').value, description: document.getElementById('infoDesc').value }); alert.textContent = 'Saved successfully!'; alert.className = 'alert alert-success'; alert.style.display = 'block'; } catch(err) { alert.textContent = 'Error: ' + err.message; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
+        async function addProduct(e) { e.preventDefault(); const alert = document.getElementById('productAlert'); try { let imageUrl = ''; const file = document.getElementById('prodImage').files[0]; if(file) imageUrl = await uploadImage(file, currentCode); await addProduct(currentCode, { name: document.getElementById('prodName').value, category: document.getElementById('prodCat').value, oldPrice: document.getElementById('prodOldPrice').value, price: document.getElementById('prodPrice').value, sizes: document.getElementById('prodSizes').value, colors: document.getElementById('prodColors').value, description: document.getElementById('prodDesc').value, image: imageUrl }); document.getElementById('productForm').reset(); alert.textContent = 'Product added!'; alert.className = 'alert alert-success'; alert.style.display = 'block'; loadProducts(); } catch(err) { alert.textContent = 'Error: ' + err.message; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
+        async function loadProducts() { const list = document.getElementById('productsList'); const prods = await getProducts(currentCode); if(prods.length === 0) { list.innerHTML = '<p style="color: var(--gray);">No products yet</p>'; return; } list.innerHTML = prods.map(p => `<div class="product-item"><img src="${p.image || 'https://via.placeholder.com/60'}" class="product-img"><div class="product-info"><div class="product-name">${p.name}</div><div class="product-cat">${p.category} - ${p.price} SAR</div></div><button class="btn-delete" onclick="deleteProd('${p.id}')">Delete</button></div>`).join(''); }
+        async function deleteProd(id) { if(confirm('Delete this product?')) { await deleteProduct(currentCode, id); loadProducts(); } }
+        async function addState() { const alert = document.getElementById('deliveryAlert'); const name = document.getElementById('stateName').value; const home = document.getElementById('homePrice').value; const office = document.getElementById('officePrice').value; if(!name || !home || !office) { alert.textContent = 'Fill all fields'; alert.className = 'alert alert-error'; alert.style.display = 'block'; return; } const states = currentStore.delivery || {}; states[name] = { home, office }; await saveDelivery(currentCode, states); currentStore.delivery = states; document.getElementById('stateName').value = ''; document.getElementById('homePrice').value = ''; document.getElementById('officePrice').value = ''; loadStates(); }
+        function loadStates() { const list = document.getElementById('statesList'); const states = currentStore.delivery || {}; if(Object.keys(states).length === 0) { list.innerHTML = '<p style="color: var(--gray);">No states added</p>'; return; } list.innerHTML = Object.entries(states).map(([name, prices]) => `<div class="state-item"><span>${name}</span><span>Home: ${prices.home} SAR</span><span>Office: ${prices.office} SAR</span><button class="btn-delete" onclick="deleteState('${name}')">Delete</button></div>`).join(''); }
+        async function deleteState(name) { if(confirm('Delete ' + name + '?')) { delete currentStore.delivery[name]; await saveDelivery(currentCode, currentStore.delivery); loadStates(); } }
+        async function saveSocial(e) { e.preventDefault(); const alert = document.getElementById('socialAlert'); try { await saveSocial(currentCode, { facebook: document.getElementById('facebook').value, instagram: document.getElementById('instagram').value, tiktok: document.getElementById('tiktok').value }); alert.textContent = 'Links saved!'; alert.className = 'alert alert-success'; alert.style.display = 'block'; } catch(err) { alert.textContent = 'Error: ' + err.message; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
+        document.getElementById('loginForm').addEventListener('submit', login); document.getElementById('infoForm').addEventListener('submit', saveInfo); document.getElementById('productForm').addEventListener('submit', addProduct); document.getElementById('socialForm').addEventListener('submit', saveSocial);
+        const savedCode = localStorage.getItem('storeCode'); if(savedCode) { document.getElementById('storeCode').value = savedCode; }
+    </script>
+</body>
+</html>
