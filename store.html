@@ -1,81 +1,136 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>متجر</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --primary: #6366f1; --bg: #ffffff; --text: #1f2937; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); }
-        header { background: var(--primary); color: white; padding: 1rem 5%; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.5rem; font-weight: bold; }
-        .social-links a { color: white; margin-right: 1rem; font-size: 1.2rem; text-decoration: none; }
-        .hero { text-align: center; padding: 3rem 5%; background: linear-gradient(135deg, var(--primary), #4f46e5); color: white; }
+        :root { --primary: #6366f1; --primary-dark: #4f46e5; --bg: #fafafa; --white: #ffffff; --text: #1f2937; --text-light: #6b7280; --border: #e5e7eb; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: var(--bg); color: var(--text); line-height: 1.6; }
+        .header { background: var(--white); box-shadow: var(--shadow); position: sticky; top: 0; z-index: 100; }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; }
+        .store-brand { display: flex; align-items: center; gap: 1rem; }
+        .store-logo { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.5rem; font-weight: bold; }
+        .store-title { font-size: 1.3rem; font-weight: 600; }
+        .store-tagline { font-size: 0.85rem; color: var(--text-light); }
+        .header-actions { display: flex; align-items: center; gap: 1rem; }
+        .social-icons { display: flex; gap: 0.8rem; }
+        .social-icons a { width: 36px; height: 36px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; color: var(--text); text-decoration: none; transition: 0.3s; }
+        .social-icons a:hover { background: var(--primary); color: white; }
+        .cart-btn { position: relative; background: var(--primary); color: white; border: none; padding: 0.7rem 1.2rem; border-radius: 10px; cursor: pointer; font-size: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .cart-count { position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; width: 22px; height: 22px; border-radius: 50%; font-size: 0.75rem; display: flex; align-items: center; justify-content: center; }
+        .hero { background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: white; padding: 4rem 1.5rem; text-align: center; }
         .hero h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .hero p { opacity: 0.9; }
-        .categories { padding: 2rem 5%; display: flex; gap: 1rem; overflow-x: auto; }
-        .cat-btn { padding: 0.6rem 1.5rem; border: 2px solid var(--primary); background: white; color: var(--primary); border-radius: 25px; cursor: pointer; white-space: nowrap; }
-        .cat-btn.active { background: var(--primary); color: white; }
-        .products { padding: 2rem 5%; display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1.5rem; }
-        .product { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); transition: 0.3s; }
-        .product:hover { transform: translateY(-5px); }
-        .product-img { width: 100%; height: 200px; object-fit: cover; }
-        .product-info { padding: 1rem; }
-        .product-name { font-size: 1.1rem; margin-bottom: 0.5rem; }
-        .product-price { font-size: 1.2rem; font-weight: bold; color: var(--primary); }
-        .old-price { text-decoration: line-through; color: #9ca3af; font-size: 0.9rem; margin-right: 0.5rem; }
-        .product-sizes, .product-colors { font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; }
-        .btn-buy { width: 100%; padding: 0.8rem; background: var(--primary); color: white; border: none; border-radius: 8px; margin-top: 1rem; cursor: pointer; }
-        footer { background: #1f2937; color: white; text-align: center; padding: 2rem; margin-top: 3rem; }
-        .loading { text-align: center; padding: 3rem; }
-        @media (max-width: 768px) { .hero h1 { font-size: 1.8rem; } }
+        .hero p { font-size: 1.1rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
+        .categories-section { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .categories-scroll { display: flex; gap: 0.8rem; overflow-x: auto; padding-bottom: 0.5rem; scrollbar-width: none; }
+        .categories-scroll::-webkit-scrollbar { display: none; }
+        .cat-btn { background: var(--white); border: 2px solid var(--border); padding: 0.7rem 1.5rem; border-radius: 25px; cursor: pointer; white-space: nowrap; transition: 0.3s; font-size: 0.95rem; }
+        .cat-btn:hover, .cat-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .products-section { max-width: 1200px; margin: 0 auto 4rem; padding: 0 1.5rem; }
+        .section-title { font-size: 1.5rem; margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--border); }
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+        .product-card { background: var(--white); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow); transition: 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+        .product-image { width: 100%; height: 220px; object-fit: cover; background: var(--bg); }
+        .product-info { padding: 1.2rem; }
+        .product-name { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.3rem; }
+        .product-category { font-size: 0.85rem; color: var(--text-light); margin-bottom: 0.8rem; }
+        .product-price { display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.8rem; }
+        .current-price { font-size: 1.3rem; font-weight: bold; color: var(--primary); }
+        .old-price { font-size: 0.95rem; color: var(--text-light); text-decoration: line-through; }
+        .product-meta { font-size: 0.85rem; color: var(--text-light); margin-bottom: 1rem; }
+        .btn-add-cart { width: 100%; background: var(--primary); color: white; border: none; padding: 0.8rem; border-radius: 10px; cursor: pointer; font-size: 1rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-add-cart:hover { background: var(--primary-dark); }
+        .cart-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1000; align-items: center; justify-content: center; }
+        .cart-modal.active { display: flex; }
+        .cart-content { background: var(--white); width: 90%; max-width: 500px; max-height: 80vh; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; }
+        .cart-header { padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .cart-header h2 { font-size: 1.3rem; }
+        .close-cart { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-light); }
+        .cart-body { padding: 1.5rem; overflow-y: auto; flex: 1; }
+        .cart-item { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+        .cart-item img { width: 70px; height: 70px; object-fit: cover; border-radius: 8px; }
+        .cart-item-info { flex: 1; }
+        .cart-item-name { font-weight: 600; margin-bottom: 0.3rem; }
+        .cart-item-price { color: var(--primary); font-weight: 600; }
+        .cart-item-qty { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+        .qty-btn { width: 28px; height: 28px; border: 1px solid var(--border); background: var(--white); border-radius: 6px; cursor: pointer; }
+        .remove-item { color: #ef4444; background: none; border: none; cursor: pointer; font-size: 0.9rem; }
+        .cart-footer { padding: 1.5rem; border-top: 1px solid var(--border); }
+        .cart-total { display: flex; justify-content: space-between; font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; }
+        .delivery-section { margin-bottom: 1rem; }
+        .delivery-section label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
+        .delivery-section select { width: 100%; padding: 0.8rem; border: 2px solid var(--border); border-radius: 8px; font-size: 1rem; }
+        .btn-checkout { width: 100%; background: #10b981; color: white; border: none; padding: 1rem; border-radius: 10px; cursor: pointer; font-size: 1.1rem; font-weight: 600; }
+        .empty-cart { text-align: center; padding: 2rem; color: var(--text-light); }
+        .footer { background: var(--text); color: white; text-align: center; padding: 2rem; margin-top: 2rem; }
+        .loading { text-align: center; padding: 3rem; color: var(--text-light); }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        @media (max-width: 768px) { .header-content { flex-wrap: wrap; gap: 1rem; } .hero h1 { font-size: 1.8rem; } .products-grid { grid-template-columns: repeat(2, 1fr); gap: 1rem; } .product-image { height: 150px; } }
     </style>
 </head>
 <body>
-    <header>
-        <div class="logo" id="storeLogo">🛒 متجر</div>
-        <div class="social-links" id="socialLinks"></div>
+    <header class="header">
+        <div class="header-content">
+            <div class="store-brand">
+                <div class="store-logo" id="storeLogo">S</div>
+                <div>
+                    <div class="store-title" id="storeName">Store</div>
+                    <div class="store-tagline" id="storeTagline">Best products with best prices</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="social-icons" id="socialIcons"></div>
+                <button class="cart-btn" onclick="openCart()"><i class="fas fa-shopping-cart"></i> Cart <span class="cart-count" id="cartCount">0</span></button>
+            </div>
+        </div>
     </header>
-    <div id="hero" class="hero"><h1 id="storeName">متجرنا</h1><p id="storeDesc">أفضل المنتجات بأفضل الأسعار</p></div>
-    <div class="categories" id="categories"><button class="cat-btn active" onclick="filterProducts('all')">الكل</button></div>
-    <div class="products" id="products"><div class="loading">جاري تحميل المنتجات...</div></div>
-    <footer><p id="footerText">© 2024</p></footer>
+    <section class="hero"><h1 id="heroTitle">Welcome to Our Store</h1><p id="heroDesc">Best products with best prices - Delivery to all areas</p></section>
+    <section class="categories-section"><div class="categories-scroll" id="categories"><button class="cat-btn active" onclick="filterProducts('all')">All</button></div></section>
+    <section class="products-section"><h2 class="section-title">Products</h2><div class="products-grid" id="productsGrid"><div class="loading"><div class="spinner"></div><p>Loading products...</p></div></div></section>
+    <footer class="footer"><p>© 2024 <span id="footerName">Store</span> - All rights reserved</p></footer>
+    <div class="cart-modal" id="cartModal"><div class="cart-content"><div class="cart-header"><h2>🛒 Shopping Cart</h2><button class="close-cart" onclick="closeCart()">×</button></div><div class="cart-body" id="cartBody"><div class="empty-cart"><p>Your cart is empty</p></div></div><div class="cart-footer"><div class="cart-total"><span>Total:</span><span><span id="cartTotal">0</span> SAR</span></div><div class="delivery-section"><label>Delivery Area:</label><select id="deliverySelect" onchange="updateTotal()"><option value="">Select area</option></select></div><button class="btn-checkout" onclick="checkout()"><i class="fab fa-whatsapp"></i> Order via WhatsApp</button></div></div></div>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const storeCode = urlParams.get('code');
-        if(!storeCode) { document.getElementById('products').innerHTML = '<p style="text-align:center;padding:2rem;">رابط المتجر غير صحيح</p>'; throw new Error('No store code'); }
+        if (!storeCode) { document.getElementById('productsGrid').innerHTML = '<div class="loading"><p>Invalid store link</p></div>'; throw new Error('No store code'); }
+        let storeData = null; let allProducts = []; let cart = [];
         async function loadStore() {
-            const store = await getStoreInfo(storeCode);
-            if(!store) { document.getElementById('products').innerHTML = '<p style="text-align:center;padding:2rem;">المتجر غير موجود</p>'; return; }
-            document.documentElement.style.setProperty('--primary', store.colors?.primary || '#6366f1');
-            document.getElementById('storeName').textContent = store.info?.name || 'متجر';
-            document.getElementById('storeDesc').textContent = store.info?.bio || '';
-            document.getElementById('storeLogo').textContent = store.info?.name?.charAt(0) || '🛒';
-            const social = store.info?.social || {};
-            document.getElementById('socialLinks').innerHTML = social.facebook ? `<a href="${social.facebook}" target="_blank">📘</a>` : '';
-            document.getElementById('socialLinks').innerHTML += social.instagram ? `<a href="${social.instagram}" target="_blank">📷</a>` : '';
-            document.getElementById('socialLinks').innerHTML += social.tiktok ? `<a href="${social.tiktok}" target="_blank">🎵</a>` : '';
-            const cats = store.categories || [];
-            const catContainer = document.getElementById('categories');
-            catContainer.innerHTML = '<button class="cat-btn active" onclick="filterProducts(\'all\')">الكل</button>';
-            cats.forEach(c => { catContainer.innerHTML += `<button class="cat-btn" onclick="filterProducts('${c}')">${c}</button>`; });
-            const prods = await getProducts(storeCode);
-            window.allProducts = prods;
-            displayProducts(prods);
+            try {
+                const doc = await db.collection('stores').doc(storeCode).get();
+                if (!doc.exists) { document.getElementById('productsGrid').innerHTML = '<div class="loading"><p>Store not found</p></div>'; return; }
+                storeData = doc.data();
+                document.title = storeData.name || 'Store';
+                document.getElementById('storeName').textContent = storeData.name || 'Store';
+                document.getElementById('storeTagline').textContent = storeData.info?.bio || 'Best products with best prices';
+                document.getElementById('heroTitle').textContent = storeData.name || 'Welcome to Our Store';
+                document.getElementById('heroDesc').textContent = storeData.info?.description || 'Best products with best prices - Delivery to all areas';
+                document.getElementById('footerName').textContent = storeData.name || 'Store';
+                document.getElementById('storeLogo').textContent = storeData.name ? storeData.name.charAt(0).toUpperCase() : 'S';
+                const social = storeData.info?.social || {};
+                let socialHtml = '';
+                if (social.facebook) socialHtml += `<a href="${social.facebook}" target="_blank"><i class="fab fa-facebook-f"></i></a>`;
+                if (social.instagram) socialHtml += `<a href="${social.instagram}" target="_blank"><i class="fab fa-instagram"></i></a>`;
+                if (social.tiktok) socialHtml += `<a href="${social.tiktok}" target="_blank"><i class="fab fa-tiktok"></i></a>`;
+                document.getElementById('socialIcons').innerHTML = socialHtml;
+                const cats = storeData.categories || [];
+                const catContainer = document.getElementById('categories');
+                catContainer.innerHTML = '<button class="cat-btn active" onclick="filterProducts(\'all\')">All</button>';
+                cats.forEach(c => { catContainer.innerHTML += `<button class="cat-btn" onclick="filterProducts('${c}')">${c}</button>`; });
+                const snapshot = await db.collection('stores').doc(storeCode).collection('products').get();
+                allProducts = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                displayProducts(allProducts);
+                loadDeliveryAreas();
+            } catch(err) { console.error(err); document.getElementById('productsGrid').innerHTML = '<div class="loading"><p>Error loading store</p></div>'; }
         }
-        function displayProducts(prods) {
-            const container = document.getElementById('products');
-            if(prods.length === 0) { container.innerHTML = '<p style="text-align:center;padding:2rem;">لا توجد منتجات حالياً</p>'; return; }
-            container.innerHTML = prods.map(p => `<div class="product"><img src="${p.image || 'https://via.placeholder.com/250'}" class="product-img"><div class="product-info"><div class="product-name">${p.name}</div>${p.oldPrice ? `<span class="old-price">${p.oldPrice} ر.س</span>` : ''}<span class="product-price">${p.price} ر.س</span>${p.sizes ? `<div class="product-sizes">المقاسات: ${p.sizes}</div>` : ''}${p.colors ? `<div class="product-colors">الألوان: ${p.colors}</div>` : ''}<button class="btn-buy" onclick="order('${p.name}', '${p.price}')">اطلب الآن</button></div></div>`).join('');
-        }
-        function filterProducts(cat) { document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active')); event.target.classList.add('active'); if(cat === 'all') displayProducts(window.allProducts); else displayProducts(window.allProducts.filter(p => p.category === cat)); }
-        function order(name, price) { const sheetUrl = 'https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit'; window.open(sheetUrl, '_blank'); }
-        loadStore();
-    </script>
-</body>
-</html>
+        function displayProducts(products) {
+            const grid = document.getElementById('productsGrid');
+            if (products.length === 0) { grid.innerHTML = '<div class="loading"><p>No products available</p></div>'; return; }
+            grid.innerHTML = products.map(p => `<div class="product-card"><img src="${p.image || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22220%22><rect fill=%22%23eee%22 width=%22260%22 height=%22220%22/><text x=%2250%25%22 y=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22>No Image</text></svg>'}" class="product-image"><div class="product-info"><div class="product-name">${p.name}</div><div class="product-category">${p.category || 'General'}</div><div class="product-price">${p.oldPrice ? `<span class="old-price">${p.oldPrice} SAR</span>` : ''}<span class="current-price">${p.price} SAR</span></div>${p.sizes || p.colors ? `<div class="product-meta">${p.sizes ? 'Sizes: ' + p.sizes : ''} ${p.colors ? ' | Colors: ' + p.colors : ''}</div>` : ''}<button class="btn-add-cart" onclick="addToCart('${p.id}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
