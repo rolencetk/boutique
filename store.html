@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="store-title">Boutique الإيطالي</title>
+    <title id="store-title">Luxurio Boutique</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -12,126 +12,144 @@
     <style>
         :root {
             --accent-color: #000000;
-            --bg-color: #ffffff;
+            --bg-products: #ffffff; /* لون صفحة المنتجات */
+            --bg-header: #f8f8f8;   /* لون مختلف للهيدر للتناسق */
             --text-color: #1a1a1a;
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: var(--bg-products);
             color: var(--text-color);
             font-family: 'Montserrat', sans-serif;
-            transition: background 0.5s ease;
+            margin: 0;
         }
 
         .font-vogue { font-family: 'Bodoni Moda', serif; }
 
-        /* ستايل المنتجات الإيطالي: بسيط ونظيف */
-        .product-card {
-            border: none;
-            transition: all 0.4s ease;
+        /* Navbar: 60% Transparency */
+        nav {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
         }
 
+        /* Hero Section (Different Color) */
+        .hero-section {
+            background-color: var(--bg-header);
+            padding: 120px 20px 80px 20px;
+            text-align: center;
+        }
+
+        /* Logo in the middle */
+        .logo-container img {
+            max-height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        /* Luxury Product Card */
+        .product-card {
+            transition: transform 0.4s ease;
+        }
         .img-wrapper {
             position: relative;
             overflow: hidden;
-            background: #f8f8f8;
+            background: #fff;
             aspect-ratio: 3/4;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
         }
-
         .product-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
         }
+        .product-card:hover img { transform: scale(1.05); }
 
-        .product-card:hover img {
-            transform: scale(1.08);
-        }
-
-        /* زر الإضافة للسلة يظهر بنعومة */
-        .add-to-cart-btn {
+        .add-to-bag {
             position: absolute;
-            bottom: -50px;
-            left: 0;
-            width: 100%;
-            background: rgba(0,0,0,0.8);
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(0,0,0,0.9);
             color: white;
-            padding: 15px;
-            text-align: center;
-            text-transform: uppercase;
+            padding: 18px;
             font-size: 10px;
-            letter-spacing: 2px;
-            transition: bottom 0.3s ease;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            transform: translateY(100%);
+            transition: transform 0.4s ease;
         }
+        .product-card:hover .add-to-bag { transform: translateY(0); }
 
-        .product-card:hover .add-to-cart-btn {
-            bottom: 0;
-        }
-
-        /* تنسيق السلة الجانبية */
+        /* Professional Italian Sidebar */
         #cart-sidebar {
-            transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
-            z-index: 1000;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            background: #ffffff;
+            box-shadow: -20px 0 50px rgba(0,0,0,0.05);
         }
 
-        .btn-main {
-            background-color: var(--accent-color);
-            color: white;
-            transition: opacity 0.3s;
+        .cart-item {
+            display: flex; gap: 20px; padding: 20px 0;
+            border-bottom: 1px solid #f0f0f0;
         }
-        .btn-main:hover { opacity: 0.8; }
+
+        .checkout-btn {
+            background: var(--accent-color);
+            color: white;
+            width: 100%;
+            padding: 20px;
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-top: 20px;
+        }
     </style>
 </head>
-<body class="pt-20">
+<body>
 
-    <nav class="fixed top-0 w-full z-[60] bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div class="container mx-auto px-6 py-5 flex justify-between items-center">
-            <h1 id="nav-store-name" class="font-vogue text-2xl font-bold tracking-tighter uppercase">STUDIO</h1>
-            
+    <nav class="fixed top-0 w-full z-[100]">
+        <div class="container mx-auto px-8 py-5 grid grid-cols-3 items-center">
             <button onclick="toggleCart(true)" class="flex items-center gap-2">
-                <span class="text-[10px] uppercase tracking-widest font-bold">الحقيبة</span>
-                <span id="cart-count" class="text-xs font-light">(0)</span>
+                <i class="fa-solid fa-bag-shopping text-sm"></i>
+                <span id="cart-count" class="text-[10px] font-bold uppercase tracking-widest">Bag (0)</span>
             </button>
+
+            <div class="logo-container flex justify-center">
+                <img id="store-logo" src="" alt="" class="hidden"> 
+                <h1 id="nav-store-name" class="font-vogue text-2xl font-bold tracking-tighter uppercase">STUDIO</h1>
+            </div>
+
+            <div class="text-right">
+                <span class="text-[9px] uppercase tracking-[0.3em] opacity-40 italic">Italian Suite</span>
+            </div>
         </div>
     </nav>
 
-    <header class="py-20 text-center border-b border-gray-50">
-        <h2 id="header-store-name" class="font-vogue text-6xl md:text-8xl italic mb-4">Collection</h2>
-        <p id="store-bio" class="text-gray-400 uppercase tracking-[0.5em] text-[9px]"></p>
+    <header class="hero-section">
+        <h2 id="header-store-name" class="font-vogue text-7xl md:text-9xl italic mb-6">Signature</h2>
+        <p id="store-bio" class="text-gray-400 uppercase tracking-[0.6em] text-[10px] max-w-xl mx-auto"></p>
     </header>
 
-    <main class="container mx-auto px-6 py-20">
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
-            <div class="col-span-full text-center py-20 opacity-20 italic">جاري تحميل المجموعة...</div>
-        </div>
+    <main class="container mx-auto px-8 py-32">
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+            </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-100 py-16">
-        <div class="container mx-auto px-6 text-center">
-            <div class="flex justify-center space-x-8 space-x-reverse mb-10 text-xl">
-                <a id="link-instagram" href="#" class="hover:opacity-50"><i class="fa-brands fa-instagram"></i></a>
-                <a id="link-facebook" href="#" class="hover:opacity-50"><i class="fa-brands fa-facebook"></i></a>
-                <a id="link-tiktok" href="#" class="hover:opacity-50"><i class="fa-brands fa-tiktok"></i></a>
-            </div>
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest">© 2024 جميع الحقوق محفوظة</p>
+    <div id="cart-overlay" class="fixed inset-0 bg-black/10 hidden z-[900] backdrop-blur-sm" onclick="toggleCart(false)"></div>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[1000] translate-x-full p-12 flex flex-col">
+        <div class="flex justify-between items-center mb-12">
+            <h2 class="font-vogue text-4xl italic">Your Selection</h2>
+            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-300 hover:text-black"></i></button>
         </div>
-    </footer>
+        
+        <div id="cart-items" class="flex-grow overflow-y-auto pr-4">
+            </div>
 
-    <div id="cart-overlay" class="fixed inset-0 bg-black/20 hidden z-[900]" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar" class="fixed top-0 left-0 w-full max-w-sm h-full bg-white shadow-2xl translate-x-full p-8 flex flex-col text-right">
-        <div class="flex justify-between items-center mb-10 border-b pb-5">
-            <h2 class="font-vogue text-2xl italic">حقيبة التسوق</h2>
-            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-400"></i></button>
-        </div>
-        <div id="cart-items" class="flex-grow overflow-y-auto space-y-6">
+        <div class="mt-auto pt-8 border-t border-gray-100">
+            <div class="flex justify-between font-light mb-2">
+                <span class="text-gray-400 text-xs uppercase tracking-widest">Subtotal</span>
+                <span id="cart-total" class="font-bold">0.00 USD</span>
             </div>
-        <div class="mt-auto pt-8 border-t">
-            <div class="flex justify-between font-bold mb-6">
-                <span id="cart-total">0.00</span>
-                <span>المجموع الإجمالي</span>
-            </div>
-            <button onclick="checkoutWhatsApp()" class="w-full btn-main py-4 text-xs uppercase tracking-widest font-bold">إتمام الطلب عبر واتساب</button>
+            <button onclick="checkout()" class="checkout-btn">Complete Order</button>
         </div>
     </div>
 
@@ -139,7 +157,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // 1. استخدام نفس الـ Config الخاص بكِ
+        // استخدام بياناتك الخاصة
         const firebaseConfig = {
           apiKey: "AIzaSyBEoyeQvUzFJviG2oYs5sZsAQ0bR9dHN0U",
           authDomain: "my-simple-stores.firebaseapp.com",
@@ -152,121 +170,102 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // 2. الحصول على كود المتجر من الرابط تلقائياً
         const urlParams = new URLSearchParams(window.location.search);
         const storeCode = urlParams.get('code');
 
-        if (!storeCode) {
-            document.body.innerHTML = "<div class='flex items-center justify-center h-screen font-vogue'>يرجى فتح المتجر باستخدام الرابط الصحيح (كود المتجر مفقود)</div>";
-        }
-
-        // 3. جلب بيانات المتجر والألوان
         async function initStore() {
+            if(!storeCode) return;
             const doc = await db.collection('stores').doc(storeCode).get();
             if (doc.exists) {
                 const store = doc.data();
                 
-                // تحديث الألوان من لوحة الإدارة
+                // Colors & Theme
                 if(store.colors) {
                     document.documentElement.style.setProperty('--accent-color', store.colors.primary);
-                    document.documentElement.style.setProperty('--bg-color', store.colors.background);
-                    document.documentElement.style.setProperty('--text-color', store.colors.text);
+                    // يمكنك هنا تغيير لون الهيدر إذا أردتِ من لوحة التحكم
                 }
 
-                // تحديث النصوص
+                // Info
                 document.getElementById('nav-store-name').innerText = store.name;
                 document.getElementById('header-store-name').innerText = store.name;
-                document.getElementById('store-title').innerText = store.name;
-                document.getElementById('store-bio').innerText = store.info?.bio || "";
+                document.getElementById('store-bio').innerText = store.info?.bio || "New Collection 2024";
                 
-                // تحديث روابط التواصل
-                if(store.info?.social) {
-                    if(store.info.social.instagram) document.getElementById('link-instagram').href = store.info.social.instagram;
-                    if(store.info.social.facebook) document.getElementById('link-facebook').href = store.info.social.facebook;
-                    if(store.info.social.tiktok) document.getElementById('link-tiktok').href = store.info.social.tiktok;
+                // Logo Management
+                if(store.info?.logo) {
+                    const logoImg = document.getElementById('store-logo');
+                    logoImg.src = store.info.logo;
+                    logoImg.classList.remove('hidden');
+                    document.getElementById('nav-store-name').classList.add('hidden');
                 }
 
                 loadProducts();
             }
         }
 
-        // 4. جلب المنتجات من الـ Sub-collection (كما في app.js)
         async function loadProducts() {
             const grid = document.getElementById('products-grid');
             const snapshot = await db.collection('stores').doc(storeCode).collection('products').get();
-            
-            if(snapshot.empty) {
-                grid.innerHTML = "<p class='col-span-full text-center opacity-40 italic'>لا توجد منتجات حالياً</p>";
-                return;
-            }
-
             grid.innerHTML = "";
+            
             snapshot.forEach(doc => {
                 const p = doc.data();
                 grid.innerHTML += `
                     <div class="product-card">
-                        <div class="img-wrapper group">
-                            <img src="${p.image || ''}" alt="${p.name}">
-                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" class="add-to-cart-btn">إضافة للحقيبة +</button>
+                        <div class="img-wrapper">
+                            <img src="${p.image || ''}" alt="">
+                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" class="add-to-bag">Add to Bag +</button>
                         </div>
-                        <div class="mt-6 text-center">
-                            <h3 class="font-vogue text-xl uppercase tracking-tighter">${p.name}</h3>
-                            <p class="text-sm font-light mt-2">${p.price} ر.س</p>
+                        <div class="mt-8 text-center">
+                            <h3 class="font-vogue text-2xl italic tracking-tight">${p.name}</h3>
+                            <p class="text-[11px] font-semibold opacity-30 mt-2">${p.price} USD</p>
                         </div>
                     </div>
                 `;
             });
         }
 
-        // 5. نظام السلة المبسط
         let cart = [];
         function addToCart(id, name, price, img) {
             const item = cart.find(i => i.id === id);
-            if(item) item.qty++;
-            else cart.push({id, name, price, img, qty: 1});
-            updateCartUI();
+            item ? item.qty++ : cart.push({id, name, price, img, qty: 1});
+            updateUI();
             toggleCart(true);
         }
 
-        function updateCartUI() {
+        function updateUI() {
             const container = document.getElementById('cart-items');
             let total = 0;
             container.innerHTML = cart.map((item, idx) => {
                 total += (item.price * item.qty);
                 return `
-                    <div class="flex items-center gap-4 border-b pb-4">
-                        <img src="${item.img}" class="w-16 h-20 object-cover">
+                    <div class="cart-item">
+                        <img src="${item.img}" class="w-20 h-24 object-cover bg-gray-50">
                         <div class="flex-grow">
-                            <h4 class="font-vogue text-sm italic">${item.name}</h4>
-                            <p class="text-[10px] text-gray-400 mt-1">${item.price} ر.س × ${item.qty}</p>
+                            <h4 class="font-vogue text-lg italic">${item.name}</h4>
+                            <p class="text-[10px] text-gray-400 uppercase mt-1">${item.price} USD x ${item.qty}</p>
+                            <button onclick="removeFromCart(${idx})" class="text-[9px] uppercase tracking-widest mt-4 border-b border-gray-200">Remove</button>
                         </div>
-                        <button onclick="removeFromCart(${idx})" class="text-xs text-gray-300">حذف</button>
-                    </div>
-                `;
+                    </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = total.toFixed(2) + " ر.س";
-            document.getElementById('cart-count').innerText = `(${cart.reduce((a, b) => a + b.qty, 0)})`;
+            document.getElementById('cart-total').innerText = total.toFixed(2) + " USD";
+            document.getElementById('cart-count').innerText = `Bag (${cart.reduce((a, b) => a + b.qty, 0)})`;
         }
 
-        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
-
-        function toggleCart(show) {
-            const sidebar = document.getElementById('cart-sidebar');
-            const overlay = document.getElementById('cart-overlay');
-            sidebar.style.transform = show ? "translateX(0)" : "translateX(100%)";
-            overlay.style.display = show ? "block" : "none";
+        function removeFromCart(i) { cart.splice(i, 1); updateUI(); }
+        function toggleCart(s) {
+            document.getElementById('cart-sidebar').style.transform = s ? "translateX(0)" : "translateX(100%)";
+            document.getElementById('cart-overlay').classList.toggle('hidden', !s);
         }
 
-        function checkoutWhatsApp() {
-            if(cart.length === 0) return alert("السلة فارغة");
-            let message = "طلب جديد من المتجر:\n\n";
-            cart.forEach(item => message += `- ${item.name} (الكمية: ${item.qty})\n`);
-            message += `\nالمجموع: ${document.getElementById('cart-total').innerText}`;
-            window.open(`https://wa.me/213000000000?text=${encodeURIComponent(message)}`);
+        function checkout() {
+            let msg = `Order Details:\n`;
+            cart.forEach(i => msg += `- ${i.name} (${i.qty})\n`);
+            window.open(`https://wa.me/YOUR_PHONE?text=${encodeURIComponent(msg)}`);
         }
 
         initStore();
     </script>
 </body>
 </html>
+
 
