@@ -3,212 +3,191 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="store-title">Lux Store | Collection</title>
+    <title id="page-title">Loading Store...</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
 
     <style>
-        :root {
-            --accent-color: #000000; /* Dynamic accent */
-            --bg-light: #ffffff;
-            --soft-gray: #f4f4f4;
-        }
-
-        body {
-            background-color: var(--bg-light);
-            color: #1a1a1a;
-            font-family: 'Montserrat', sans-serif;
-            letter-spacing: -0.01em;
-        }
-
+        :root { --accent-color: #000000; }
+        body { background-color: #ffffff; color: #1a1a1a; font-family: 'Montserrat', sans-serif; }
         .font-italy { font-family: 'Bodoni Moda', serif; }
-
-        /* Elegant Thin Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #888; }
-
-        /* Soft Hover for Italian Style */
-        .product-image-wrapper {
-            overflow: hidden;
-            background-color: var(--soft-gray);
-            transition: all 0.5s ease;
-        }
-        .product-card:hover .product-image {
-            transform: scale(1.05);
-            opacity: 0.9;
-        }
-
-        .btn-accent {
-            background-color: var(--accent-color);
-            color: #fff;
-            transition: all 0.3s ease;
-        }
-        .btn-accent:hover {
-            filter: brightness(1.2);
-            letter-spacing: 1px;
-        }
-
-        /* Cart Sidebar */
+        
+        /* Sidebar Design */
         #cart-sidebar {
-            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            transition: transform 0.5s cubic-bezier(0.77, 0, 0.175, 1);
+            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+        }
+        
+        .product-card img { transition: transform 0.8s ease; }
+        .product-card:hover img { transform: scale(1.03); }
+        
+        .btn-buy {
+            background-color: var(--accent-color);
+            color: white;
+            transition: all 0.3s ease;
         }
     </style>
 </head>
-<body>
+<body class="pt-24">
 
-    <nav class="fixed w-full top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100">
-        <div class="container mx-auto px-8 py-6 flex justify-between items-center">
-            <div class="flex flex-col items-center">
-                <img id="store-logo" src="" class="h-8 mb-1 object-contain" alt="">
-                <h1 id="store-name" class="font-italy text-2xl font-bold tracking-tighter uppercase">Studio</h1>
+    <nav class="fixed w-full top-0 z-[60] bg-white/80 backdrop-blur-md border-b border-gray-50">
+        <div class="container mx-auto px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-4">
+                <img id="store-logo" src="" class="h-12 w-12 object-contain hidden" alt="Logo">
+                <h1 id="store-name" class="font-italy text-2xl font-bold tracking-tighter uppercase">LUXE</h1>
             </div>
             
-            <div class="flex items-center space-x-8">
-                <button onclick="toggleCart(true)" class="relative group">
-                    <span class="text-xs uppercase tracking-widest font-semibold mr-2 group-hover:opacity-70">Bag</span>
-                    <i class="fa-solid fa-bag-shopping text-xl"></i>
-                    <span id="cart-count" class="absolute -top-2 -right-3 text-[10px] font-bold">0</span>
-                </button>
-            </div>
+            <button onclick="toggleCart(true)" class="flex items-center space-x-2 group">
+                <span class="text-[10px] uppercase tracking-[0.2em] font-semibold border-b border-black">Bag</span>
+                <div class="relative">
+                    <i class="fa-solid fa-bag-shopping text-xl transition group-hover:opacity-50"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 text-[9px] font-bold bg-black text-white rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                </div>
+            </button>
         </div>
     </nav>
 
-    <header class="pt-40 pb-20 text-center border-b border-gray-50">
-        <h2 class="font-italy text-5xl md:text-7xl mb-4 italic italic">The New Collection</h2>
-        <p class="text-gray-400 uppercase tracking-[0.3em] text-[10px]">Essence of Italian Craftsmanship</p>
+    <header class="py-20 text-center">
+        <h2 class="font-italy text-6xl md:text-8xl italic mb-4 opacity-90">Signature</h2>
+        <p class="text-gray-400 uppercase tracking-[0.5em] text-[9px]">The Italian Minimalist Collection</p>
     </header>
 
-    <main class="container mx-auto px-8 py-20">
-        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
+    <main class="container mx-auto px-8 pb-32">
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-20 gap-x-12">
             </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-100 py-16 text-center">
-        <div class="mb-8">
-            <h3 class="font-italy text-2xl mb-2 italic">Follow Our Journey</h3>
-            <p class="text-gray-400 text-xs uppercase tracking-widest">Connect with us on social media</p>
-        </div>
-        <div class="flex justify-center space-x-8 text-xl">
-            <a href="#" class="hover:opacity-50 transition"><i class="fa-brands fa-instagram"></i></a>
-            <a href="#" class="hover:opacity-50 transition"><i class="fa-brands fa-facebook-f"></i></a>
-            <a href="#" class="hover:opacity-50 transition"><i class="fa-brands fa-tiktok"></i></a>
-            <a href="#" class="hover:opacity-50 transition"><i class="fa-brands fa-whatsapp"></i></a>
-        </div>
-        <div class="mt-12 text-[10px] text-gray-300 uppercase tracking-widest">
-            &copy; <span id="footer-year"></span> All Rights Reserved.
-        </div>
-    </footer>
-
-    <div id="cart-overlay" class="fixed inset-0 bg-black/20 z-[100] hidden backdrop-blur-sm" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[101] bg-white translate-x-full shadow-2xl p-10 flex flex-col">
+    <div id="cart-overlay" class="fixed inset-0 bg-black/10 z-[100] hidden backdrop-blur-sm" onclick="toggleCart(false)"></div>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-sm h-full z-[101] bg-white translate-x-full p-10 flex flex-col">
         <div class="flex justify-between items-center mb-12">
-            <h2 class="font-italy text-3xl italic">Shopping Bag</h2>
-            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-xl text-gray-400 hover:text-black"></i></button>
+            <h2 class="font-italy text-3xl italic">Order Details</h2>
+            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-300 hover:text-black transition"></i></button>
         </div>
         
-        <div id="cart-items" class="flex-grow overflow-y-auto space-y-8">
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-8 pr-2">
             </div>
 
-        <div class="mt-auto pt-8">
-            <div class="flex justify-between text-sm uppercase tracking-widest mb-6">
-                <span class="text-gray-400">Subtotal</span>
-                <span id="cart-total" class="font-bold">$0.00</span>
+        <div class="mt-auto pt-10 border-t border-gray-100">
+            <div class="flex justify-between text-xs uppercase tracking-widest mb-6">
+                <span class="text-gray-400">Total Amount</span>
+                <span id="cart-total" class="font-bold text-lg">$0.00</span>
             </div>
-            <button class="w-full btn-accent py-5 text-xs uppercase tracking-[0.2em] font-bold">
-                Complete Checkout
+            <button onclick="sendWhatsApp()" class="w-full btn-buy py-5 text-[10px] uppercase tracking-[0.3em] font-bold hover:brightness-125">
+                Complete Order
             </button>
         </div>
     </div>
 
+    <footer class="border-t border-gray-50 py-20 text-center">
+        <div class="flex justify-center space-x-10 mb-8 opacity-40 hover:opacity-100 transition duration-500">
+            <a href="#" class="text-sm uppercase tracking-widest">Instagram</a>
+            <a href="#" class="text-sm uppercase tracking-widest">WhatsApp</a>
+            <a href="#" class="text-sm uppercase tracking-widest">TikTok</a>
+        </div>
+        <p class="text-[9px] text-gray-300 uppercase tracking-[0.4em]">&copy; 2024 Crafted for Excellence</p>
+    </footer>
+
     <script>
-        // --- 1. CONFIGURATION (INSERT YOUR DATA) ---
+        // 1. YOUR FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_AUTH_DOMAIN",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
             projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_STORAGE_BUCKET",
-            messagingSenderId: "YOUR_SENDER_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_ID",
             appId: "YOUR_APP_ID"
         };
         
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        document.getElementById('footer-year').innerText = new Date().getFullYear();
 
-        // --- 2. THEME & SETTINGS ---
+        // 2. SYNC SETTINGS (Logo, Name, Color)
         db.collection("settings").doc("store_info").onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
                 document.getElementById('store-name').innerText = data.name || "LUXE";
-                document.getElementById('store-title').innerText = data.name;
-                document.getElementById('store-logo').src = data.logo || "";
-                if(data.themeColor) document.documentElement.style.setProperty('--accent-color', data.themeColor);
+                document.getElementById('page-title').innerText = data.name;
+                
+                if(data.logo) {
+                    const logo = document.getElementById('store-logo');
+                    logo.src = data.logo;
+                    logo.classList.remove('hidden');
+                }
+                
+                if(data.themeColor) {
+                    document.documentElement.style.setProperty('--accent-color', data.themeColor);
+                }
             }
         });
 
-        // --- 3. PRODUCT DISPLAY (ITALIAN STYLE) ---
+        // 3. FETCH PRODUCTS (Fixed Connection)
         db.collection("products").onSnapshot(snapshot => {
             const container = document.getElementById('products-container');
             container.innerHTML = "";
+            
+            if(snapshot.empty) {
+                container.innerHTML = `<div class="col-span-full text-center py-20 text-gray-300 uppercase tracking-widest text-xs">No products in collection</div>`;
+                return;
+            }
+
             snapshot.forEach(doc => {
                 const p = doc.data();
+                // Ensure data names match your Admin Panel (name, price, image)
                 container.innerHTML += `
-                    <div class="product-card group cursor-pointer">
-                        <div class="product-image-wrapper aspect-[3/4] mb-6 relative">
-                            <img src="${p.image}" class="product-image w-full h-full object-cover transition duration-700" alt="${p.name}">
-                            <div class="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" 
-                                    class="absolute bottom-0 left-0 w-full bg-white/90 backdrop-blur py-4 text-[10px] uppercase tracking-widest font-bold translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                                Add to Bag
-                            </button>
+                    <div class="product-card group">
+                        <div class="relative aspect-[4/5] overflow-hidden bg-[#fbfbfb] mb-6">
+                            <img src="${p.image}" class="w-full h-full object-cover" alt="${p.name}">
+                            <div class="absolute inset-0 bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-center justify-center px-8">
+                                <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" 
+                                        class="w-full btn-buy py-4 text-[9px] uppercase tracking-widest font-bold translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                                    Quick Add +
+                                </button>
+                            </div>
                         </div>
-                        <h3 class="font-italy text-xl mb-1">${p.name}</h3>
-                        <p class="text-gray-400 text-[10px] uppercase tracking-widest mb-2">Luxury Selection</p>
-                        <span class="text-sm font-semibold tracking-tighter">$${p.price}</span>
+                        <div class="text-center">
+                            <h3 class="font-italy text-xl mb-1">${p.name}</h3>
+                            <p class="text-[11px] font-semibold opacity-40">$${p.price}</p>
+                        </div>
                     </div>
                 `;
             });
         });
 
-        // --- 4. CART LOGIC ---
+        // 4. CART SYSTEM
         let cart = [];
         function addToCart(id, name, price, img) {
             const item = cart.find(i => i.id === id);
-            if(item) item.qty++;
-            else cart.push({id, name, price, img, qty: 1});
+            item ? item.qty++ : cart.push({id, name, price, img, qty: 1});
             updateCart();
             toggleCart(true);
         }
 
         function updateCart() {
             const itemsDiv = document.getElementById('cart-items');
-            const totalSpan = document.getElementById('cart-total');
-            const countSpan = document.getElementById('cart-count');
             let total = 0, count = 0;
 
             itemsDiv.innerHTML = cart.map((item, index) => {
                 total += item.price * item.qty;
                 count += item.qty;
                 return `
-                    <div class="flex items-start space-x-6">
-                        <img src="${item.img}" class="w-20 h-24 object-cover bg-gray-100">
+                    <div class="flex space-x-4 border-b border-gray-50 pb-6">
+                        <img src="${item.img}" class="w-16 h-20 object-cover bg-gray-50">
                         <div class="flex-grow">
-                            <h4 class="font-italy text-lg">${item.name}</h4>
-                            <p class="text-[10px] text-gray-400 uppercase mt-1">Qty: ${item.qty}</p>
-                            <p class="text-sm font-bold mt-2">$${item.price}</p>
+                            <h4 class="font-italy text-md italic">${item.name}</h4>
+                            <p class="text-[10px] text-gray-300 mt-1 uppercase italic">$${item.price} &times; ${item.qty}</p>
                         </div>
-                        <button onclick="removeItem(${index})" class="text-gray-300 hover:text-black"><i class="fa-solid fa-xmark"></i></button>
+                        <button onclick="removeItem(${index})" class="text-gray-200 hover:text-black transition"><i class="fa-solid fa-x"></i></button>
                     </div>
                 `;
             }).join('');
-            totalSpan.innerText = `$${total.toFixed(2)}`;
-            countSpan.innerText = count;
+            
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+            document.getElementById('cart-count').innerText = count;
         }
 
         function removeItem(index) {
@@ -222,8 +201,17 @@
             sidebar.style.transform = show ? "translateX(0)" : "translateX(100%)";
             overlay.classList.toggle('hidden', !show);
         }
+
+        function sendWhatsApp() {
+            if(cart.length === 0) return alert("Your bag is empty");
+            let message = "New Order:\n\n";
+            cart.forEach(item => message += `- ${item.name} (x${item.qty})\n`);
+            message += `\nTotal: ${document.getElementById('cart-total').innerText}`;
+            window.open(`https://wa.me/YOUR_PHONE_NUMBER?text=${encodeURIComponent(message)}`);
+        }
     </script>
 </body>
 </html>
+
 
 
