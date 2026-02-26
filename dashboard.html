@@ -4,11 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Dashboard</title>
-    <link rel="stylesheet" href="style.css">
     <style>
         :root { --black: #000; --dark: #1a1a1a; --gray: #6b6b6b; --light: #f5f5f5; --white: #fff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
+        
+        /* Login Page */
         .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--white); }
         .login-box { max-width: 400px; width: 90%; padding: 2.5rem; background: var(--white); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
         .login-box h1 { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
@@ -50,7 +51,7 @@
         .state-item { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.8rem; padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 0.8rem; align-items: center; }
         .state-item input { padding: 0.6rem; border: 1px solid var(--light); border-radius: 6px; }
         .product-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 0.8rem; }
-        .product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+        .product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; background: var(--light); }
         .product-info { flex: 1; }
         .product-name { font-weight: 600; }
         .product-cat { font-size: 0.85rem; color: var(--gray); }
@@ -62,6 +63,7 @@
     </style>
 </head>
 <body>
+    <!-- Login Page -->
     <div id="loginPage" class="login-page">
         <div class="login-box">
             <h1>🛒</h1>
@@ -75,6 +77,8 @@
             <a href="index.html" class="btn-back">← Back to Home</a>
         </div>
     </div>
+
+    <!-- Dashboard -->
     <div id="dashboard" class="dashboard">
         <header class="header">
             <div class="header-left"><span class="store-title" id="displayName">My Store</span><span class="store-code" id="displayCode">STR-XXXX</span></div>
@@ -90,39 +94,38 @@
                 </ul>
             </aside>
             <main class="main">
+                <!-- Information -->
                 <div id="info" class="section active">
                     <div class="page-header"><h2>Store Information</h2></div>
                     <div class="card"><h3>Basic Info</h3><div id="infoAlert" class="alert"></div><form id="infoForm">
                         <div class="form-group"><label>Store Name</label><input type="text" id="infoName" placeholder="Your store name"></div>
                         <div class="form-group"><label>Tagline / Bio</label><input type="text" id="infoBio" placeholder="Short description"></div>
                         <div class="form-group"><label>Description</label><textarea id="infoDesc" rows="3" placeholder="Full description"></textarea></div>
-                        <div class="form-group"><label>Logo</label><input type="file" id="infoLogo" accept="image/*"></div>
                         <button type="submit" class="btn-save">Save Changes</button>
                     </form></div>
                 </div>
+                <!-- Products -->
                 <div id="products" class="section">
                     <div class="page-header"><h2>Products</h2></div>
-                    <div class="card"><h3>Add Category</h3><div style="display: flex; gap: 0.8rem;"><input type="text" id="newCat" placeholder="Category name" style="flex: 1; padding: 0.8rem; border: 1px solid var(--light); border-radius: 6px;"><button class="btn-add" onclick="addCategory()">Add</button></div></div>
+                    <div class="card"><h3>Add Category</h3><div style="display: flex; gap: 0.8rem;"><input type="text" id="newCat" placeholder="Category name" style="flex:1;padding:0.8rem;border:1px solid var(--light);border-radius:6px;"><button class="btn-add" onclick="addCategory()">Add</button></div></div>
                     <div class="card"><h3>Add Product</h3><div id="productAlert" class="alert"></div><form id="productForm">
                         <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required></div>
                         <div class="form-group"><label>Category</label><select id="prodCat"><option value="">Select category</option></select></div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
-                            <div class="form-group"><label>Old Price</label><input type="number" id="prodOldPrice" placeholder="0.00"></div>
-                            <div class="form-group"><label>New Price</label><input type="number" id="prodPrice" required></div>
-                        </div>
+                        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;"><div class="form-group"><label>Old Price</label><input type="number" id="prodOldPrice" placeholder="0.00"></div><div class="form-group"><label>New Price</label><input type="number" id="prodPrice" required></div></div>
                         <div class="form-group"><label>Sizes (comma separated)</label><input type="text" id="prodSizes" placeholder="S, M, L, XL"></div>
                         <div class="form-group"><label>Colors (comma separated)</label><input type="text" id="prodColors" placeholder="Red, Blue, Black"></div>
                         <div class="form-group"><label>Description</label><textarea id="prodDesc" rows="2"></textarea></div>
-                        <div class="form-group"><label>Image</label><input type="file" id="prodImage" accept="image/*"></div>
                         <button type="submit" class="btn-save">Add Product</button>
                     </form></div>
-                    <div class="card"><h3>All Products</h3><div id="productsList"><p style="color: var(--gray);">No products yet</p></div></div>
+                    <div class="card"><h3>All Products</h3><div id="productsList"><p style="color:var(--gray);">No products yet</p></div></div>
                 </div>
+                <!-- Delivery -->
                 <div id="delivery" class="section">
                     <div class="page-header"><h2>Delivery Settings</h2></div>
-                    <div class="card"><h3>Add State</h3><div id="deliveryAlert" class="alert"></div><div style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.8rem;"><input type="text" id="stateName" placeholder="State name"><input type="number" id="homePrice" placeholder="Home price"><input type="number" id="officePrice" placeholder="Office price"><button class="btn-add" onclick="addState()">Add</button></div></div>
+                    <div class="card"><h3>Add State</h3><div id="deliveryAlert" class="alert"></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.8rem;"><input type="text" id="stateName" placeholder="State name"><input type="number" id="homePrice" placeholder="Home price"><input type="number" id="officePrice" placeholder="Office price"><button class="btn-add" onclick="addState()">Add</button></div></div>
                     <div class="card"><h3>States List</h3><div id="statesList"></div></div>
                 </div>
+                <!-- Social -->
                 <div id="social" class="section">
                     <div class="page-header"><h2>Social Media</h2></div>
                     <div class="card"><h3>Links</h3><div id="socialAlert" class="alert"></div><form id="socialForm">
@@ -135,28 +138,265 @@
             </main>
         </div>
     </div>
+
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
     <script src="app.js"></script>
     <script>
-        let currentStore = null; let currentCode = ''; let categories = [];
-        async function login(e) { e.preventDefault(); const alert = document.getElementById('loginAlert'); try { alert.style.display = 'none'; const store = await login(document.getElementById('username').value, document.getElementById('storeCode').value); currentStore = store; currentCode = document.getElementById('storeCode').value; localStorage.setItem('storeCode', currentCode); localStorage.setItem('username', store.username); document.getElementById('displayName').textContent = store.name || 'My Store'; document.getElementById('displayCode').textContent = currentCode; document.getElementById('loginPage').style.display = 'none'; document.getElementById('dashboard').classList.add('active'); loadStoreData(); } catch(err) { alert.textContent = 'Invalid username or code'; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
-        function logout() { localStorage.removeItem('storeCode'); localStorage.removeItem('username'); location.reload(); }
-        function showSection(id) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active')); event.target.classList.add('active'); }
-        async function loadStoreData() { if(!currentStore) return; document.getElementById('infoName').value = currentStore.info?.name || ''; document.getElementById('infoBio').value = currentStore.info?.bio || ''; document.getElementById('infoDesc').value = currentStore.info?.description || ''; document.getElementById('facebook').value = currentStore.info?.social?.facebook || ''; document.getElementById('instagram').value = currentStore.info?.social?.instagram || ''; document.getElementById('tiktok').value = currentStore.info?.social?.tiktok || ''; categories = currentStore.categories || []; updateCategorySelect(); loadProducts(); loadStates(); }
-        function updateCategorySelect() { const sel = document.getElementById('prodCat'); sel.innerHTML = '<option value="">Select category</option>'; categories.forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; }); }
-        async function addCategory() { const cat = document.getElementById('newCat').value.trim(); if(cat && !categories.includes(cat)) { categories.push(cat); await db.collection('stores').doc(currentCode).update({categories: categories}); document.getElementById('newCat').value = ''; updateCategorySelect(); } }
-        async function saveInfo(e) { e.preventDefault(); const alert = document.getElementById('infoAlert'); try { await saveInfo(currentCode, { name: document.getElementById('infoName').value, bio: document.getElementById('infoBio').value, description: document.getElementById('infoDesc').value }); alert.textContent = 'Saved successfully!'; alert.className = 'alert alert-success'; alert.style.display = 'block'; } catch(err) { alert.textContent = 'Error: ' + err.message; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
-        async function addProduct(e) { e.preventDefault(); const alert = document.getElementById('productAlert'); try { let imageUrl = ''; const file = document.getElementById('prodImage').files[0]; if(file) imageUrl = await uploadImage(file, currentCode); await addProduct(currentCode, { name: document.getElementById('prodName').value, category: document.getElementById('prodCat').value, oldPrice: document.getElementById('prodOldPrice').value, price: document.getElementById('prodPrice').value, sizes: document.getElementById('prodSizes').value, colors: document.getElementById('prodColors').value, description: document.getElementById('prodDesc').value, image: imageUrl }); document.getElementById('productForm').reset(); alert.textContent = 'Product added!'; alert.className = 'alert alert-success'; alert.style.display = 'block'; loadProducts(); } catch(err) { alert.textContent = 'Error: ' + err.message; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
-        async function loadProducts() { const list = document.getElementById('productsList'); const prods = await getProducts(currentCode); if(prods.length === 0) { list.innerHTML = '<p style="color: var(--gray);">No products yet</p>'; return; } list.innerHTML = prods.map(p => `<div class="product-item"><img src="${p.image || 'https://via.placeholder.com/60'}" class="product-img"><div class="product-info"><div class="product-name">${p.name}</div><div class="product-cat">${p.category} - ${p.price} SAR</div></div><button class="btn-delete" onclick="deleteProd('${p.id}')">Delete</button></div>`).join(''); }
-        async function deleteProd(id) { if(confirm('Delete this product?')) { await deleteProduct(currentCode, id); loadProducts(); } }
-        async function addState() { const alert = document.getElementById('deliveryAlert'); const name = document.getElementById('stateName').value; const home = document.getElementById('homePrice').value; const office = document.getElementById('officePrice').value; if(!name || !home || !office) { alert.textContent = 'Fill all fields'; alert.className = 'alert alert-error'; alert.style.display = 'block'; return; } const states = currentStore.delivery || {}; states[name] = { home, office }; await saveDelivery(currentCode, states); currentStore.delivery = states; document.getElementById('stateName').value = ''; document.getElementById('homePrice').value = ''; document.getElementById('officePrice').value = ''; loadStates(); }
-        function loadStates() { const list = document.getElementById('statesList'); const states = currentStore.delivery || {}; if(Object.keys(states).length === 0) { list.innerHTML = '<p style="color: var(--gray);">No states added</p>'; return; } list.innerHTML = Object.entries(states).map(([name, prices]) => `<div class="state-item"><span>${name}</span><span>Home: ${prices.home} SAR</span><span>Office: ${prices.office} SAR</span><button class="btn-delete" onclick="deleteState('${name}')">Delete</button></div>`).join(''); }
-        async function deleteState(name) { if(confirm('Delete ' + name + '?')) { delete currentStore.delivery[name]; await saveDelivery(currentCode, currentStore.delivery); loadStates(); } }
-        async function saveSocial(e) { e.preventDefault(); const alert = document.getElementById('socialAlert'); try { await saveSocial(currentCode, { facebook: document.getElementById('facebook').value, instagram: document.getElementById('instagram').value, tiktok: document.getElementById('tiktok').value }); alert.textContent = 'Links saved!'; alert.className = 'alert alert-success'; alert.style.display = 'block'; } catch(err) { alert.textContent = 'Error: ' + err.message; alert.className = 'alert alert-error'; alert.style.display = 'block'; } }
-        document.getElementById('loginForm').addEventListener('submit', login); document.getElementById('infoForm').addEventListener('submit', saveInfo); document.getElementById('productForm').addEventListener('submit', addProduct); document.getElementById('socialForm').addEventListener('submit', saveSocial);
-        const savedCode = localStorage.getItem('storeCode'); if(savedCode) { document.getElementById('storeCode').value = savedCode; }
+        let currentStore = null; 
+        let currentCode = ''; 
+        let categories = [];
+
+        // Login
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('loginAlert');
+            const username = document.getElementById('username').value.trim();
+            const code = document.getElementById('storeCode').value.trim().toUpperCase();
+            
+            alertDiv.style.display = 'none';
+            
+            try {
+                const doc = await db.collection('stores').doc(code).get();
+                
+                if (!doc.exists) {
+                    throw new Error('المتجر غير موجود! تحقق من الكود');
+                }
+                
+                const storeData = doc.data();
+                
+                if (storeData.username !== username) {
+                    throw new Error('اسم المستخدم غير صحيح!');
+                }
+                
+                currentStore = storeData;
+                currentCode = code;
+                
+                localStorage.setItem('storeCode', code);
+                localStorage.setItem('username', username);
+                
+                document.getElementById('displayName').textContent = storeData.name || 'My Store';
+                document.getElementById('displayCode').textContent = code;
+                
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').classList.add('active');
+                
+                loadStoreData();
+                
+            } catch(err) {
+                alertDiv.textContent = err.message;
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('storeCode');
+            localStorage.removeItem('username');
+            location.reload();
+        }
+
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        async function loadStoreData() {
+            if(!currentStore) return;
+            document.getElementById('infoName').value = currentStore.info?.name || '';
+            document.getElementById('infoBio').value = currentStore.info?.bio || '';
+            document.getElementById('infoDesc').value = currentStore.info?.description || '';
+            document.getElementById('facebook').value = currentStore.info?.social?.facebook || '';
+            document.getElementById('instagram').value = currentStore.info?.social?.instagram || '';
+            document.getElementById('tiktok').value = currentStore.info?.social?.tiktok || '';
+            categories = currentStore.categories || [];
+            updateCategorySelect();
+            loadProducts();
+            loadStates();
+        }
+
+        function updateCategorySelect() {
+            const sel = document.getElementById('prodCat');
+            sel.innerHTML = '<option value="">Select category</option>';
+            categories.forEach(c => {
+                sel.innerHTML += `<option value="${c}">${c}</option>`;
+            });
+        }
+
+                async function addCategory() {
+            const cat = document.getElementById('newCat').value.trim();
+            if(cat && !categories.includes(cat)) {
+                categories.push(cat);
+                await db.collection('stores').doc(currentCode).update({categories: categories});
+                document.getElementById('newCat').value = '';
+                updateCategorySelect();
+            }
+        }
+
+        document.getElementById('infoForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('infoAlert');
+            try {
+                await db.collection('stores').doc(currentCode).update({
+                    'info.name': document.getElementById('infoName').value,
+                    'info.bio': document.getElementById('infoBio').value,
+                    'info.description': document.getElementById('infoDesc').value
+                });
+                alertDiv.textContent = 'Saved successfully!';
+                alertDiv.className = 'alert alert-success';
+                alertDiv.style.display = 'block';
+            } catch(err) {
+                alertDiv.textContent = 'Error: ' + err.message;
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+            }
+        });
+
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('productAlert');
+            try {
+                let imageUrl = '';
+                const fileInput = document.getElementById('prodImage');
+                if(fileInput && fileInput.files[0]) {
+                    try {
+                        const ref = storage.ref().child(`stores/${currentCode}/${Date.now()}_${fileInput.files[0].name}`);
+                        await ref.put(fileInput.files[0]);
+                        imageUrl = await ref.getDownloadURL();
+                    } catch(err) {
+                        console.log('Image upload failed, continuing without image');
+                    }
+                }
+                await db.collection('stores').doc(currentCode).collection('products').add({
+                    name: document.getElementById('prodName').value,
+                    category: document.getElementById('prodCat').value,
+                    oldPrice: document.getElementById('prodOldPrice').value,
+                    price: document.getElementById('prodPrice').value,
+                    sizes: document.getElementById('prodSizes').value,
+                    colors: document.getElementById('prodColors').value,
+                    description: document.getElementById('prodDesc').value,
+                    image: imageUrl,
+                    createdAt: new Date().toISOString()
+                });
+                document.getElementById('productForm').reset();
+                alertDiv.textContent = 'Product added!';
+                alertDiv.className = 'alert alert-success';
+                alertDiv.style.display = 'block';
+                loadProducts();
+            } catch(err) {
+                alertDiv.textContent = 'Error: ' + err.message;
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+            }
+        });
+
+        async function loadProducts() {
+            const list = document.getElementById('productsList');
+            try {
+                const snapshot = await db.collection('stores').doc(currentCode).collection('products').get();
+                const prods = snapshot.docs.map(d => ({id: d.id, ...d.data()}));
+                if(prods.length === 0) {
+                    list.innerHTML = '<p style="color:var(--gray);">No products yet</p>';
+                    return;
+                }
+                list.innerHTML = prods.map(p => `<div class="product-item"><img src="${p.image || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2260%22 height=%2260%22><rect fill=%22%23eee%22 width=%2260%22 height=%2260%22/><text x=%2250%25%22 y=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22>No Image</text></svg>'}" class="product-img"><div class="product-info"><div class="product-name">${p.name}</div><div class="product-cat">${p.category || 'Uncategorized'} - ${p.price} SAR</div></div><button class="btn-delete" onclick="deleteProd('${p.id}')">Delete</button></div>`).join('');
+            } catch(err) {
+                list.innerHTML = '<p style="color:red;">Error loading products</p>';
+            }
+        }
+
+        async function deleteProd(id) {
+            if(confirm('Delete this product?')) {
+                try {
+                    await db.collection('stores').doc(currentCode).collection('products').doc(id).delete();
+                    loadProducts();
+                } catch(err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        }
+
+        async function addState() {
+            const alertDiv = document.getElementById('deliveryAlert');
+            const name = document.getElementById('stateName').value;
+            const home = document.getElementById('homePrice').value;
+            const office = document.getElementById('officePrice').value;
+            if(!name || !home || !office) {
+                alertDiv.textContent = 'Fill all fields';
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+                return;
+            }
+            try {
+                const doc = await db.collection('stores').doc(currentCode).get();
+                let delivery = doc.data().delivery || {};
+                delivery[name] = { home: home, office: office };
+                await db.collection('stores').doc(currentCode).update({ delivery: delivery });
+                currentStore.delivery = delivery;
+                document.getElementById('stateName').value = '';
+                document.getElementById('homePrice').value = '';
+                document.getElementById('officePrice').value = '';
+                loadStates();
+            } catch(err) {
+                alertDiv.textContent = 'Error: ' + err.message;
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+            }
+        }
+
+        function loadStates() {
+            const list = document.getElementById('statesList');
+            const states = currentStore.delivery || {};
+            if(Object.keys(states).length === 0) {
+                list.innerHTML = '<p style="color:var(--gray);">No states added</p>';
+                return;
+            }
+            list.innerHTML = Object.entries(states).map(([name, prices]) => `<div class="state-item"><span>${name}</span><span>Home: ${prices.home} SAR</span><span>Office: ${prices.office} SAR</span><button class="btn-delete" onclick="deleteState('${name}')">Delete</button></div>`).join('');
+        }
+
+        async function deleteState(name) {
+            if(confirm('Delete ' + name + '?')) {
+                try {
+                    delete currentStore.delivery[name];
+                    await db.collection('stores').doc(currentCode).update({ delivery: currentStore.delivery });
+                    loadStates();
+                } catch(err) {
+                    alert('Error: ' + err.message);
+                }
+            }
+        }
+
+        document.getElementById('socialForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const alertDiv = document.getElementById('socialAlert');
+            try {
+                await db.collection('stores').doc(currentCode).update({
+                    'info.social': {
+                        facebook: document.getElementById('facebook').value,
+                        instagram: document.getElementById('instagram').value,
+                        tiktok: document.getElementById('tiktok').value
+                    }
+                });
+                alertDiv.textContent = 'Links saved!';
+                alertDiv.className = 'alert alert-success';
+                alertDiv.style.display = 'block';
+            } catch(err) {
+                alertDiv.textContent = 'Error: ' + err.message;
+                alertDiv.className = 'alert alert-error';
+                alertDiv.style.display = 'block';
+            }
+        });
+
+        // Check for saved session
+        const savedCode = localStorage.getItem('storeCode');
+        const savedUsername = localStorage.getItem('username');
+        if(savedCode && savedUsername) {
+            document.getElementById('storeCode').value = savedCode;
+            document.getElementById('username').value = savedUsername;
+        }
     </script>
 </body>
 </html>
