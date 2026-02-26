@@ -134,3 +134,76 @@
             const grid = document.getElementById('productsGrid');
             if (products.length === 0) { grid.innerHTML = '<div class="loading"><p>No products available</p></div>'; return; }
             grid.innerHTML = products.map(p => `<div class="product-card"><img src="${p.image || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22260%22 height=%22220%22><rect fill=%22%23eee%22 width=%22260%22 height=%22220%22/><text x=%2250%25%22 y=%2250%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23999%22>No Image</text></svg>'}" class="product-image"><div class="product-info"><div class="product-name">${p.name}</div><div class="product-category">${p.category || 'General'}</div><div class="product-price">${p.oldPrice ? `<span class="old-price">${p.oldPrice} SAR</span>` : ''}<span class="current-price">${p.price} SAR</span></div>${p.sizes || p.colors ? `<div class="product-meta">${p.sizes ? 'Sizes: ' + p.sizes : ''} ${p.colors ? ' | Colors: ' + p.colors : ''}</div>` : ''}<button class="btn-add-cart" onclick="addToCart('${p.id}')"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+                    </div></div>`).join('');
+        }
+        function filterProducts(category) {
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            if (category === 'all') displayProducts(allProducts);
+            else displayProducts(allProducts.filter(p => p.category === category));
+        }
+        function addToCart(productId) {
+            const product = allProducts.find(p => p.id === productId);
+            if (!product) return;
+            const existing = cart.find(item => item.id === productId);
+            if (existing) existing.qty++;
+            else cart.push({...product, qty: 1});
+            updateCartUI();
+        }
+        function updateCartUI() {
+            document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.qty, 0);
+            const cartBody = document.getElementById('cartBody');
+            if (cart.length === 0) { cartBody.innerHTML = '<div class="empty-cart"><p>Your cart is empty</p></div>'; }
+            else { cartBody.innerHTML = cart.map(item => `<div class="cart-item"><img src="${item.image || 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22><rect fill=%22%23eee%22 width=%2270%22 height=%2270%22/></svg>'}" alt="${item.name}"><div class="cart-item-info"><div class="cart-item-name">${item.name}</div><div class="cart-item-price">${item.price} SAR</div><div class="cart-item-qty"><button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button><span>${item.qty}</span><button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button></div></div><button class="remove-item" onclick="removeFromCart('${item.id}')">Remove</button></div>`).join(''); }
+            updateTotal();
+        }
+        function changeQty(productId, delta) {
+            const item = cart.find(i => i.id === productId);
+            if (!item) return;
+            item.qty += delta;
+            if (item.qty <= 0) removeFromCart(productId);
+            else updateCartUI();
+        }
+        function removeFromCart(productId) {
+            cart = cart.filter(i => i.id !== productId);
+            updateCartUI();
+        }
+        function openCart() { document.getElementById('cartModal').classList.add('active'); }
+        function closeCart() { document.getElementById('cartModal').classList.remove('active'); }
+        function loadDeliveryAreas() {
+            const select = document.getElementById('deliverySelect');
+            const delivery = storeData.delivery || {};
+            select.innerHTML = '<option value="">Select area</option>';
+            Object.entries(delivery).forEach(([name, prices]) => { select.innerHTML += `<option value="${prices.home}" data-office="${prices.office}">${name} (Home: ${prices.home} SAR | Office: ${prices.office} SAR)</option>`; });
+        }
+        function updateTotal() {
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const select = document.getElementById('deliverySelect');
+            const deliveryType = document.querySelector('input[name="deliveryType"]:checked');
+            let deliveryCost = 0;
+            if (select.value) { deliveryCost = parseFloat(select.value); }
+            document.getElementById('cartTotal').textContent = subtotal + deliveryCost;
+        }
+        function checkout() {
+            if (cart.length === 0) { alert('Your cart is empty!'); return; }
+            const select = document.getElementById('deliverySelect');
+            if (!select.value) { alert('Please select delivery area!'); return; }
+            const areaName = select.options[select.selectedIndex].text.split(' (')[0];
+            const deliveryCost = parseFloat(select.value);
+            const subtotal = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            const total = subtotal + deliveryCost;
+            let message = `*New Order from ${storeData.name || 'Store'}*\n\n`;
+            message += `*Products:*\n`;
+            cart.forEach(item => { message += `- ${item.name} x${item.qty} = ${item.price * item.qty} SAR\n`; });
+            message += `\n*Delivery Area:* ${areaName}`;
+            message += `\n*Delivery Cost:* ${deliveryCost} SAR`;
+            message += `\n*Subtotal:* ${subtotal} SAR`;
+            message += `\n*Total:* ${total} SAR`;
+            const phone = '966500000000';
+            window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+        document.getElementById('cartModal').addEventListener('click', function(e) { if (e.target === this) closeCart(); });
+        loadStore();
+    </script>
+</body>
+</html>
