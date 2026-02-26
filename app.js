@@ -4,15 +4,15 @@
 
 // ✏️ استبدلي هذا بـ Project ID الخاص بكِ!
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyBEoyeQvUzFJviG2oYs5sZsAQ0bR9dHN0U",
   authDomain: "my-simple-stores
 .firebaseapp.com",
   projectId: "my-simple-stores
 ",
   storageBucket: "my-simple-stores
 .appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  messagingSenderId: "280278183648",
+  appId: "1:280278183648:web:65d99dceeab2be1584ea85"
 };
 
 // Initialize Firebase
