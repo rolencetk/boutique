@@ -1,104 +1,199 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="store-name-title">متجري التقني</title>
+    <title id="store-name-title">Tech Store | Loading...</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
     <style>
-        /* تعريف متغير اللون الأساسي الذي سيتم تغييره من لوحة التحكم */
-        :root { --main-color: #000000; }
-        .bg-main { background-color: var(--main-color); }
-        .text-main { color: var(--main-color); }
-        .border-main { border-color: var(--main-color); }
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        :root {
+            --main-color: #00e5ff; /* Default Tech Blue */
+            --main-color-rgb: 0, 229, 255;
+            --bg-dark: #050505;
+            --card-bg: #0f0f0f;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .font-tech { font-family: 'Orbitron', sans-serif; }
+
+        /* Animated Grid Background */
+        .tech-grid {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            z-index: -1;
+            animation: moveGrid 15s linear infinite;
+        }
+        @keyframes moveGrid {
+            0% { background-position: 0 0; }
+            100% { background-position: 40px 40px; }
+        }
+
+        /* Glassmorphism Navigation */
+        nav {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* Cyber Product Card */
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+        }
+        .product-card:hover {
+            border-color: var(--main-color);
+            box-shadow: 0 0 20px rgba(var(--main-color-rgb), 0.2);
+            transform: translateY(-5px);
+        }
+
+        /* Glow Effect for Buttons */
+        .btn-glow {
+            box-shadow: 0 0 10px rgba(var(--main-color-rgb), 0.4);
+        }
+        .btn-glow:hover {
+            box-shadow: 0 0 20px rgba(var(--main-color-rgb), 0.7);
+        }
+
+        /* Cart Sidebar Animation */
+        #cart-sidebar {
+            transition: transform 0.4s ease-in-out;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+        }
     </style>
 </head>
 <body>
 
-    <nav class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="tech-grid"></div>
+
+    <nav class="fixed w-full top-0 z-50">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center space-x-4 space-x-reverse">
-                <img id="store-logo" src="https://via.placeholder.com/40" alt="Logo" class="h-10 w-10 object-contain">
-                <h1 id="store-name" class="text-2xl font-bold text-gray-800">تحميل...</h1>
+            <div class="flex items-center space-x-3">
+                <img id="store-logo" src="" class="h-10 w-10 object-contain rounded border border-gray-800" alt="Logo">
+                <span id="store-name" class="font-tech text-xl font-black tracking-widest uppercase">TechStore</span>
             </div>
-            
-            <div class="relative cursor-pointer" onclick="toggleCart()">
-                <i class="fa-solid fa-cart-shopping text-2xl text-gray-700"></i>
-                <span id="cart-count" class="absolute -top-2 -right-2 bg-main text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">0</span>
+            <div class="relative cursor-pointer" onclick="toggleCart(true)">
+                <i class="fa-solid fa-cart-shopping text-2xl hover:text-[var(--main-color)] transition"></i>
+                <span id="cart-count" class="absolute -top-2 -right-2 bg-[var(--main-color)] text-black text-[10px] font-bold rounded-full h-5 w-5 flex items-center justify-center btn-glow">0</span>
             </div>
         </div>
     </nav>
 
-    <header class="bg-black text-white py-20 px-6 text-center">
-        <h2 class="text-4xl md:text-6xl font-extrabold mb-4">اكتشف التكنولوجيا المستقبلية</h2>
-        <p class="text-gray-400 max-w-2xl mx-auto">أفضل المنتجات التقنية المختارة بعناية لتناسب أسلوب حياتك العصري.</p>
+    <header class="pt-32 pb-16 text-center">
+        <div class="container mx-auto px-6">
+            <h1 class="font-tech text-5xl md:text-7xl font-black mb-4">FUTURE <span style="color: var(--main-color)">TECH</span> HUB</h1>
+            <p class="text-gray-400 max-w-xl mx-auto text-sm uppercase tracking-widest">Premium gadgets curated for the digital era.</p>
+        </div>
     </header>
 
-    <main class="container mx-auto px-6 py-12">
-        <h3 class="text-2xl font-bold text-gray-800 mb-8 border-r-4 border-main pr-4">أحدث المنتجات</h3>
-        <div id="products-container" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            <div class="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
-            <div class="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
-            <div class="animate-pulse bg-gray-200 h-64 rounded-lg"></div>
+    <main class="container mx-auto px-6 py-10">
+        <div class="flex items-center space-x-4 mb-10 border-l-4 border-[var(--main-color)] pl-4">
+            <h2 class="font-tech text-2xl uppercase tracking-tighter">Latest Releases</h2>
+        </div>
+
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="h-80 bg-zinc-900 animate-pulse rounded-lg"></div>
+            <div class="h-80 bg-zinc-900 animate-pulse rounded-lg"></div>
+            <div class="h-80 bg-zinc-900 animate-pulse rounded-lg"></div>
         </div>
     </main>
 
-    <div id="cart-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-[100] flex justify-end">
-        <div class="bg-white w-full max-w-md h-full shadow-xl p-6 overflow-y-auto">
-            <div class="flex justify-between items-center mb-8">
-                <h2 class="text-2xl font-bold">سلة التسوق</h2>
-                <button onclick="toggleCart()" class="text-gray-500 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <div id="cart-overlay" class="fixed inset-0 bg-black/60 z-[100] hidden backdrop-blur-sm" onclick="toggleCart(false)"></div>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[101] translate-x-full border-l border-white/5 p-8 flex flex-col">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="font-tech text-xl uppercase">Your Cart</h2>
+            <button onclick="toggleCart(false)" class="text-gray-500 hover:text-white"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        </div>
+        
+        <div id="cart-items" class="flex-grow overflow-y-auto space-y-6 pr-2">
             </div>
-            <div id="cart-items" class="space-y-4">
-                </div>
-            <div class="mt-8 border-t pt-6">
-                <div class="flex justify-between text-xl font-bold mb-6">
-                    <span>إجمالي المبلغ:</span>
-                    <span id="cart-total">0 $</span>
-                </div>
-                <button class="w-full bg-main text-white py-4 rounded-lg font-bold hover:opacity-90 transition">إتمام الطلب عبر واتساب</button>
+
+        <div class="mt-auto pt-8 border-t border-white/10">
+            <div class="flex justify-between text-2xl font-tech mb-8">
+                <span>TOTAL:</span>
+                <span id="cart-total" style="color: var(--main-color)">$0</span>
             </div>
+            <button class="w-full bg-[var(--main-color)] text-black font-black py-4 rounded uppercase tracking-widest btn-glow transition active:scale-95">
+                Checkout Now
+            </button>
         </div>
     </div>
 
     <script>
-        // --- إعدادات Firebase (ضع إعداداتك هنا) ---
-        const firebaseConfig = { /* انسخ إعداداتك هنا */ };
+        // --- 1. CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_AUTH_DOMAIN",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_STORAGE_BUCKET",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        // Initialize Firebase
         if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // --- جلب إعدادات المتجر (اسم، لون، شعار) ---
-        db.collection("settings").doc("store_info").onSnapshot((doc) => {
+        // Utility: Convert Hex to RGB for Glow effects
+        function hexToRgb(hex) {
+            let r = parseInt(hex.slice(1, 3), 16),
+                g = parseInt(hex.slice(3, 5), 16),
+                b = parseInt(hex.slice(5, 7), 16);
+            return `${r}, ${g}, ${b}`;
+        }
+
+        // --- 2. FETCH STORE SETTINGS ---
+        db.collection("settings").doc("store_info").onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
-                document.getElementById("store-name").innerText = data.name;
-                document.getElementById("store-name-title").innerText = data.name;
-                document.getElementById("store-logo").src = data.logo;
-                document.documentElement.style.setProperty('--main-color', data.themeColor);
+                document.getElementById('store-name').innerText = data.name || "TechStore";
+                document.getElementById('store-name-title').innerText = data.name + " | Store";
+                document.getElementById('store-logo').src = data.logo || "https://via.placeholder.com/40";
+                
+                if(data.themeColor) {
+                    document.documentElement.style.setProperty('--main-color', data.themeColor);
+                    document.documentElement.style.setProperty('--main-color-rgb', hexToRgb(data.themeColor));
+                }
             }
         });
 
-        // --- جلب المنتجات بتصميم عصري ---
-        db.collection("products").onSnapshot((snapshot) => {
-            const container = document.getElementById("products-container");
+        // --- 3. FETCH PRODUCTS ---
+        db.collection("products").onSnapshot(snapshot => {
+            const container = document.getElementById('products-container');
             container.innerHTML = "";
-            snapshot.forEach((doc) => {
+            snapshot.forEach(doc => {
                 const p = doc.data();
                 container.innerHTML += `
-                    <div class="bg-white rounded-xl shadow-sm hover:shadow-md transition p-4 border border-gray-100 group">
-                        <div class="relative overflow-hidden rounded-lg mb-4">
-                            <img src="${p.image}" alt="${p.name}" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
+                    <div class="product-card rounded-lg p-4 group">
+                        <div class="relative overflow-hidden aspect-square rounded mb-4 bg-black">
+                            <img src="${p.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-110 opacity-80 group-hover:opacity-100">
                         </div>
-                        <h4 class="text-lg font-bold text-gray-800 mb-2">${p.name}</h4>
+                        <h3 class="font-bold text-lg mb-1 truncate">${p.name}</h3>
+                        <p class="text-xs text-gray-500 mb-4 line-clamp-1">${p.description || 'Pro-grade tech device.'}</p>
                         <div class="flex justify-between items-center">
-                            <span class="text-main font-bold text-xl">${p.price} $</span>
+                            <span class="font-tech text-xl" style="color: var(--main-color)">$${p.price}</span>
                             <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" 
-                                    class="bg-gray-100 p-2 rounded-full hover:bg-main hover:text-white transition">
-                                <i class="fa-solid fa-plus px-2"></i>
+                                    class="bg-white/5 border border-white/10 hover:bg-[var(--main-color)] hover:text-black p-3 rounded transition shadow-lg">
+                                <i class="fa-solid fa-plus"></i>
                             </button>
                         </div>
                     </div>
@@ -106,35 +201,61 @@
             });
         });
 
-        // --- نظام سلة التسوق البسيط ---
+        // --- 4. CART LOGIC ---
         let cart = [];
+
         function addToCart(id, name, price, img) {
-            cart.push({id, name, price, img});
-            updateCartUI();
+            const item = cart.find(i => i.id === id);
+            if(item) item.qty++;
+            else cart.push({id, name, price, img, qty: 1});
+            updateCart();
+            toggleCart(true); // Auto open cart when adding
         }
 
-        function updateCartUI() {
-            document.getElementById("cart-count").innerText = cart.length;
-            const cartItems = document.getElementById("cart-items");
+        function updateCart() {
+            const cartItems = document.getElementById('cart-items');
+            const cartCount = document.getElementById('cart-count');
+            const cartTotal = document.getElementById('cart-total');
+            
             let total = 0;
+            let count = 0;
+            
             cartItems.innerHTML = cart.map((item, index) => {
-                total += item.price;
+                total += item.price * item.qty;
+                count += item.qty;
                 return `
-                    <div class="flex items-center space-x-4 space-x-reverse border-b pb-4">
-                        <img src="${item.img}" class="w-16 h-16 rounded object-cover">
+                    <div class="flex items-center space-x-4 border-b border-white/5 pb-4">
+                        <img src="${item.img}" class="w-16 h-16 rounded object-cover border border-white/10">
                         <div class="flex-1">
-                            <h5 class="font-bold">${item.name}</h5>
-                            <p class="text-main">${item.price} $</p>
+                            <h4 class="text-sm font-bold uppercase">${item.name}</h4>
+                            <p class="text-[var(--main-color)] text-xs">$${item.price} x ${item.qty}</p>
                         </div>
+                        <button onclick="removeItem(${index})" class="text-gray-600 hover:text-red-500 transition"><i class="fa-solid fa-trash-can"></i></button>
                     </div>
                 `;
             }).join('');
-            document.getElementById("cart-total").innerText = total + " $";
+
+            cartCount.innerText = count;
+            cartTotal.innerText = `$${total}`;
         }
 
-        function toggleCart() {
-            document.getElementById("cart-modal").classList.toggle("hidden");
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCart();
+        }
+
+        function toggleCart(show) {
+            const sidebar = document.getElementById('cart-sidebar');
+            const overlay = document.getElementById('cart-overlay');
+            if(show) {
+                sidebar.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+            } else {
+                sidebar.classList.add('translate-x-full');
+                overlay.classList.add('hidden');
+            }
         }
     </script>
 </body>
 </html>
+
