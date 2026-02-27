@@ -5,51 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Store Dashboard</title>
     <style>
-        /* التنسيق الأصلي الخاص بكِ 100% */
+        /* التنسيق الأصلي الخاص بكِ */
         :root { --black: #000; --dark: #1a1a1a; --gray: #6b6b6b; --light: #f5f5f5; --white: #fff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
+        
         .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--white); }
         .login-box { max-width: 400px; width: 90%; padding: 2.5rem; background: var(--white); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
         .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
         .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; border: 2px solid var(--light); border-radius: 8px; font-size: 1rem; }
+        
         .dashboard { display: none; }
         .dashboard.active { display: block; }
         .header { background: var(--white); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
         .container { display: flex; min-height: calc(100vh - 70px); }
         .sidebar { width: 250px; background: var(--white); padding: 1.5rem; border-right: 1px solid var(--light); }
         .sidebar-menu { list-style: none; }
-        .sidebar-menu a { display: flex; align-items: center; padding: 0.8rem 1rem; color: var(--gray); text-decoration: none; border-radius: 8px; transition: 0.3s; cursor: pointer; }
+        .sidebar-menu a { display: flex; align-items: center; padding: 0.8rem 1rem; color: var(--gray); text-decoration: none; border-radius: 8px; cursor: pointer; }
         .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--black); color: var(--white); }
+
         .main { flex: 1; padding: 2rem; max-width: 1000px; }
         .section { display: none; }
         .section.active { display: block; }
         .card { background: var(--white); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .btn-save { background: var(--black); color: var(--white); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; margin-top: 1rem; }
-        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: none; }
-        .alert-success { background: #d1fae5; color: #065f46; }
-        .alert-error { background: #fee2e2; color: #991b1b; }
-        
-        /* تحسين الموبايل */
+
+        /* رسالة الحفظ الأخضر */
+        .alert-toast { display: none; background: #2ecc71; color: white; padding: 10px 20px; border-radius: 8px; position: fixed; top: 20px; right: 20px; z-index: 1000; animation: slideIn 0.5s; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        /* تنسيق الطلبات الجديد */
+        .order-card { border-left: 5px solid black; padding: 15px; margin-bottom: 15px; background: #f9f9f9; border-radius: 8px; }
+        .order-info { margin-bottom: 10px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+        .order-items { font-size: 0.9rem; background: white; padding: 10px; border-radius: 5px; }
+
         @media (max-width: 768px) {
             .container { flex-direction: column; }
             .sidebar { width: 100%; border-bottom: 1px solid var(--light); }
-            .sidebar-menu { display: flex; overflow-x: auto; gap: 10px; }
+            .sidebar-menu { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 5px; }
             .sidebar-menu li { white-space: nowrap; }
         }
     </style>
 </head>
 <body>
 
+    <div id="saveToast" class="alert-toast">✅ تم الحفظ بنجاح!</div>
+
     <div id="loginPage" class="login-page">
         <div class="login-box">
             <h1>🛒</h1><p>Store Dashboard</p>
-            <div id="loginAlert" class="alert"></div>
             <form id="loginForm">
                 <div class="form-group"><label>Username</label><input type="text" id="username" required></div>
                 <div class="form-group"><label>Store Code</label><input type="text" id="storeCode" required></div>
-                <button type="submit" class="btn-save" style="width:100%">Login</button>
+                <button type="submit" style="width:100%; padding:10px; background:black; color:white; border-radius:8px; border:none; cursor:pointer;">Login</button>
             </form>
         </div>
     </div>
@@ -57,7 +65,7 @@
     <div id="dashboard" class="dashboard">
         <header class="header">
             <div class="header-left"><span class="store-title" id="displayName">My Store</span></div>
-            <div class="header-right"><button onclick="logout()">Logout</button></div>
+            <div class="header-right"><button onclick="logout()" style="background:none; border:1px solid #ddd; padding:5px 10px; border-radius:5px; cursor:pointer;">Logout</button></div>
         </header>
 
         <div class="container">
@@ -73,78 +81,81 @@
 
             <main class="main">
                 <div id="orders" class="section">
-                    <div class="page-header"><h2>Orders List</h2></div>
-                    <div class="card" id="ordersList">No orders found.</div>
+                    <div class="page-header"><h2>Orders</h2></div>
+                    <div class="card" id="ordersList">Loading orders...</div>
                 </div>
 
                 <div id="info" class="section active">
                     <div class="page-header"><h2>Store Information</h2></div>
                     <div class="card">
-                        <div id="infoAlert" class="alert"></div>
                         <form id="infoForm">
                             <div class="form-group"><label>Store Name</label><input type="text" id="infoName"></div>
                             <div class="form-group"><label>Bio</label><input type="text" id="infoBio"></div>
                             <div class="form-group"><label>Description</label><textarea id="infoDesc" rows="3"></textarea></div>
-                            <button type="submit" class="btn-save">Save Changes</button>
+                            <hr style="margin:20px 0; opacity:0.1">
+                            <div class="form-group">
+                                <label>Home Background Image</label>
+                                <input type="file" id="bgFile" onchange="uploadFile(this, 'bg')">
+                                <input type="hidden" id="bgUrl">
+                            </div>
+                            <div class="form-group">
+                                <label>Background Opacity: <span id="opValue">100</span>%</label>
+                                <input type="range" id="bgOpacity" min="0" max="100" value="100" oninput="document.getElementById('opValue').innerText=this.value">
+                            </div>
+                            <button type="submit" style="padding:10px 20px; background:black; color:white; border-radius:8px; border:none; cursor:pointer;">Save Info</button>
                         </form>
                     </div>
                 </div>
 
                 <div id="products" class="section">
-                    <div class="page-header"><h2>Products</h2></div>
                     <div class="card">
-                        <h3>Add Category</h3>
+                        <h3>Categories</h3>
                         <div style="display:flex; gap:10px;">
                             <input type="text" id="newCat" placeholder="New Category">
-                            <button onclick="addCategory()" class="btn-save" style="margin:0">Add</button>
+                            <button onclick="addCategory()" style="padding:10px; background:black; color:white; border:none; border-radius:5px; cursor:pointer;">Add</button>
                         </div>
                     </div>
                     <div class="card">
                         <h3>Add Product</h3>
-                        <div id="productAlert" class="alert"></div>
                         <form id="productForm">
-                            <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required></div>
-                            <div class="form-group"><label>Category</label><select id="prodCat"></select></div>
+                            <div class="form-group"><label>Name</label><input type="text" id="pName" required></div>
+                            <div class="form-group"><label>Category</label><select id="pCat"></select></div>
                             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-                                <div class="form-group"><label>Old Price</label><input type="number" id="prodOldPrice"></div>
-                                <div class="form-group"><label>New Price</label><input type="number" id="prodPrice" required></div>
+                                <div class="form-group"><label>Old Price</label><input type="number" id="pOldPrice"></div>
+                                <div class="form-group"><label>Price</label><input type="number" id="pPrice" required></div>
                             </div>
-                            <div class="form-group">
-                                <label>Product Image</label>
-                                <input type="file" id="prodImage" accept="image/*">
-                            </div>
-                            <div class="form-group"><label>Sizes</label><input type="text" id="prodSizes" placeholder="S, M, L"></div>
-                            <div class="form-group"><label>Colors</label><input type="text" id="prodColors" placeholder="Red, Black"></div>
-                            <div class="form-group"><label>Description</label><textarea id="prodDesc" rows="2"></textarea></div>
-                            <button type="submit" class="btn-save">Add Product</button>
+                            <div class="form-group"><label>Image</label><input type="file" onchange="uploadFile(this, 'prod')"></div>
+                            <input type="hidden" id="pUrl">
+                            <div class="form-group"><label>Sizes</label><input type="text" id="pSizes" placeholder="S, M, L"></div>
+                            <div class="form-group"><label>Colors</label><input type="text" id="pColors" placeholder="Red, White"></div>
+                            <div class="form-group"><label>Description</label><textarea id="pDesc" rows="2"></textarea></div>
+                            <button type="submit" style="padding:10px 20px; background:black; color:white; border-radius:8px; border:none; cursor:pointer;">Add Product</button>
                         </form>
                     </div>
                     <div class="card"><h3>Inventory</h3><div id="productsList"></div></div>
                 </div>
 
                 <div id="delivery" class="section">
-                    <div class="page-header"><h2>Delivery</h2></div>
                     <div class="card">
-                        <div id="deliveryAlert" class="alert"></div>
+                        <h3>Delivery Prices</h3>
                         <div style="display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:10px;">
-                            <input type="text" id="stateName" placeholder="State">
-                            <input type="number" id="homePrice" placeholder="Home">
-                            <input type="number" id="officePrice" placeholder="Office">
-                            <button onclick="addState()" class="btn-save" style="margin:0">Add</button>
+                            <input type="text" id="sName" placeholder="State">
+                            <input type="number" id="sHome" placeholder="Home">
+                            <input type="number" id="sOffice" placeholder="Office">
+                            <button onclick="addState()" style="padding:10px; background:black; color:white; border:none; border-radius:5px; cursor:pointer;">Add</button>
                         </div>
                     </div>
                     <div class="card"><div id="statesList"></div></div>
                 </div>
 
                 <div id="social" class="section">
-                    <div class="page-header"><h2>Social Media</h2></div>
                     <div class="card">
-                        <div id="socialAlert" class="alert"></div>
+                        <h3>Social Links</h3>
                         <form id="socialForm">
-                            <div class="form-group"><label>Facebook</label><input type="text" id="facebook"></div>
-                            <div class="form-group"><label>Instagram</label><input type="text" id="instagram"></div>
-                            <div class="form-group"><label>TikTok</label><input type="text" id="tiktok"></div>
-                            <button type="submit" class="btn-save">Save Links</button>
+                            <div class="form-group"><label>Facebook</label><input type="text" id="fb"></div>
+                            <div class="form-group"><label>Instagram</label><input type="text" id="ig"></div>
+                            <div class="form-group"><label>TikTok</label><input type="text" id="tk"></div>
+                            <button type="submit" style="padding:10px 20px; background:black; color:white; border-radius:8px; border:none; cursor:pointer;">Save Social</button>
                         </form>
                     </div>
                 </div>
@@ -157,7 +168,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
 
     <script>
-        // إعدادات Firebase من ملفك الأصلي
         const firebaseConfig = {
           apiKey: "AIzaSyBEoyeQvUzFJviG2oYs5sZsAQ0bR9dHN0U",
           authDomain: "my-simple-stores.firebaseapp.com",
@@ -172,6 +182,12 @@
 
         let currentCode = localStorage.getItem('storeCode');
         let currentStore = null;
+
+        function showToast() {
+            const t = document.getElementById('saveToast');
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 3000);
+        }
 
         // Login
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -202,16 +218,29 @@
             document.getElementById('nav-' + id).classList.add('active');
         }
 
+        async function uploadFile(input, type) {
+            const file = input.files[0];
+            if(!file) return;
+            const ref = storage.ref().child(`stores/${currentCode}/${Date.now()}_${file.name}`);
+            await ref.put(file);
+            const url = await ref.getDownloadURL();
+            if(type === 'bg') document.getElementById('bgUrl').value = url;
+            else document.getElementById('pUrl').value = url;
+            alert("File Uploaded!");
+        }
+
         async function loadData() {
-            // تحميل المعلومات
-            document.getElementById('infoName').value = currentStore.info?.name || '';
-            document.getElementById('infoBio').value = currentStore.info?.bio || '';
-            document.getElementById('infoDesc').value = currentStore.info?.description || '';
+            const info = currentStore.info || {};
+            document.getElementById('infoName').value = info.name || '';
+            document.getElementById('infoBio').value = info.bio || '';
+            document.getElementById('infoDesc').value = info.description || '';
+            document.getElementById('bgUrl').value = info.bgImage || '';
+            document.getElementById('bgOpacity').value = info.bgOpacity || 100;
+            document.getElementById('opValue').innerText = info.bgOpacity || 100;
             
-            // تحميل السوشيال
-            document.getElementById('facebook').value = currentStore.info?.social?.facebook || '';
-            document.getElementById('instagram').value = currentStore.info?.social?.instagram || '';
-            document.getElementById('tiktok').value = currentStore.info?.social?.tiktok || '';
+            document.getElementById('fb').value = info.social?.facebook || '';
+            document.getElementById('ig').value = info.social?.instagram || '';
+            document.getElementById('tk').value = info.social?.tiktok || '';
 
             updateCatSelect();
             loadProducts();
@@ -219,42 +248,28 @@
             loadOrders();
         }
 
-        // الحفظ في قسم المعلومات
+        // حفظ المعلومات
         document.getElementById('infoForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             await db.collection('stores').doc(currentCode).update({
                 'info.name': document.getElementById('infoName').value,
                 'info.bio': document.getElementById('infoBio').value,
-                'info.description': document.getElementById('infoDesc').value
+                'info.description': document.getElementById('infoDesc').value,
+                'info.bgImage': document.getElementById('bgUrl').value,
+                'info.bgOpacity': document.getElementById('bgOpacity').value
             });
-            alert("Saved!");
+            showToast();
         });
 
-        // إضافة منتج مع الصورة
-        document.getElementById('productForm').addEventListener('submit', async (e) => {
+        // حفظ التواصل
+        document.getElementById('socialForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            let imageUrl = "";
-            const file = document.getElementById('prodImage').files[0];
-            
-            if(file) {
-                const ref = storage.ref().child(`products/${currentCode}/${Date.now()}`);
-                await ref.put(file);
-                imageUrl = await ref.getDownloadURL();
-            }
-
-            await db.collection('stores').doc(currentCode).collection('products').add({
-                name: document.getElementById('prodName').value,
-                category: document.getElementById('prodCat').value,
-                oldPrice: document.getElementById('prodOldPrice').value,
-                price: document.getElementById('prodPrice').value,
-                sizes: document.getElementById('prodSizes').value,
-                colors: document.getElementById('prodColors').value,
-                description: document.getElementById('prodDesc').value,
-                image: imageUrl,
-                createdAt: new Date().toISOString()
+            await db.collection('stores').doc(currentCode).update({
+                'info.social.facebook': document.getElementById('fb').value,
+                'info.social.instagram': document.getElementById('ig').value,
+                'info.social.tiktok': document.getElementById('tk').value
             });
-            alert("Product Added!");
-            loadProducts();
+            showToast();
         });
 
         // إضافة تصنيف
@@ -265,41 +280,84 @@
             await db.collection('stores').doc(currentCode).update({ categories: cats });
             currentStore.categories = cats;
             updateCatSelect();
-            document.getElementById('newCat').value = '';
+            showToast();
         }
 
         function updateCatSelect() {
-            const sel = document.getElementById('prodCat');
-            sel.innerHTML = (currentStore.categories || []).map(c => `<option value="${c}">${c}</option>`).join('');
+            document.getElementById('pCat').innerHTML = (currentStore.categories || []).map(c => `<option value="${c}">${c}</option>`).join('');
         }
+
+        // إضافة منتج
+        document.getElementById('productForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await db.collection('stores').doc(currentCode).collection('products').add({
+                name: document.getElementById('pName').value,
+                category: document.getElementById('pCat').value,
+                price: document.getElementById('pPrice').value,
+                oldPrice: document.getElementById('pOldPrice').value,
+                image: document.getElementById('pUrl').value,
+                sizes: document.getElementById('pSizes').value,
+                colors: document.getElementById('pColors').value,
+                description: document.getElementById('pDesc').value,
+                createdAt: new Date().toISOString()
+            });
+            showToast();
+            loadProducts();
+        });
 
         async function loadProducts() {
             const snap = await db.collection('stores').doc(currentCode).collection('products').get();
             document.getElementById('productsList').innerHTML = snap.docs.map(doc => `
                 <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
                     <span>${doc.data().name}</span>
-                    <button onclick="deleteProd('${doc.id}')" style="color:red">Delete</button>
+                    <button onclick="deleteProd('${doc.id}')" style="color:red; background:none; border:none; cursor:pointer;">Delete</button>
                 </div>`).join('');
         }
 
+        async function addState() {
+            const n = document.getElementById('sName').value;
+            const h = document.getElementById('sHome').value;
+            const o = document.getElementById('sOffice').value;
+            let delivery = currentStore.delivery || {};
+            delivery[n] = { home: h, office: o };
+            await db.collection('stores').doc(currentCode).update({ delivery });
+            currentStore.delivery = delivery;
+            loadStates();
+            showToast();
+        }
+
+        function loadStates() {
+            document.getElementById('statesList').innerHTML = Object.entries(currentStore.delivery || {}).map(([n, p]) => `
+                <div style="display:flex; justify-content:space-between; padding:10px; border-bottom:1px solid #eee;">
+                    <span>${n}</span><span>🏠 ${p.home} | 🏢 ${p.office}</span>
+                </div>`).join('');
+        }
+
+        // عرض الطلبات بالتفاصيل
         async function loadOrders() {
-            const snap = await db.collection('stores').doc(currentCode).collection('orders').get();
-            document.getElementById('ordersList').innerHTML = snap.docs.map(doc => `
-                <div style="padding:15px; border-bottom:1px solid #eee;">
-                    <b>Order by: ${doc.data().customer?.name}</b> - Total: ${doc.data().total}
-                </div>`).join('');
-        }
+            const snap = await db.collection('stores').doc(currentCode).collection('orders').orderBy('createdAt', 'desc').get();
+            document.getElementById('ordersList').innerHTML = snap.docs.map(doc => {
+                const o = doc.data();
+                // تفاصيل المنتجات داخل الطلب
+                const itemsHtml = (o.items || []).map(item => `
+                    <li>${item.name} (${item.quantity}x) - اللون: ${item.color || 'N/A'} - المقاس: ${item.size || 'N/A'}</li>
+                `).join('');
 
-        // الحفظ في قسم السوشيال
-        document.getElementById('socialForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            await db.collection('stores').doc(currentCode).update({
-                'info.social.facebook': document.getElementById('facebook').value,
-                'info.social.instagram': document.getElementById('instagram').value,
-                'info.social.tiktok': document.getElementById('tiktok').value
-            });
-            alert("Social links saved!");
-        });
+                return `
+                <div class="order-card">
+                    <div class="order-info">
+                        <b>👤 الاسم:</b> ${o.customer?.name}<br>
+                        <b>📞 الهاتف:</b> ${o.customer?.phone}<br>
+                        <b>📍 العنوان:</b> ${o.customer?.state} - ${o.customer?.address}<br>
+                        <b>💰 الإجمالي:</b> ${o.total} DA
+                    </div>
+                    <div class="order-items">
+                        <b>🛍️ المنتجات المطلوبة:</b>
+                        <ul>${itemsHtml}</ul>
+                    </div>
+                </div>`;
+            }).join('');
+        }
 
         function logout() { localStorage.clear(); location.reload(); }
     </script>
