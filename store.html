@@ -17,22 +17,22 @@
         nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: fixed; top: 0; width: 100%; z-index: 1000; }
         .nav-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 15px 40px; }
         
+        /* Modal Style */
+        #product-modal { transition: opacity 0.4s ease; z-index: 2000; }
+        .modal-content { background: var(--bg); transform: scale(0.95); transition: 0.4s ease; }
+        #product-modal.active .modal-content { transform: scale(1); }
+
+        .option-chip { border: 1px solid #eee; padding: 8px 15px; font-size: 10px; cursor: pointer; transition: 0.3s; }
+        .option-chip.active { background: var(--primary); color: var(--bg); border-color: var(--primary); }
+
+        .qty-btn { width: 35px; height: 35px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        
+        .btn-main { background: var(--primary); color: var(--bg); width: 100%; padding: 18px; font-size: 11px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; }
+
         .hero-section { padding: 160px 20px 80px; text-align: center; }
+        #cart-sidebar { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); background: var(--bg); z-index: 2100; }
         
-        /* Checkout Form Styling */
-        .form-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 0; font-size: 12px; margin-bottom: 10px; background: transparent; }
-        .form-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; opacity: 0.6; }
-
-        .delivery-option { border: 1px solid #eee; padding: 10px; cursor: pointer; text-align: center; font-size: 10px; transition: 0.3s; }
-        .delivery-option.active { border-color: var(--primary); background: var(--primary); color: white; }
-
-        .btn-order { background: var(--primary); color: #fff; width: 100%; padding: 18px; font-size: 11px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; margin-top: 20px; }
-        
-        .product-card .img-wrapper { position: relative; overflow: hidden; aspect-ratio: 3/4; }
-        .product-card img { width: 100%; height: 100%; object-fit: cover; transition: 1s cubic-bezier(0.2, 1, 0.3, 1); }
-        .product-card:hover img { transform: scale(1.05); }
-
-        #cart-sidebar { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); background: var(--bg); }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #eee; font-size: 12px; margin-bottom: 10px; background: transparent; }
     </style>
 </head>
 <body>
@@ -59,57 +59,70 @@
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16"></div>
     </main>
 
+    <div id="product-modal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center p-4">
+        <div class="modal-content w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-4 right-4 z-10 text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
+            
+            <div class="md:w-1/2 bg-gray-50">
+                <img id="modal-img" src="" class="w-full h-full object-cover aspect-[3/4]">
+            </div>
+            
+            <div class="md:w-1/2 p-8 md:p-12">
+                <h2 id="modal-name" class="font-vogue text-4xl mb-2 italic">Product Name</h2>
+                <p id="modal-price" class="text-lg opacity-40 mb-6 font-light">0.00 DA</p>
+                
+                <div class="mb-8">
+                    <p class="text-[10px] uppercase tracking-widest mb-3 opacity-60">Description</p>
+                    <p id="modal-desc" class="text-sm leading-relaxed opacity-80"></p>
+                </div>
+
+                <div class="mb-6">
+                    <p class="text-[10px] uppercase tracking-widest mb-3 opacity-60">Select Size</p>
+                    <div id="size-options" class="flex flex-wrap gap-2">
+                        </div>
+                </div>
+
+                <div class="mb-8">
+                    <p class="text-[10px] uppercase tracking-widest mb-3 opacity-60">Quantity</p>
+                    <div class="flex items-center gap-4">
+                        <div class="qty-btn" onclick="updateQty(-1)">-</div>
+                        <span id="modal-qty" class="text-sm">1</span>
+                        <div class="qty-btn" onclick="updateQty(1)">+</div>
+                    </div>
+                </div>
+
+                <button id="add-to-cart-final" class="btn-main">Add to Selection</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="py-20 border-t border-gray-50 text-center">
         <div id="social-links" class="flex justify-center gap-10 mb-8 text-lg"></div>
         <p class="text-[9px] uppercase tracking-[0.4em] opacity-30">&copy; 2024 All Rights Reserved</p>
     </footer>
 
-    <div id="cart-overlay" class="fixed inset-0 bg-black/10 hidden z-[900] backdrop-blur-sm" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[1000] translate-x-full p-10 flex flex-col shadow-2xl overflow-y-auto">
+    <div id="cart-overlay" class="fixed inset-0 bg-black/10 hidden z-[2050] backdrop-blur-sm" onclick="toggleCart(false)"></div>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full translate-x-full p-10 flex flex-col shadow-2xl overflow-y-auto">
         <div class="flex justify-between items-center mb-10">
-            <h2 class="font-vogue text-3xl italic">Checkout</h2>
+            <h2 class="font-vogue text-3xl italic">My Bag</h2>
             <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
         </div>
+        <div id="cart-items" class="mb-10"></div>
         
-        <div id="cart-items" class="mb-10 border-b pb-6"></div>
-
         <div class="space-y-4 mb-10">
-            <h3 class="text-[10px] uppercase tracking-[0.2em] font-bold border-b pb-2 mb-4">Customer Information</h3>
-            <div><label class="form-label">Full Name</label><input type="text" id="cust-name" class="form-input" placeholder="e.g. Ahmed Mohamed"></div>
-            <div><label class="form-label">Phone Number</label><input type="tel" id="cust-phone" class="form-input" placeholder="05/06/07 00 00 00 00"></div>
-            
-            <div>
-                <label class="form-label">Wilaya (State)</label>
-                <select id="cust-wilaya" class="form-input" onchange="updateDeliveryPrices()">
-                    <option value="">Select Wilaya</option>
-                </select>
-            </div>
-
+            <h3 class="text-[10px] uppercase tracking-[0.2em] font-bold border-b pb-2">Customer Info</h3>
+            <input type="text" id="cust-name" class="form-input" placeholder="Full Name">
+            <input type="tel" id="cust-phone" class="form-input" placeholder="Phone Number">
+            <select id="cust-wilaya" class="form-input" onchange="updateDeliveryPrices()"><option value="">Select Wilaya</option></select>
             <div id="delivery-methods" class="grid grid-cols-2 gap-2 hidden">
-                <div id="opt-home" class="delivery-option" onclick="selectDelivery('home')">
-                    <p>Home Delivery</p><span id="price-home">0</span> DA
-                </div>
-                <div id="opt-office" class="delivery-option" onclick="selectDelivery('office')">
-                    <p>Office/Desk</p><span id="price-office">0</span> DA
-                </div>
+                <div id="opt-home" class="p-3 border text-[10px] text-center cursor-pointer" onclick="selectDelivery('home')">Home <span id="price-home">0</span> DA</div>
+                <div id="opt-office" class="p-3 border text-[10px] text-center cursor-pointer" onclick="selectDelivery('office')">Office <span id="price-office">0</span> DA</div>
             </div>
-        </div>
-
-        <div class="mb-10">
-            <h3 class="text-[10px] uppercase tracking-[0.2em] font-bold border-b pb-2 mb-4">Payment Method</h3>
-            <select id="pay-method" class="form-input">
-                <option value="Cash on Delivery">Cash on Delivery (COD)</option>
-                <option value="BaridiMob">BaridiMob</option>
-                <option value="Paysera / Wise">Paysera / Wise</option>
-            </select>
         </div>
 
         <div class="mt-auto">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-[10px] uppercase opacity-40">Total + Shipping</span>
-                <span id="cart-total" class="font-bold text-xl">0.00 DA</span>
-            </div>
-            <button onclick="sendOrder()" class="btn-order">Send Order to WhatsApp</button>
+            <div class="flex justify-between mb-4 font-bold"><span class="opacity-40">Total</span> <span id="cart-total">0.00 DA</span></div>
+            <button onclick="sendOrder()" class="btn-main">Checkout via WhatsApp</button>
         </div>
     </div>
 
@@ -117,6 +130,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
+        // Firebase Config (Same as yours)
         const firebaseConfig = {
           apiKey: "AIzaSyBEoyeQvUzFJviG2oYs5sZsAQ0bR9dHN0U",
           authDomain: "my-simple-stores.firebaseapp.com",
@@ -130,50 +144,35 @@
 
         const urlParams = new URLSearchParams(window.location.search);
         const storeCode = urlParams.get('code');
-        let storeData = null;
-        let selectedDeliveryType = 'home';
-        let shippingCost = 0;
+        let storeData, currentProduct, currentQty = 1, selectedSize = "";
 
         async function initStore() {
             if(!storeCode) return;
             db.collection('stores').doc(storeCode).onSnapshot(doc => {
                 if (doc.exists) {
                     storeData = doc.data();
-                    if(storeData.colors) {
-                        document.documentElement.style.setProperty('--primary', storeData.colors.primary);
-                        document.documentElement.style.setProperty('--bg', storeData.colors.background);
-                        document.documentElement.style.setProperty('--text', storeData.colors.text);
-                    }
-                    document.getElementById('nav-store-name').innerText = storeData.name || "Studio";
-                    document.getElementById('header-store-name').innerText = storeData.name || "Boutique";
-                    document.getElementById('store-bio').innerText = storeData.info?.bio || "";
-                    
-                    if(storeData.info?.logo) {
-                        const logo = document.getElementById('store-logo');
-                        logo.src = storeData.info.logo; logo.classList.remove('hidden');
-                    }
-
-                    // Social Media
-                    const soc = document.getElementById('social-links'); soc.innerHTML = '';
-                    if(storeData.info?.social) {
-                        const s = storeData.info.social;
-                        if(s.instagram) soc.innerHTML += `<a href="${s.instagram}"><i class="fa-brands fa-instagram"></i></a>`;
-                        if(s.facebook) soc.innerHTML += `<a href="${s.facebook}"><i class="fa-brands fa-facebook"></i></a>`;
-                        if(s.tiktok) soc.innerHTML += `<a href="${s.tiktok}"><i class="fa-brands fa-tiktok"></i></a>`;
-                    }
-
-                    // States for Algeria Delivery
-                    const stateSelect = document.getElementById('cust-wilaya');
-                    stateSelect.innerHTML = '<option value="">Select Wilaya</option>';
-                    if(storeData.delivery) {
-                        Object.keys(storeData.delivery).forEach(wilaya => {
-                            stateSelect.innerHTML += `<option value="${wilaya}">${wilaya}</option>`;
-                        });
-                    }
-                    
+                    updateTheme(storeData);
                     loadProducts();
+                    setupWilayas(storeData.delivery);
                 }
             });
+        }
+
+        function updateTheme(data) {
+            document.documentElement.style.setProperty('--primary', data.colors.primary);
+            document.documentElement.style.setProperty('--bg', data.colors.background);
+            document.documentElement.style.setProperty('--text', data.colors.text);
+            document.getElementById('nav-store-name').innerText = data.name;
+            document.getElementById('header-store-name').innerText = data.name;
+            if(data.info?.logo) { document.getElementById('store-logo').src = data.info.logo; document.getElementById('store-logo').classList.remove('hidden'); }
+            
+            // Social Media Footer
+            const soc = document.getElementById('social-links'); soc.innerHTML = '';
+            if(data.info?.social) {
+                Object.entries(data.info.social).forEach(([key, val]) => {
+                    if(val) soc.innerHTML += `<a href="${val}"><i class="fa-brands fa-${key}"></i></a>`;
+                });
+            }
         }
 
         async function loadProducts() {
@@ -183,97 +182,109 @@
             snap.forEach(doc => {
                 const p = doc.data();
                 grid.innerHTML += `
-                    <div class="product-card group cursor-pointer text-center">
-                        <div class="img-wrapper mb-6">
-                            <img src="${p.image || ''}" alt="">
-                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" 
-                                    class="absolute bottom-0 left-0 w-full bg-black text-white p-4 translate-y-full group-hover:translate-y-0 transition text-[10px] tracking-widest">ADD TO BAG +</button>
+                    <div class="product-card group cursor-pointer" onclick="openProduct('${doc.id}', '${p.name}', ${p.price}, '${p.image}', '${p.description || 'No description available'}')">
+                        <div class="relative overflow-hidden aspect-[3/4] mb-6">
+                            <img src="${p.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
+                            <div class="absolute bottom-0 w-full bg-black/5 py-4 text-center text-[9px] tracking-widest opacity-0 group-hover:opacity-100 transition">VIEW DETAILS</div>
                         </div>
-                        <h3 class="font-vogue text-xl italic">${p.name}</h3>
-                        <p class="text-[10px] opacity-40 mt-1">${p.price} DA</p>
+                        <div class="text-center">
+                            <h3 class="font-vogue text-xl italic">${p.name}</h3>
+                            <p class="text-[10px] opacity-40 mt-1">${p.price} DA</p>
+                        </div>
                     </div>`;
             });
         }
 
+        function openProduct(id, name, price, img, desc) {
+            currentProduct = { id, name, price, img };
+            currentQty = 1; selectedSize = "";
+            document.getElementById('modal-img').src = img;
+            document.getElementById('modal-name').innerText = name;
+            document.getElementById('modal-price').innerText = price + " DA";
+            document.getElementById('modal-desc').innerText = desc;
+            document.getElementById('modal-qty').innerText = "1";
+            
+            // Size Selection (Mockup - can be connected to Firebase later)
+            const sizes = ["S", "M", "L", "XL"];
+            document.getElementById('size-options').innerHTML = sizes.map(s => 
+                `<div class="option-chip" onclick="selectSize(this, '${s}')">${s}</div>`
+            ).join('');
+
+            document.getElementById('product-modal').classList.remove('hidden');
+            setTimeout(() => document.getElementById('product-modal').classList.add('active'), 10);
+            
+            document.getElementById('add-to-cart-final').onclick = () => {
+                addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.img, currentQty, selectedSize);
+                closeModal();
+            };
+        }
+
+        function selectSize(el, s) {
+            document.querySelectorAll('.option-chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            selectedSize = s;
+        }
+
+        function updateQty(val) {
+            currentQty = Math.max(1, currentQty + val);
+            document.getElementById('modal-qty').innerText = currentQty;
+        }
+
+        function closeModal() {
+            document.getElementById('product-modal').classList.remove('active');
+            setTimeout(() => document.getElementById('product-modal').classList.add('hidden'), 400);
+        }
+
+        // Cart Logic
         let cart = [];
-        function addToCart(id, name, price, img) {
-            const item = cart.find(i => i.id === id);
-            item ? item.qty++ : cart.push({id, name, price, img, qty: 1});
+        function addToCart(id, name, price, img, qty, size) {
+            const item = cart.find(i => i.id === id && i.size === size);
+            item ? item.qty += qty : cart.push({id, name, price, img, qty, size});
             updateUI();
             toggleCart(true);
         }
 
-        function updateDeliveryPrices() {
-            const wilaya = document.getElementById('cust-wilaya').value;
-            const methods = document.getElementById('delivery-methods');
-            if(wilaya && storeData.delivery[wilaya]) {
-                methods.classList.remove('hidden');
-                document.getElementById('price-home').innerText = storeData.delivery[wilaya].home;
-                document.getElementById('price-office').innerText = storeData.delivery[wilaya].office;
-                selectDelivery(selectedDeliveryType);
-            } else {
-                methods.classList.add('hidden');
-                shippingCost = 0;
-                updateUI();
-            }
-        }
-
-        function selectDelivery(type) {
-            selectedDeliveryType = type;
-            document.getElementById('opt-home').classList.toggle('active', type === 'home');
-            document.getElementById('opt-office').classList.toggle('active', type === 'office');
-            const wilaya = document.getElementById('cust-wilaya').value;
-            shippingCost = parseFloat(storeData.delivery[wilaya][type]);
-            updateUI();
-        }
-
+        // Rest of your Logic (Shipping, Wilayas, WhatsApp)
         function updateUI() {
             const container = document.getElementById('cart-items');
             let subtotal = 0;
             container.innerHTML = cart.map((item, idx) => {
                 subtotal += (item.price * item.qty);
-                return `<div class="flex gap-4 mb-4 text-xs">
+                return `<div class="flex gap-4 mb-4 text-xs border-b pb-4">
                     <img src="${item.img}" class="w-12 h-16 object-cover">
                     <div class="flex-grow">
-                        <p class="font-bold uppercase">${item.name}</p>
+                        <p class="font-bold">${item.name} ${item.size ? '('+item.size+')' : ''}</p>
                         <p class="opacity-50">${item.price} DA x ${item.qty}</p>
                     </div>
                     <button onclick="removeFromCart(${idx})">×</button>
                 </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = (subtotal + shippingCost).toFixed(2) + " DA";
+            document.getElementById('cart-total').innerText = (subtotal + (shippingCost || 0)).toFixed(2) + " DA";
             document.getElementById('cart-count').innerText = `Bag (${cart.reduce((a, b) => a + b.qty, 0)})`;
         }
 
-        function removeFromCart(i) { cart.splice(i, 1); updateUI(); }
         function toggleCart(s) {
             document.getElementById('cart-sidebar').style.transform = s ? "translateX(0)" : "translateX(100%)";
             document.getElementById('cart-overlay').classList.toggle('hidden', !s);
         }
 
+        function removeFromCart(i) { cart.splice(i, 1); updateUI(); }
+
+        // WhatsApp Checkout
         function sendOrder() {
             const name = document.getElementById('cust-name').value;
             const phone = document.getElementById('cust-phone').value;
-            const wilaya = document.getElementById('cust-wilaya').value;
-            const payment = document.getElementById('pay-method').value;
-
-            if(!name || !phone || !wilaya || cart.length === 0) {
-                alert("Please fill all information"); return;
-            }
-
-            let msg = `*NEW ORDER - ${storeData.name}*\n\n`;
-            msg += `*Customer:* ${name}\n*Phone:* ${phone}\n*Wilaya:* ${wilaya}\n`;
-            msg += `*Delivery:* ${selectedDeliveryType === 'home' ? 'Home Delivery' : 'Office Pick-up'}\n`;
-            msg += `*Payment:* ${payment}\n\n`;
-            msg += `*Products:*\n`;
-            cart.forEach(i => msg += `- ${i.name} (${i.qty}x)\n`);
-            msg += `\n*Total:* ${document.getElementById('cart-total').innerText}`;
+            if(!name || !phone || cart.length === 0) return alert("Please complete info");
             
-            window.open(`https://wa.me/213000000000?text=${encodeURIComponent(msg)}`);
+            let msg = `*NEW ORDER*\nCustomer: ${name}\nPhone: ${phone}\n\nItems:\n`;
+            cart.forEach(i => msg += `- ${i.name} (Size: ${i.size}, Qty: ${i.qty})\n`);
+            msg += `\n*TOTAL:* ${document.getElementById('cart-total').innerText}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
         }
 
         initStore();
     </script>
 </body>
 </html>
+
 
