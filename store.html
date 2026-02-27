@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="store-title">Luxurio Boutique</title>
+    <title id="store-title">Boutique</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;1,400&family=Montserrat:wght@200;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -11,117 +11,108 @@
 
     <style>
         :root { --primary: #000; --bg: #fff; --text: #1a1a1a; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; transition: 0.5s; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; transition: 0.5s; overflow-x: hidden; }
         .font-vogue { font-family: 'Bodoni Moda', serif; }
         
+        /* Navbar & Bio Bar */
         nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: fixed; top: 0; width: 100%; z-index: 1000; }
-        .nav-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 15px 40px; }
+        .bio-bar { background: var(--primary); color: var(--bg); font-size: 9px; text-transform: uppercase; letter-spacing: 2px; padding: 8px; text-align: center; }
         
-        /* Modal Style */
-        #product-modal { transition: opacity 0.4s ease; z-index: 2000; }
-        .modal-content { background: var(--bg); transform: scale(0.95); transition: 0.4s ease; }
-        #product-modal.active .modal-content { transform: scale(1); }
+        /* Modal & UI Elements */
+        #product-modal { z-index: 2000; }
+        .modal-content { background: var(--bg); transform: translateY(50px); opacity: 0; transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1); }
+        #product-modal.active .modal-content { transform: translateY(0); opacity: 1; }
 
-        .option-chip { border: 1px solid #eee; padding: 8px 15px; font-size: 10px; cursor: pointer; transition: 0.3s; }
+        .option-chip { border: 1px solid #eee; padding: 10px 18px; font-size: 10px; cursor: pointer; transition: 0.3s; }
         .option-chip.active { background: var(--primary); color: var(--bg); border-color: var(--primary); }
 
-        .qty-btn { width: 35px; height: 35px; border: 1px solid #eee; display: flex; align-items: center; justify-content: center; cursor: pointer; }
-        
-        .btn-main { background: var(--primary); color: var(--bg); width: 100%; padding: 18px; font-size: 11px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; }
+        .color-circle { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #eee; cursor: pointer; transition: 0.3s; }
+        .color-circle.active { border-color: var(--primary); transform: scale(1.1); }
 
-        .hero-section { padding: 160px 20px 80px; text-align: center; }
+        .old-price { text-decoration: line-through; opacity: 0.3; font-size: 0.8em; margin-right: 10px; }
+        .btn-main { background: var(--primary); color: var(--bg); width: 100%; padding: 20px; font-size: 11px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; }
+
         #cart-sidebar { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); background: var(--bg); z-index: 2100; }
-        
-        .form-input { width: 100%; padding: 12px; border: 1px solid #eee; font-size: 12px; margin-bottom: 10px; background: transparent; }
     </style>
 </head>
-<body>
+<body class="pt-24">
 
     <nav>
-        <div class="nav-container">
-            <div class="text-left"><h1 id="nav-store-name" class="font-vogue text-xl uppercase">Studio</h1></div>
-            <div class="logo-mid"><img id="store-logo" src="" alt="" class="hidden max-h-12"></div>
+        <div id="store-bio-small" class="bio-bar">Welcome to our luxury boutique</div>
+        <div class="grid grid-cols-3 items-center px-10 py-4">
+            <div class="text-left font-vogue text-xl uppercase tracking-tighter" id="nav-store-name">Studio</div>
+            <div class="flex justify-center"><img id="store-logo" src="" class="hidden max-h-10"></div>
             <div class="text-right">
                 <button onclick="toggleCart(true)" class="flex items-center gap-2 justify-end w-full">
-                    <span id="cart-count" class="text-[10px] font-bold uppercase tracking-widest">Bag (0)</span>
+                    <span id="cart-count" class="text-[9px] font-bold uppercase tracking-widest">Bag (0)</span>
                     <i class="fa-solid fa-bag-shopping text-sm"></i>
                 </button>
             </div>
         </div>
     </nav>
 
-    <header class="hero-section">
-        <h2 id="header-store-name" class="font-vogue text-7xl md:text-9xl italic mb-6">Boutique</h2>
-        <p id="store-bio" class="uppercase tracking-[0.5em] text-[10px] opacity-40"></p>
+    <header class="pt-20 pb-10 text-center">
+        <h2 id="header-store-name" class="font-vogue text-7xl md:text-9xl italic mb-2 uppercase tracking-tighter">Collection</h2>
+        <p id="store-description" class="text-[11px] uppercase tracking-[0.4em] opacity-40 max-w-lg mx-auto leading-relaxed"></p>
     </header>
 
     <main class="container mx-auto px-10 py-20">
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16"></div>
     </main>
 
-    <div id="product-modal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center p-4">
-        <div class="modal-content w-full max-w-4xl max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl relative">
-            <button onclick="closeModal()" class="absolute top-4 right-4 z-10 text-gray-400"><i class="fa-solid fa-xmark text-xl"></i></button>
+    <div id="product-modal" class="fixed inset-0 bg-black/30 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="modal-content w-full max-w-5xl h-auto max-h-[90vh] overflow-y-auto flex flex-col md:flex-row shadow-2xl relative">
+            <button onclick="closeModal()" class="absolute top-6 right-6 z-10 text-gray-400 hover:text-black"><i class="fa-solid fa-xmark text-xl"></i></button>
             
-            <div class="md:w-1/2 bg-gray-50">
+            <div class="md:w-1/2 bg-[#fcfcfc] flex items-center justify-center">
                 <img id="modal-img" src="" class="w-full h-full object-cover aspect-[3/4]">
             </div>
             
-            <div class="md:w-1/2 p-8 md:p-12">
-                <h2 id="modal-name" class="font-vogue text-4xl mb-2 italic">Product Name</h2>
-                <p id="modal-price" class="text-lg opacity-40 mb-6 font-light">0.00 DA</p>
+            <div class="md:w-1/2 p-10 md:p-16 flex flex-col">
+                <h2 id="modal-name" class="font-vogue text-5xl mb-4 italic tracking-tighter">Name</h2>
+                <div class="mb-8">
+                    <span id="modal-old-price" class="old-price"></span>
+                    <span id="modal-price" class="text-2xl font-light">0 DA</span>
+                </div>
                 
-                <div class="mb-8">
-                    <p class="text-[10px] uppercase tracking-widest mb-3 opacity-60">Description</p>
-                    <p id="modal-desc" class="text-sm leading-relaxed opacity-80"></p>
+                <p id="modal-desc" class="text-xs leading-relaxed opacity-60 mb-10 border-l-2 pl-4 border-gray-100 italic"></p>
+
+                <div id="color-section" class="mb-8">
+                    <p class="text-[9px] uppercase tracking-widest mb-4 font-bold">Available Colors</p>
+                    <div id="modal-colors" class="flex gap-4"></div>
                 </div>
 
-                <div class="mb-6">
-                    <p class="text-[10px] uppercase tracking-widest mb-3 opacity-60">Select Size</p>
-                    <div id="size-options" class="flex flex-wrap gap-2">
-                        </div>
+                <div id="size-section" class="mb-10">
+                    <p class="text-[9px] uppercase tracking-widest mb-4 font-bold">Select Size</p>
+                    <div id="modal-sizes" class="flex flex-wrap gap-2"></div>
                 </div>
 
-                <div class="mb-8">
-                    <p class="text-[10px] uppercase tracking-widest mb-3 opacity-60">Quantity</p>
-                    <div class="flex items-center gap-4">
-                        <div class="qty-btn" onclick="updateQty(-1)">-</div>
-                        <span id="modal-qty" class="text-sm">1</span>
-                        <div class="qty-btn" onclick="updateQty(1)">+</div>
+                <div class="mt-auto flex items-center gap-6">
+                    <div class="flex items-center border border-gray-100">
+                        <button onclick="updateQty(-1)" class="px-5 py-4 text-sm">-</button>
+                        <span id="modal-qty" class="w-10 text-center text-xs">1</span>
+                        <button onclick="updateQty(1)" class="px-5 py-4 text-sm">+</button>
                     </div>
+                    <button id="add-to-cart-final" class="btn-main">Add to Bag</button>
                 </div>
-
-                <button id="add-to-cart-final" class="btn-main">Add to Selection</button>
             </div>
         </div>
     </div>
 
     <footer class="py-20 border-t border-gray-50 text-center">
-        <div id="social-links" class="flex justify-center gap-10 mb-8 text-lg"></div>
-        <p class="text-[9px] uppercase tracking-[0.4em] opacity-30">&copy; 2024 All Rights Reserved</p>
+        <div id="social-links" class="flex justify-center gap-12 mb-10 text-xl opacity-60"></div>
+        <p class="text-[9px] uppercase tracking-[0.5em] opacity-20">&copy; 2024 LUXE SUITE</p>
     </footer>
 
     <div id="cart-overlay" class="fixed inset-0 bg-black/10 hidden z-[2050] backdrop-blur-sm" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full translate-x-full p-10 flex flex-col shadow-2xl overflow-y-auto">
-        <div class="flex justify-between items-center mb-10">
-            <h2 class="font-vogue text-3xl italic">My Bag</h2>
-            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full translate-x-full p-12 flex flex-col shadow-2xl overflow-y-auto">
+        <div class="flex justify-between items-center mb-16">
+            <h2 class="font-vogue text-4xl italic tracking-tighter">Your Bag</h2>
+            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-300"></i></button>
         </div>
-        <div id="cart-items" class="mb-10"></div>
-        
-        <div class="space-y-4 mb-10">
-            <h3 class="text-[10px] uppercase tracking-[0.2em] font-bold border-b pb-2">Customer Info</h3>
-            <input type="text" id="cust-name" class="form-input" placeholder="Full Name">
-            <input type="tel" id="cust-phone" class="form-input" placeholder="Phone Number">
-            <select id="cust-wilaya" class="form-input" onchange="updateDeliveryPrices()"><option value="">Select Wilaya</option></select>
-            <div id="delivery-methods" class="grid grid-cols-2 gap-2 hidden">
-                <div id="opt-home" class="p-3 border text-[10px] text-center cursor-pointer" onclick="selectDelivery('home')">Home <span id="price-home">0</span> DA</div>
-                <div id="opt-office" class="p-3 border text-[10px] text-center cursor-pointer" onclick="selectDelivery('office')">Office <span id="price-office">0</span> DA</div>
-            </div>
-        </div>
-
-        <div class="mt-auto">
-            <div class="flex justify-between mb-4 font-bold"><span class="opacity-40">Total</span> <span id="cart-total">0.00 DA</span></div>
+        <div id="cart-items" class="flex-grow space-y-8"></div>
+        <div class="mt-10 pt-10 border-t">
+            <div class="flex justify-between mb-8"><span class="text-[10px] uppercase opacity-40">Subtotal</span><span id="cart-total" class="font-bold text-xl">0 DA</span></div>
             <button onclick="sendOrder()" class="btn-main">Checkout via WhatsApp</button>
         </div>
     </div>
@@ -130,7 +121,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // Firebase Config (Same as yours)
         const firebaseConfig = {
           apiKey: "AIzaSyBEoyeQvUzFJviG2oYs5sZsAQ0bR9dHN0U",
           authDomain: "my-simple-stores.firebaseapp.com",
@@ -142,35 +132,41 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const storeCode = urlParams.get('code');
-        let storeData, currentProduct, currentQty = 1, selectedSize = "";
+        const params = new URLSearchParams(window.location.search);
+        const storeCode = params.get('code');
+        let storeData, currentProduct, currentQty = 1, selectedSize = "", selectedColor = "";
 
-        async function initStore() {
+        async function init() {
             if(!storeCode) return;
             db.collection('stores').doc(storeCode).onSnapshot(doc => {
-                if (doc.exists) {
+                if(doc.exists) {
                     storeData = doc.data();
-                    updateTheme(storeData);
+                    applyTheme(storeData);
                     loadProducts();
-                    setupWilayas(storeData.delivery);
                 }
             });
         }
 
-        function updateTheme(data) {
+        function applyTheme(data) {
             document.documentElement.style.setProperty('--primary', data.colors.primary);
             document.documentElement.style.setProperty('--bg', data.colors.background);
             document.documentElement.style.setProperty('--text', data.colors.text);
+            
             document.getElementById('nav-store-name').innerText = data.name;
             document.getElementById('header-store-name').innerText = data.name;
-            if(data.info?.logo) { document.getElementById('store-logo').src = data.info.logo; document.getElementById('store-logo').classList.remove('hidden'); }
+            document.getElementById('store-description').innerText = data.info?.description || "";
+            document.getElementById('store-bio-small').innerText = data.info?.bio || "Luxury Experience";
             
-            // Social Media Footer
+            if(data.info?.logo) {
+                document.getElementById('store-logo').src = data.info.logo;
+                document.getElementById('store-logo').classList.remove('hidden');
+                document.getElementById('nav-store-name').classList.add('hidden');
+            }
+
             const soc = document.getElementById('social-links'); soc.innerHTML = '';
             if(data.info?.social) {
-                Object.entries(data.info.social).forEach(([key, val]) => {
-                    if(val) soc.innerHTML += `<a href="${val}"><i class="fa-brands fa-${key}"></i></a>`;
+                Object.entries(data.info.social).forEach(([k,v]) => {
+                    if(v) soc.innerHTML += `<a href="${v}" target="_blank"><i class="fa-brands fa-${k}"></i></a>`;
                 });
             }
         }
@@ -182,109 +178,109 @@
             snap.forEach(doc => {
                 const p = doc.data();
                 grid.innerHTML += `
-                    <div class="product-card group cursor-pointer" onclick="openProduct('${doc.id}', '${p.name}', ${p.price}, '${p.image}', '${p.description || 'No description available'}')">
-                        <div class="relative overflow-hidden aspect-[3/4] mb-6">
-                            <img src="${p.image}" class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
-                            <div class="absolute bottom-0 w-full bg-black/5 py-4 text-center text-[9px] tracking-widest opacity-0 group-hover:opacity-100 transition">VIEW DETAILS</div>
+                    <div class="product-card group cursor-pointer" onclick='openProduct(${JSON.stringify({id: doc.id, ...p}).replace(/'/g, "&apos;")})'>
+                        <div class="relative overflow-hidden aspect-[3/4] mb-8">
+                            <img src="${p.image}" class="w-full h-full object-cover transition duration-1000 group-hover:scale-105">
                         </div>
                         <div class="text-center">
-                            <h3 class="font-vogue text-xl italic">${p.name}</h3>
-                            <p class="text-[10px] opacity-40 mt-1">${p.price} DA</p>
+                            <h3 class="font-vogue text-2xl italic mb-2">${p.name}</h3>
+                            <p class="text-[10px] font-bold">
+                                ${p.oldPrice ? `<span class="old-price">${p.oldPrice} DA</span>` : ''}
+                                <span>${p.price} DA</span>
+                            </p>
                         </div>
                     </div>`;
             });
         }
 
-        function openProduct(id, name, price, img, desc) {
-            currentProduct = { id, name, price, img };
-            currentQty = 1; selectedSize = "";
-            document.getElementById('modal-img').src = img;
-            document.getElementById('modal-name').innerText = name;
-            document.getElementById('modal-price').innerText = price + " DA";
-            document.getElementById('modal-desc').innerText = desc;
+        function openProduct(p) {
+            currentProduct = p; currentQty = 1; selectedSize = ""; selectedColor = "";
+            document.getElementById('modal-img').src = p.image;
+            document.getElementById('modal-name').innerText = p.name;
+            document.getElementById('modal-price').innerText = p.price + " DA";
+            document.getElementById('modal-old-price').innerText = p.oldPrice ? p.oldPrice + " DA" : "";
+            document.getElementById('modal-desc').innerText = p.description || "";
             document.getElementById('modal-qty').innerText = "1";
-            
-            // Size Selection (Mockup - can be connected to Firebase later)
-            const sizes = ["S", "M", "L", "XL"];
-            document.getElementById('size-options').innerHTML = sizes.map(s => 
-                `<div class="option-chip" onclick="selectSize(this, '${s}')">${s}</div>`
-            ).join('');
+
+            // Sizes
+            const sizeBox = document.getElementById('modal-sizes'); sizeBox.innerHTML = "";
+            if(p.sizes) {
+                p.sizes.split(',').forEach(s => {
+                    sizeBox.innerHTML += `<div class="option-chip" onclick="selectOpt(this, 'size', '${s.trim()}')">${s.trim()}</div>`;
+                });
+            }
+
+            // Colors
+            const colorBox = document.getElementById('modal-colors'); colorBox.innerHTML = "";
+            if(p.colors) {
+                p.colors.split(',').forEach(c => {
+                    colorBox.innerHTML += `<div class="color-circle" style="background:${c.trim()}" onclick="selectOpt(this, 'color', '${c.trim()}')"></div>`;
+                });
+            }
 
             document.getElementById('product-modal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('product-modal').classList.add('active'), 10);
+            setTimeout(() => document.getElementById('product-modal').classList.add('active'), 50);
             
             document.getElementById('add-to-cart-final').onclick = () => {
-                addToCart(currentProduct.id, currentProduct.name, currentProduct.price, currentProduct.img, currentQty, selectedSize);
+                addToCart(p.id, p.name, p.price, p.image, currentQty, selectedSize, selectedColor);
                 closeModal();
+                toggleCart(true); // يفتح السلة تلقائياً
             };
         }
 
-        function selectSize(el, s) {
-            document.querySelectorAll('.option-chip').forEach(c => c.classList.remove('active'));
+        function selectOpt(el, type, val) {
+            const selector = type === 'size' ? '.option-chip' : '.color-circle';
+            document.querySelectorAll(selector).forEach(c => c.classList.remove('active'));
             el.classList.add('active');
-            selectedSize = s;
+            if(type === 'size') selectedSize = val; else selectedColor = val;
         }
 
-        function updateQty(val) {
-            currentQty = Math.max(1, currentQty + val);
-            document.getElementById('modal-qty').innerText = currentQty;
-        }
+        function updateQty(v) { currentQty = Math.max(1, currentQty + v); document.getElementById('modal-qty').innerText = currentQty; }
+        function closeModal() { document.getElementById('product-modal').classList.remove('active'); setTimeout(()=>document.getElementById('product-modal').classList.add('hidden'), 500); }
 
-        function closeModal() {
-            document.getElementById('product-modal').classList.remove('active');
-            setTimeout(() => document.getElementById('product-modal').classList.add('hidden'), 400);
-        }
-
-        // Cart Logic
         let cart = [];
-        function addToCart(id, name, price, img, qty, size) {
-            const item = cart.find(i => i.id === id && i.size === size);
-            item ? item.qty += qty : cart.push({id, name, price, img, qty, size});
-            updateUI();
-            toggleCart(true);
+        function addToCart(id, name, price, img, qty, size, color) {
+            cart.push({id, name, price, img, qty, size, color});
+            updateCartUI();
         }
 
-        // Rest of your Logic (Shipping, Wilayas, WhatsApp)
-        function updateUI() {
+        function updateCartUI() {
             const container = document.getElementById('cart-items');
-            let subtotal = 0;
+            let total = 0;
             container.innerHTML = cart.map((item, idx) => {
-                subtotal += (item.price * item.qty);
-                return `<div class="flex gap-4 mb-4 text-xs border-b pb-4">
-                    <img src="${item.img}" class="w-12 h-16 object-cover">
+                total += (item.price * item.qty);
+                return `<div class="flex gap-6 items-center border-b border-gray-50 pb-6">
+                    <img src="${item.img}" class="w-20 h-24 object-cover">
                     <div class="flex-grow">
-                        <p class="font-bold">${item.name} ${item.size ? '('+item.size+')' : ''}</p>
-                        <p class="opacity-50">${item.price} DA x ${item.qty}</p>
+                        <h4 class="font-vogue text-lg italic">${item.name}</h4>
+                        <p class="text-[9px] uppercase opacity-40 mt-1">${item.size || ''} ${item.color ? '| '+item.color : ''}</p>
+                        <p class="text-[10px] mt-2">${item.price} DA x ${item.qty}</p>
                     </div>
-                    <button onclick="removeFromCart(${idx})">×</button>
+                    <button onclick="removeFromCart(${idx})" class="text-xs opacity-20 hover:opacity-100">×</button>
                 </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = (subtotal + (shippingCost || 0)).toFixed(2) + " DA";
-            document.getElementById('cart-count').innerText = `Bag (${cart.reduce((a, b) => a + b.qty, 0)})`;
+            document.getElementById('cart-total').innerText = total + " DA";
+            document.getElementById('cart-count').innerText = `Bag (${cart.length})`;
         }
 
+        function removeFromCart(i) { cart.splice(i, 1); updateCartUI(); }
         function toggleCart(s) {
             document.getElementById('cart-sidebar').style.transform = s ? "translateX(0)" : "translateX(100%)";
             document.getElementById('cart-overlay').classList.toggle('hidden', !s);
         }
 
-        function removeFromCart(i) { cart.splice(i, 1); updateUI(); }
-
-        // WhatsApp Checkout
         function sendOrder() {
-            const name = document.getElementById('cust-name').value;
-            const phone = document.getElementById('cust-phone').value;
-            if(!name || !phone || cart.length === 0) return alert("Please complete info");
-            
-            let msg = `*NEW ORDER*\nCustomer: ${name}\nPhone: ${phone}\n\nItems:\n`;
-            cart.forEach(i => msg += `- ${i.name} (Size: ${i.size}, Qty: ${i.qty})\n`);
-            msg += `\n*TOTAL:* ${document.getElementById('cart-total').innerText}`;
+            if(cart.length === 0) return alert("Bag is empty");
+            let msg = `*NEW ORDER*\n\nItems:\n`;
+            cart.forEach(i => msg += `- ${i.name} [Size: ${i.size}, Color: ${i.color}] x${i.qty}\n`);
+            msg += `\n*TOTAL: ${document.getElementById('cart-total').innerText}*`;
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
         }
 
-        initStore();
+        init();
     </script>
 </body>
 </html>
+
 
 
