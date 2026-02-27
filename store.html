@@ -10,116 +10,40 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
     <style>
-        :root {
-            --primary-color: #000000;
-            --bg-color: #ffffff;
-            --text-color: #1a1a1a;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Montserrat', sans-serif;
-            transition: all 0.5s ease;
-        }
-
+        :root { --primary: #000; --bg: #fff; --text: #1a1a1a; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; transition: 0.5s; }
         .font-vogue { font-family: 'Bodoni Moda', serif; }
+        
+        nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: fixed; top: 0; width: 100%; z-index: 1000; }
+        .nav-container { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; padding: 15px 40px; }
+        
+        .hero-section { padding: 160px 20px 80px; text-align: center; }
+        
+        /* Checkout Form Styling */
+        .form-input { width: 100%; padding: 12px; border: 1px solid #eee; border-radius: 0; font-size: 12px; margin-bottom: 10px; background: transparent; }
+        .form-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; display: block; opacity: 0.6; }
 
-        /* Navbar: 60% Transparency & Layout */
-        nav {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            position: fixed;
-            top: 0; width: 100%; z-index: 1000;
-        }
+        .delivery-option { border: 1px solid #eee; padding: 10px; cursor: pointer; text-align: center; font-size: 10px; transition: 0.3s; }
+        .delivery-option.active { border-color: var(--primary); background: var(--primary); color: white; }
 
-        .nav-container {
-            display: grid;
-            grid-template-columns: 1fr auto 1fr;
-            align-items: center;
-            padding: 20px 40px;
-        }
-
-        /* Logo Area in Middle */
-        .logo-mid img {
-            max-height: 60px;
-            width: auto;
-        }
-
-        /* Hero / Header Section */
-        .hero-section {
-            padding: 160px 20px 100px;
-            text-align: center;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
-        }
-
-        .hero-section h2 {
-            color: var(--primary-color); /* يتغير حسب لوحة الإدارة */
-        }
-
-        /* Luxury Product Card */
-        .img-wrapper {
-            position: relative;
-            overflow: hidden;
-            aspect-ratio: 3/4;
-            background: #fdfdfd;
-        }
-        .product-card img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 1s cubic-bezier(0.2, 1, 0.3, 1);
-        }
+        .btn-order { background: var(--primary); color: #fff; width: 100%; padding: 18px; font-size: 11px; letter-spacing: 3px; font-weight: 600; text-transform: uppercase; margin-top: 20px; }
+        
+        .product-card .img-wrapper { position: relative; overflow: hidden; aspect-ratio: 3/4; }
+        .product-card img { width: 100%; height: 100%; object-fit: cover; transition: 1s cubic-bezier(0.2, 1, 0.3, 1); }
         .product-card:hover img { transform: scale(1.05); }
 
-        .btn-add {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background: var(--primary-color);
-            color: #fff; padding: 20px;
-            font-size: 10px; letter-spacing: 3px;
-            transform: translateY(100%);
-            transition: transform 0.4s ease;
-        }
-        .product-card:hover .btn-add { transform: translateY(0); }
-
-        /* Sidebar Cart (Italian Professional) */
-        #cart-sidebar {
-            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            background: var(--bg-color);
-            color: var(--text-color);
-        }
-
-        .checkout-btn {
-            background: var(--primary-color);
-            color: #fff;
-            width: 100%; padding: 20px;
-            font-size: 11px; letter-spacing: 4px;
-            font-weight: 600;
-        }
-
-        /* Social Footer */
-        .footer-social a {
-            color: var(--text-color);
-            font-size: 18px;
-            transition: opacity 0.3s;
-        }
-        .footer-social a:hover { opacity: 0.5; }
+        #cart-sidebar { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); background: var(--bg); }
     </style>
 </head>
 <body>
 
     <nav>
         <div class="nav-container">
-            <div class="text-left">
-                <h1 id="nav-store-name" class="font-vogue text-xl font-bold tracking-tighter uppercase">Studio</h1>
-            </div>
-
-            <div class="logo-mid">
-                <img id="store-logo" src="" alt="Logo" class="hidden">
-            </div>
-
+            <div class="text-left"><h1 id="nav-store-name" class="font-vogue text-xl uppercase">Studio</h1></div>
+            <div class="logo-mid"><img id="store-logo" src="" alt="" class="hidden max-h-12"></div>
             <div class="text-right">
-                <button onclick="toggleCart(true)" class="group flex items-center gap-3 justify-end w-full">
-                    <span id="cart-count" class="text-[10px] font-bold uppercase tracking-[0.2em]">Bag (0)</span>
+                <button onclick="toggleCart(true)" class="flex items-center gap-2 justify-end w-full">
+                    <span id="cart-count" class="text-[10px] font-bold uppercase tracking-widest">Bag (0)</span>
                     <i class="fa-solid fa-bag-shopping text-sm"></i>
                 </button>
             </div>
@@ -127,37 +51,65 @@
     </nav>
 
     <header class="hero-section">
-        <h2 id="header-store-name" class="font-vogue text-6xl md:text-9xl italic mb-6 uppercase tracking-tighter">Boutique</h2>
-        <p id="store-bio" class="uppercase tracking-[0.5em] text-[10px] opacity-40 max-w-2xl mx-auto"></p>
+        <h2 id="header-store-name" class="font-vogue text-7xl md:text-9xl italic mb-6">Boutique</h2>
+        <p id="store-bio" class="uppercase tracking-[0.5em] text-[10px] opacity-40"></p>
     </header>
 
-    <main class="container mx-auto px-10 py-32">
-        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
-            </div>
+    <main class="container mx-auto px-10 py-20">
+        <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16"></div>
     </main>
 
-    <footer class="py-24 border-t border-gray-50 text-center">
-        <div id="social-links" class="footer-social flex justify-center gap-12 mb-10">
-            </div>
-        <p class="text-[9px] uppercase tracking-[0.4em] opacity-30">&copy; <span id="year"></span> All Rights Reserved</p>
+    <footer class="py-20 border-t border-gray-50 text-center">
+        <div id="social-links" class="flex justify-center gap-10 mb-8 text-lg"></div>
+        <p class="text-[9px] uppercase tracking-[0.4em] opacity-30">&copy; 2024 All Rights Reserved</p>
     </footer>
 
     <div id="cart-overlay" class="fixed inset-0 bg-black/10 hidden z-[900] backdrop-blur-sm" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[1000] translate-x-full p-12 flex flex-col shadow-2xl">
-        <div class="flex justify-between items-center mb-16">
-            <h2 class="font-vogue text-4xl italic tracking-tighter">Selection</h2>
-            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-300"></i></button>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[1000] translate-x-full p-10 flex flex-col shadow-2xl overflow-y-auto">
+        <div class="flex justify-between items-center mb-10">
+            <h2 class="font-vogue text-3xl italic">Checkout</h2>
+            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
-        <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
+        <div id="cart-items" class="mb-10 border-b pb-6"></div>
+
+        <div class="space-y-4 mb-10">
+            <h3 class="text-[10px] uppercase tracking-[0.2em] font-bold border-b pb-2 mb-4">Customer Information</h3>
+            <div><label class="form-label">Full Name</label><input type="text" id="cust-name" class="form-input" placeholder="e.g. Ahmed Mohamed"></div>
+            <div><label class="form-label">Phone Number</label><input type="tel" id="cust-phone" class="form-input" placeholder="05/06/07 00 00 00 00"></div>
+            
+            <div>
+                <label class="form-label">Wilaya (State)</label>
+                <select id="cust-wilaya" class="form-input" onchange="updateDeliveryPrices()">
+                    <option value="">Select Wilaya</option>
+                </select>
             </div>
 
-        <div class="mt-auto pt-10 border-t border-gray-100">
-            <div class="flex justify-between items-center mb-8">
-                <span class="text-[10px] uppercase tracking-widest opacity-40">Total Amount</span>
-                <span id="cart-total" class="font-bold text-xl">0.00 USD</span>
+            <div id="delivery-methods" class="grid grid-cols-2 gap-2 hidden">
+                <div id="opt-home" class="delivery-option" onclick="selectDelivery('home')">
+                    <p>Home Delivery</p><span id="price-home">0</span> DA
+                </div>
+                <div id="opt-office" class="delivery-option" onclick="selectDelivery('office')">
+                    <p>Office/Desk</p><span id="price-office">0</span> DA
+                </div>
             </div>
-            <button onclick="checkout()" class="checkout-btn uppercase">Order via WhatsApp</button>
+        </div>
+
+        <div class="mb-10">
+            <h3 class="text-[10px] uppercase tracking-[0.2em] font-bold border-b pb-2 mb-4">Payment Method</h3>
+            <select id="pay-method" class="form-input">
+                <option value="Cash on Delivery">Cash on Delivery (COD)</option>
+                <option value="BaridiMob">BaridiMob</option>
+                <option value="Paysera / Wise">Paysera / Wise</option>
+            </select>
+        </div>
+
+        <div class="mt-auto">
+            <div class="flex justify-between items-center mb-4">
+                <span class="text-[10px] uppercase opacity-40">Total + Shipping</span>
+                <span id="cart-total" class="font-bold text-xl">0.00 DA</span>
+            </div>
+            <button onclick="sendOrder()" class="btn-order">Send Order to WhatsApp</button>
         </div>
     </div>
 
@@ -173,45 +125,50 @@
           messagingSenderId: "280278183648",
           appId: "1:280278183648:web:65d99dceeab2be1584ea85"
         };
-
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
         const urlParams = new URLSearchParams(window.location.search);
         const storeCode = urlParams.get('code');
+        let storeData = null;
+        let selectedDeliveryType = 'home';
+        let shippingCost = 0;
 
         async function initStore() {
             if(!storeCode) return;
             db.collection('stores').doc(storeCode).onSnapshot(doc => {
                 if (doc.exists) {
-                    const data = doc.data();
-                    
-                    // 1. Dynamic Colors from Admin Panel
-                    if(data.colors) {
-                        document.documentElement.style.setProperty('--primary-color', data.colors.primary);
-                        document.documentElement.style.setProperty('--bg-color', data.colors.background);
-                        document.documentElement.style.setProperty('--text-color', data.colors.text);
+                    storeData = doc.data();
+                    if(storeData.colors) {
+                        document.documentElement.style.setProperty('--primary', storeData.colors.primary);
+                        document.documentElement.style.setProperty('--bg', storeData.colors.background);
+                        document.documentElement.style.setProperty('--text', storeData.colors.text);
                     }
-
-                    // 2. Info & Logo
-                    document.getElementById('nav-store-name').innerText = data.name || "Studio";
-                    document.getElementById('header-store-name').innerText = data.name || "Boutique";
-                    document.getElementById('store-bio').innerText = data.info?.bio || "";
+                    document.getElementById('nav-store-name').innerText = storeData.name || "Studio";
+                    document.getElementById('header-store-name').innerText = storeData.name || "Boutique";
+                    document.getElementById('store-bio').innerText = storeData.info?.bio || "";
                     
-                    if(data.info?.logo) {
+                    if(storeData.info?.logo) {
                         const logo = document.getElementById('store-logo');
-                        logo.src = data.info.logo;
-                        logo.classList.remove('hidden');
+                        logo.src = storeData.info.logo; logo.classList.remove('hidden');
                     }
 
-                    // 3. Social Links
-                    const socialDiv = document.getElementById('social-links');
-                    socialDiv.innerHTML = '';
-                    if(data.info?.social) {
-                        const s = data.info.social;
-                        if(s.instagram) socialDiv.innerHTML += `<a href="${s.instagram}"><i class="fa-brands fa-instagram"></i></a>`;
-                        if(s.facebook) socialDiv.innerHTML += `<a href="${s.facebook}"><i class="fa-brands fa-facebook"></i></a>`;
-                        if(s.tiktok) socialDiv.innerHTML += `<a href="${s.tiktok}"><i class="fa-brands fa-tiktok"></i></a>`;
+                    // Social Media
+                    const soc = document.getElementById('social-links'); soc.innerHTML = '';
+                    if(storeData.info?.social) {
+                        const s = storeData.info.social;
+                        if(s.instagram) soc.innerHTML += `<a href="${s.instagram}"><i class="fa-brands fa-instagram"></i></a>`;
+                        if(s.facebook) soc.innerHTML += `<a href="${s.facebook}"><i class="fa-brands fa-facebook"></i></a>`;
+                        if(s.tiktok) soc.innerHTML += `<a href="${s.tiktok}"><i class="fa-brands fa-tiktok"></i></a>`;
+                    }
+
+                    // States for Algeria Delivery
+                    const stateSelect = document.getElementById('cust-wilaya');
+                    stateSelect.innerHTML = '<option value="">Select Wilaya</option>';
+                    if(storeData.delivery) {
+                        Object.keys(storeData.delivery).forEach(wilaya => {
+                            stateSelect.innerHTML += `<option value="${wilaya}">${wilaya}</option>`;
+                        });
                     }
                     
                     loadProducts();
@@ -226,15 +183,14 @@
             snap.forEach(doc => {
                 const p = doc.data();
                 grid.innerHTML += `
-                    <div class="product-card group cursor-pointer">
-                        <div class="img-wrapper">
+                    <div class="product-card group cursor-pointer text-center">
+                        <div class="img-wrapper mb-6">
                             <img src="${p.image || ''}" alt="">
-                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" class="btn-add">ADD TO BAG +</button>
+                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" 
+                                    class="absolute bottom-0 left-0 w-full bg-black text-white p-4 translate-y-full group-hover:translate-y-0 transition text-[10px] tracking-widest">ADD TO BAG +</button>
                         </div>
-                        <div class="mt-8 text-center">
-                            <h3 class="font-vogue text-2xl italic tracking-tight">${p.name}</h3>
-                            <p class="text-[11px] font-bold opacity-30 mt-2">${p.price} USD</p>
-                        </div>
+                        <h3 class="font-vogue text-xl italic">${p.name}</h3>
+                        <p class="text-[10px] opacity-40 mt-1">${p.price} DA</p>
                     </div>`;
             });
         }
@@ -247,22 +203,45 @@
             toggleCart(true);
         }
 
+        function updateDeliveryPrices() {
+            const wilaya = document.getElementById('cust-wilaya').value;
+            const methods = document.getElementById('delivery-methods');
+            if(wilaya && storeData.delivery[wilaya]) {
+                methods.classList.remove('hidden');
+                document.getElementById('price-home').innerText = storeData.delivery[wilaya].home;
+                document.getElementById('price-office').innerText = storeData.delivery[wilaya].office;
+                selectDelivery(selectedDeliveryType);
+            } else {
+                methods.classList.add('hidden');
+                shippingCost = 0;
+                updateUI();
+            }
+        }
+
+        function selectDelivery(type) {
+            selectedDeliveryType = type;
+            document.getElementById('opt-home').classList.toggle('active', type === 'home');
+            document.getElementById('opt-office').classList.toggle('active', type === 'office');
+            const wilaya = document.getElementById('cust-wilaya').value;
+            shippingCost = parseFloat(storeData.delivery[wilaya][type]);
+            updateUI();
+        }
+
         function updateUI() {
             const container = document.getElementById('cart-items');
-            let total = 0;
+            let subtotal = 0;
             container.innerHTML = cart.map((item, idx) => {
-                total += (item.price * item.qty);
-                return `
-                    <div class="flex gap-6 py-6 border-b border-gray-50 items-center">
-                        <img src="${item.img}" class="w-20 h-28 object-cover">
-                        <div class="flex-grow">
-                            <h4 class="font-vogue text-lg italic">${item.name}</h4>
-                            <p class="text-[10px] opacity-40 uppercase mt-1">${item.price} USD x ${item.qty}</p>
-                            <button onclick="removeFromCart(${idx})" class="text-[9px] uppercase tracking-widest mt-4 border-b">Remove</button>
-                        </div>
-                    </div>`;
+                subtotal += (item.price * item.qty);
+                return `<div class="flex gap-4 mb-4 text-xs">
+                    <img src="${item.img}" class="w-12 h-16 object-cover">
+                    <div class="flex-grow">
+                        <p class="font-bold uppercase">${item.name}</p>
+                        <p class="opacity-50">${item.price} DA x ${item.qty}</p>
+                    </div>
+                    <button onclick="removeFromCart(${idx})">×</button>
+                </div>`;
             }).join('');
-            document.getElementById('cart-total').innerText = total.toFixed(2) + " USD";
+            document.getElementById('cart-total').innerText = (subtotal + shippingCost).toFixed(2) + " DA";
             document.getElementById('cart-count').innerText = `Bag (${cart.reduce((a, b) => a + b.qty, 0)})`;
         }
 
@@ -272,15 +251,29 @@
             document.getElementById('cart-overlay').classList.toggle('hidden', !s);
         }
 
-        function checkout() {
-            let msg = `New Order:\n`;
-            cart.forEach(i => msg += `- ${i.name} (Qty: ${i.qty})\n`);
-            msg += `\nTotal: ${document.getElementById('cart-total').innerText}`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
+        function sendOrder() {
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const wilaya = document.getElementById('cust-wilaya').value;
+            const payment = document.getElementById('pay-method').value;
+
+            if(!name || !phone || !wilaya || cart.length === 0) {
+                alert("Please fill all information"); return;
+            }
+
+            let msg = `*NEW ORDER - ${storeData.name}*\n\n`;
+            msg += `*Customer:* ${name}\n*Phone:* ${phone}\n*Wilaya:* ${wilaya}\n`;
+            msg += `*Delivery:* ${selectedDeliveryType === 'home' ? 'Home Delivery' : 'Office Pick-up'}\n`;
+            msg += `*Payment:* ${payment}\n\n`;
+            msg += `*Products:*\n`;
+            cart.forEach(i => msg += `- ${i.name} (${i.qty}x)\n`);
+            msg += `\n*Total:* ${document.getElementById('cart-total').innerText}`;
+            
+            window.open(`https://wa.me/213000000000?text=${encodeURIComponent(msg)}`);
         }
 
-        document.getElementById('year').innerText = new Date().getFullYear();
         initStore();
     </script>
 </body>
 </html>
+
