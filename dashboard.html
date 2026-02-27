@@ -3,172 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Store Dashboard | Pro</title>
+    <title>Store Dashboard | Pro Mobile-Ready</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root { --black: #000; --dark: #1a1a1a; --gray: #6b6b6b; --light: #f5f5f5; --white: #fff; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--light); color: var(--dark); overflow-x: hidden; }
         
-        /* Login Page */
-        .login-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--white); }
-        .login-box { max-width: 400px; width: 90%; padding: 2.5rem; background: var(--white); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); }
-        .login-box h1 { text-align: center; font-size: 2.5rem; margin-bottom: 0.5rem; }
-        .login-box p { text-align: center; color: var(--gray); margin-bottom: 2rem; }
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; border: 2px solid var(--light); border-radius: 8px; font-size: 1rem; }
-        .form-group input:focus, .form-group textarea:focus { outline: none; border-color: var(--black); }
-        .btn { width: 100%; padding: 0.9rem; border: none; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: 0.3s; }
-        .btn-primary { background: var(--black); color: var(--white); }
-        .btn-primary:hover { background: var(--dark); }
-        .btn-back { display: block; text-align: center; margin-top: 1.5rem; color: var(--gray); text-decoration: none; }
-        
-        .dashboard { display: none; }
-        .dashboard.active { display: block; }
-        .header { background: var(--white); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
-        .header-left { display: flex; align-items: center; gap: 1rem; }
-        .store-title { font-size: 1.2rem; font-weight: 600; }
-        .store-code { background: var(--light); padding: 0.3rem 0.6rem; border-radius: 4px; font-size: 0.8rem; font-family: monospace; }
-        .header-right { display: flex; gap: 0.8rem; }
-        .btn-logout { background: transparent; color: var(--gray); padding: 0.6rem 1rem; border: 1px solid var(--light); border-radius: 6px; cursor: pointer; }
-        
-        .container { display: flex; min-height: calc(100vh - 70px); }
-        .sidebar { width: 250px; background: var(--white); padding: 1.5rem; border-right: 1px solid var(--light); }
+        /* Navbar للهاتف */
+        .mobile-header { display: none; background: var(--white); padding: 1rem; border-bottom: 1px solid var(--light); position: sticky; top: 0; z-index: 1000; justify-content: space-between; align-items: center; }
+        .menu-btn { font-size: 1.5rem; cursor: pointer; background: none; border: none; }
+
+        /* Sidebar الاستجابة */
+        .container { display: flex; min-height: 100vh; }
+        .sidebar { width: 250px; background: var(--white); padding: 1.5rem; border-right: 1px solid var(--light); transition: 0.3s; z-index: 1100; }
         .sidebar-menu { list-style: none; }
-        .sidebar-menu li { margin-bottom: 0.5rem; }
-        .sidebar-menu a { display: flex; align-items: center; padding: 0.8rem 1rem; color: var(--gray); text-decoration: none; border-radius: 8px; transition: 0.3s; cursor: pointer; }
+        .sidebar-menu a { display: flex; align-items: center; padding: 0.8rem 1rem; color: var(--gray); text-decoration: none; border-radius: 8px; margin-bottom: 0.5rem; transition: 0.3s; cursor: pointer; }
         .sidebar-menu a:hover, .sidebar-menu a.active { background: var(--black); color: var(--white); }
-        .sidebar-menu .icon { margin-left: 0.8rem; }
-        
-        .main { flex: 1; padding: 2rem; max-width: 1000px; }
+        .sidebar-menu .icon { margin-right: 10px; }
+
+        /* Main Area */
+        .main { flex: 1; padding: 2rem; width: 100%; max-width: 1100px; margin: 0 auto; }
         .section { display: none; }
         .section.active { display: block; }
-        .page-header { margin-bottom: 2rem; }
-        .page-header h2 { font-size: 1.5rem; margin-bottom: 0.5rem; }
         .card { background: var(--white); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .card h3 { margin-bottom: 1rem; padding-bottom: 0.8rem; border-bottom: 1px solid var(--light); }
         
-        .btn-save, .btn-add { background: var(--black); color: var(--white); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; margin-top: 1rem; }
-        .btn-delete { background: #dc2626; color: var(--white); padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
-        
-        .state-item { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 0.8rem; padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 0.8rem; align-items: center; }
-        .product-item { display: flex; align-items: center; gap: 1rem; padding: 1rem; background: #fafafa; border-radius: 8px; margin-bottom: 0.8rem; }
-        .product-img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
-        
-        /* تصميم الطلبيات الجديد */
-        .order-item { border-bottom: 1px solid var(--light); padding: 1rem 0; display: grid; grid-template-columns: 1fr 1fr 1fr auto; align-items: center; font-size: 0.9rem; }
-        
-        /* معاينة الصور المرفوعة */
+        /* استجابة الجداول والحقول */
+        .order-item, .state-item { 
+            display: grid; grid-template-columns: 1fr 1fr 1fr auto; 
+            padding: 1rem; border-bottom: 1px solid var(--light); align-items: center; gap: 10px;
+        }
+
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.8rem; border: 2px solid var(--light); border-radius: 8px; margin-top: 5px; }
+
+        /* الموبايل */
+        @media (max-width: 768px) {
+            .mobile-header { display: flex; }
+            .sidebar { position: fixed; left: -260px; height: 100%; width: 260px; }
+            .sidebar.open { left: 0; box-shadow: 10px 0 30px rgba(0,0,0,0.1); }
+            .main { padding: 1rem; }
+            .order-item, .state-item { grid-template-columns: 1fr; border: 1px solid var(--light); border-radius: 8px; margin-bottom: 10px; }
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 1050; }
+            .sidebar-overlay.open { display: block; }
+        }
+
+        /* تنسيقات إضافية */
         .image-preview-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
         .preview-box { position: relative; width: 70px; height: 70px; border: 1px solid #ddd; border-radius: 5px; overflow: hidden; }
         .preview-box img { width: 100%; height: 100%; object-fit: cover; }
-        .remove-btn { position: absolute; top: 0; right: 0; background: red; color: white; border: none; font-size: 10px; cursor: pointer; padding: 2px 5px; }
-
-        .alert { padding: 1rem; border-radius: 8px; margin-bottom: 1rem; display: none; }
-        .alert-success { background: #d1fae5; color: #065f46; }
-        .alert-error { background: #fee2e2; color: #991b1b; }
+        .btn-save { background: var(--black); color: var(--white); padding: 0.8rem 1.5rem; border: none; border-radius: 8px; cursor: pointer; width: 100%; }
+        .btn-delete { background: #dc2626; color: white; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="loginPage" class="login-page">
-        <div class="login-box">
-            <h1>🛒</h1>
-            <p>Store Dashboard</p>
-            <div id="loginAlert" class="alert"></div>
+    <div id="sidebarOverlay" class="sidebar-overlay" onclick="toggleMenu()"></div>
+
+    <div class="mobile-header">
+        <button class="menu-btn" onclick="toggleMenu()"><i class="fa-solid fa-bars"></i></button>
+        <span class="store-title" id="mobileDisplayName">Dashboard</span>
+        <button onclick="logout()" style="border:none; background:none; opacity:0.5"><i class="fa-solid fa-right-from-bracket"></i></button>
+    </div>
+
+    <div id="loginPage" class="login-page" style="display: flex; min-height: 100vh; align-items: center; justify-content: center; background: white;">
+        <div class="login-box" style="width: 90%; max-width: 400px; padding: 2rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); text-align: center;">
+            <h1 style="font-size: 3rem;">🛍️</h1>
+            <h2 style="margin-bottom: 1.5rem;">Admin Login</h2>
             <form id="loginForm">
-                <div class="form-group"><label>Username</label><input type="text" id="username" placeholder="Enter username" required></div>
-                <div class="form-group"><label>Store Code</label><input type="text" id="storeCode" placeholder="Enter store code" required></div>
-                <button type="submit" class="btn btn-primary">Login</button>
+                <input type="text" id="username" placeholder="Username" style="width:100%; padding:1rem; margin-bottom:10px; border:1px solid #eee; border-radius:10px;" required>
+                <input type="text" id="storeCode" placeholder="Store Code" style="width:100%; padding:1rem; margin-bottom:20px; border:1px solid #eee; border-radius:10px;" required>
+                <button type="submit" class="btn-save">Access Dashboard</button>
             </form>
         </div>
     </div>
 
     <div id="dashboard" class="dashboard">
-        <header class="header">
-            <div class="header-left"><span class="store-title" id="displayName">My Store</span><span class="store-code" id="displayCode">STR-XXXX</span></div>
-            <div class="header-right"><button class="btn-logout" onclick="logout()">Logout</button></div>
-        </header>
-
         <div class="container">
-            <aside class="sidebar">
+            <aside class="sidebar" id="sidebar">
+                <div style="padding-bottom: 2rem; text-align: center;">
+                    <h3 id="sidebarStoreName" class="store-title">My Store</h3>
+                    <small id="sidebarStoreCode" style="opacity: 0.4;">STR-XXXX</small>
+                </div>
                 <ul class="sidebar-menu">
-                    <li><a onclick="showSection('orders')" id="menu-orders" class="active"><span class="icon">📦</span> Orders List</a></li>
-                    <li><a onclick="showSection('info')" id="menu-info"><span class="icon">📋</span> Information</a></li>
-                    <li><a onclick="showSection('products')" id="menu-products"><span class="icon">🛍️</span> Products</a></li>
-                    <li><a onclick="showSection('delivery')" id="menu-delivery"><span class="icon">🚚</span> Delivery</a></li>
-                    <li><a onclick="showSection('social')" id="menu-social"><span class="icon">📱</span> Social Links</a></li>
+                    <li><a onclick="showSection('orders')" id="menu-orders" class="active"><i class="fa-solid fa-box icon"></i> Orders</a></li>
+                    <li><a onclick="showSection('info')" id="menu-info"><i class="fa-solid fa-circle-info icon"></i> Store Info</a></li>
+                    <li><a onclick="showSection('products')" id="menu-products"><i class="fa-solid fa-shirt icon"></i> Products</a></li>
+                    <li><a onclick="showSection('delivery')" id="menu-delivery"><i class="fa-solid fa-truck icon"></i> Delivery</a></li>
+                    <li><a onclick="showSection('social')" id="menu-social"><i class="fa-solid fa-share-nodes icon"></i> Social Links</a></li>
+                    <li style="margin-top: 2rem;"><a onclick="logout()" style="color: #dc2626;"><i class="fa-solid fa-power-off icon"></i> Logout</a></li>
                 </ul>
             </aside>
 
             <main class="main">
                 <div id="orders" class="section active">
-                    <div class="page-header"><h2>Orders Management</h2><p>Last 500 orders received</p></div>
-                    <div class="card"><div id="ordersList">Loading...</div></div>
+                    <div class="page-header"><h2>Orders</h2><p>Last 500 orders</p></div>
+                    <div class="card" id="ordersList" style="padding:0">
+                        <div style="padding: 2rem; text-align: center; color: var(--gray);">Loading orders...</div>
+                    </div>
                 </div>
 
                 <div id="info" class="section">
                     <div class="page-header"><h2>Store Information</h2></div>
                     <div class="card">
-                        <h3>Basic Info</h3>
-                        <div id="infoAlert" class="alert"></div>
                         <form id="infoForm">
                             <div class="form-group"><label>Store Name</label><input type="text" id="infoName"></div>
-                            <div class="form-group"><label>Tagline / Bio</label><input type="text" id="infoBio"></div>
+                            <div class="form-group"><label>Bio</label><input type="text" id="infoBio"></div>
                             <div class="form-group"><label>Description</label><textarea id="infoDesc" rows="3"></textarea></div>
                             <hr style="margin:20px 0; opacity:0.1">
                             <div class="form-group">
-                                <label>Home Background Image</label>
+                                <label>Background Image (Cloudinary)</label>
                                 <input type="file" onchange="uploadToCloudinary(this, 'bg')">
                                 <input type="hidden" id="bgImageUrl">
                             </div>
                             <div class="form-group">
-                                <label>Background Opacity: <span id="opValue">100</span>%</label>
+                                <label>Opacity: <span id="opValue">100</span>%</label>
                                 <input type="range" id="bgOpacity" min="0" max="100" value="100" oninput="document.getElementById('opValue').innerText=this.value">
                             </div>
-                            <button type="submit" class="btn-save">Save Information</button>
+                            <button type="submit" class="btn-save">Update Settings</button>
                         </form>
                     </div>
                 </div>
 
                 <div id="products" class="section">
                     <div class="page-header"><h2>Products</h2></div>
-                    <div class="card"><h3>Add Category</h3><div style="display: flex; gap: 0.8rem;"><input type="text" id="newCat" placeholder="Category name" style="flex:1;padding:0.8rem;border:1px solid var(--light);border-radius:6px;"><button class="btn-add" onclick="addCategory()">Add</button></div></div>
                     <div class="card">
-                        <h3>Add Product</h3>
-                        <div id="productAlert" class="alert"></div>
+                        <h3>New Product</h3>
                         <form id="productForm">
-                            <div class="form-group"><label>Product Name</label><input type="text" id="prodName" required></div>
-                            <div class="form-group"><label>Category</label><select id="prodCat"><option value="">Select category</option></select></div>
-                            <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;"><div class="form-group"><label>Old Price</label><input type="number" id="prodOldPrice"></div><div class="form-group"><label>New Price</label><input type="number" id="prodPrice" required></div></div>
+                            <div class="form-group"><label>Name</label><input type="text" id="prodName" required></div>
+                            <div class="form-group"><label>Category</label><select id="prodCat"></select></div>
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px">
+                                <div class="form-group"><label>Old Price</label><input type="number" id="prodOldPrice"></div>
+                                <div class="form-group"><label>Price</label><input type="number" id="prodPrice" required></div>
+                            </div>
                             <div class="form-group">
-                                <label>Product Images (Multiple Upload)</label>
+                                <label>Product Images</label>
                                 <input type="file" multiple onchange="uploadToCloudinary(this, 'product')">
                                 <div id="imageGallery" class="image-preview-grid"></div>
                             </div>
-                            <div class="form-group"><label>Sizes</label><input type="text" id="prodSizes" placeholder="S, M, L"></div>
-                            <div class="form-group"><label>Colors</label><input type="text" id="prodColors" placeholder="Red, Black"></div>
+                            <div class="form-group"><label>Sizes</label><input type="text" id="prodSizes" placeholder="S,M,L"></div>
+                            <div class="form-group"><label>Colors</label><input type="text" id="prodColors" placeholder="Red,Black"></div>
                             <div class="form-group"><label>Description</label><textarea id="prodDesc"></textarea></div>
-                            <button type="submit" class="btn-save">Add Product</button>
+                            <button type="submit" class="btn-save">Publish</button>
                         </form>
                     </div>
-                    <div class="card"><h3>All Products</h3><div id="productsList"></div></div>
+                    <div class="card"><h3>Inventory</h3><div id="productsList"></div></div>
                 </div>
 
                 <div id="delivery" class="section">
-                    <div class="page-header"><h2>Delivery Settings</h2></div>
-                    <div class="card"><h3>Add State</h3><div id="deliveryAlert" class="alert"></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr auto;gap:0.8rem;"><input type="text" id="stateName" placeholder="State name"><input type="number" id="homePrice" placeholder="Home price"><input type="number" id="officePrice" placeholder="Office price"><button class="btn-add" style="margin-top:0" onclick="addState()">Add</button></div></div>
+                    <div class="page-header"><h2>Delivery</h2></div>
+                    <div class="card">
+                        <div style="display:flex; flex-direction:column; gap:10px">
+                            <input type="text" id="stateName" placeholder="State Name" class="form-group">
+                            <input type="number" id="homePrice" placeholder="Home Delivery" class="form-group">
+                            <input type="number" id="officePrice" placeholder="Office Delivery" class="form-group">
+                            <button class="btn-save" onclick="addState()">Add State</button>
+                        </div>
+                    </div>
                     <div class="card"><h3>States List</h3><div id="statesList"></div></div>
                 </div>
 
                 <div id="social" class="section">
-                    <div class="page-header"><h2>Social Media</h2></div>
-                    <div class="card"><h3>Links</h3><div id="socialAlert" class="alert"></div><form id="socialForm">
-                        <div class="form-group"><label>Facebook</label><input type="text" id="facebook"></div>
-                        <div class="form-group"><label>Instagram</label><input type="text" id="instagram"></div>
-                        <div class="form-group"><label>TikTok</label><input type="text" id="tiktok"></div>
-                        <button type="submit" class="btn-save">Save Links</button>
-                    </form></div>
+                    <div class="page-header"><h2>Social Links</h2></div>
+                    <div class="card">
+                        <form id="socialForm">
+                            <div class="form-group"><label>Facebook</label><input type="text" id="facebook"></div>
+                            <div class="form-group"><label>Instagram</label><input type="text" id="instagram"></div>
+                            <div class="form-group"><label>TikTok</label><input type="text" id="tiktok"></div>
+                            <button type="submit" class="btn-save">Save Links</button>
+                        </form>
+                    </div>
                 </div>
             </main>
         </div>
@@ -178,7 +181,13 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // Cloudinary Config (امسحي YOUR_ وضع بياناتك)
+        // دالة فتح/إغلاق القائمة في الموبايل
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+
+        // إعدادات Firebase و Cloudinary (تأكدي من تغيير YOUR_NAME)
         const CLOUD_URL = "https://api.cloudinary.com/v1_1/YOUR_NAME/image/upload";
         const CLOUD_PRESET = "YOUR_PRESET";
 
@@ -195,23 +204,21 @@
 
         let currentStore = null, currentCode = '', categories = [], uploadedImages = [];
 
-        // Login Logic
+        // Logic الدخول والتبديل
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const code = document.getElementById('storeCode').value.trim().toUpperCase();
             const user = document.getElementById('username').value.trim();
-            try {
-                const doc = await db.collection('stores').doc(code).get();
-                if(doc.exists && doc.data().username === user) {
-                    currentStore = doc.data(); currentCode = code;
-                    localStorage.setItem('storeCode', code);
-                    document.getElementById('loginPage').style.display = 'none';
-                    document.getElementById('dashboard').classList.add('active');
-                    document.getElementById('displayName').innerText = currentStore.name;
-                    document.getElementById('displayCode').innerText = code;
-                    loadAllData();
-                } else { alert("Wrong credentials!"); }
-            } catch(e) { alert("Error!"); }
+            const doc = await db.collection('stores').doc(code).get();
+            if(doc.exists && doc.data().username === user) {
+                currentStore = doc.data(); currentCode = code;
+                localStorage.setItem('storeCode', code);
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('dashboard').classList.add('active');
+                document.getElementById('sidebarStoreName').innerText = currentStore.name;
+                document.getElementById('sidebarStoreCode').innerText = code;
+                loadAllData();
+            } else { alert("Error in Code or Username"); }
         });
 
         function showSection(id) {
@@ -219,14 +226,15 @@
             document.getElementById(id).classList.add('active');
             document.querySelectorAll('.sidebar-menu a').forEach(a => a.classList.remove('active'));
             document.getElementById('menu-'+id).classList.add('active');
+            if(window.innerWidth <= 768) toggleMenu(); // إغلاق القائمة بعد الاختيار في الموبايل
             if(id === 'orders') loadOrders();
         }
 
+        // تحميل الصور والطلبيات (نفس الوظائف السابقة)
         async function uploadToCloudinary(input, type) {
             for(let file of input.files) {
                 const form = new FormData();
-                form.append('file', file);
-                form.append('upload_preset', CLOUD_PRESET);
+                form.append('file', file); form.append('upload_preset', CLOUD_PRESET);
                 const res = await fetch(CLOUD_URL, {method: 'POST', body: form}).then(r => r.json());
                 if(type === 'bg') document.getElementById('bgImageUrl').value = res.secure_url;
                 else { uploadedImages.push(res.secure_url); renderGallery(); }
@@ -235,14 +243,11 @@
 
         function renderGallery() {
             const g = document.getElementById('imageGallery');
-            g.innerHTML = uploadedImages.map((img, i) => `<div class="preview-box"><img src="${img}"><button class="remove-btn" onclick="uploadedImages.splice(${i},1);renderGallery()">X</button></div>`).join('');
+            g.innerHTML = uploadedImages.map((img, i) => `<div class="preview-box"><img src="${img}"><button type="button" class="remove-btn" onclick="uploadedImages.splice(${i},1);renderGallery()">X</button></div>`).join('');
         }
 
         async function loadAllData() {
-            loadStoreInfo();
-            loadProducts();
-            loadStates();
-            loadOrders();
+            loadStoreInfo(); loadProducts(); loadStates(); loadOrders();
         }
 
         async function loadStoreInfo() {
@@ -250,28 +255,30 @@
             document.getElementById('infoName').value = info.name || '';
             document.getElementById('infoBio').value = info.bio || '';
             document.getElementById('infoDesc').value = info.description || '';
-            document.getElementById('facebook').value = info.social?.facebook || '';
-            document.getElementById('instagram').value = info.social?.instagram || '';
-            document.getElementById('tiktok').value = info.social?.tiktok || '';
             categories = currentStore.categories || [];
             updateCatSelect();
         }
 
         function updateCatSelect() {
             const s = document.getElementById('prodCat');
-            s.innerHTML = '<option value="">Select Category</option>' + categories.map(c => `<option value="${c}">${c}</option>`).join('');
+            s.innerHTML = '<option value="">Category</option>' + categories.map(c => `<option value="${c}">${c}</option>`).join('');
         }
 
-        async function addCategory() {
-            const cat = document.getElementById('newCat').value.trim();
-            if(cat) { 
-                categories.push(cat); 
-                await db.collection('stores').doc(currentCode).update({categories}); 
-                updateCatSelect(); 
-            }
+        async function loadOrders() {
+            const list = document.getElementById('ordersList');
+            const snap = await db.collection('stores').doc(currentCode).collection('orders').orderBy('createdAt', 'desc').limit(500).get();
+            list.innerHTML = snap.empty ? "<p style='padding:20px'>No orders</p>" : snap.docs.map(doc => {
+                const o = doc.data();
+                return `<div class="order-item"><span><b>${o.customer.name}</b></span><span>${o.customer.phone}</span><span>${o.total}</span><span style="color:blue">New</span></div>`;
+            }).join('');
         }
 
-        // --- إعادة دوال التوصيل (Delivery Functions) ---
+        async function loadStates() {
+            const list = document.getElementById('statesList');
+            const states = currentStore.delivery || {};
+            list.innerHTML = Object.entries(states).map(([n, p]) => `<div class="state-item"><span><b>${n}</b></span><span>H: ${p.home}</span><span>O: ${p.office}</span><button class="btn-delete" onclick="deleteState('${n}')">Delete</button></div>`).join('');
+        }
+
         async function addState() {
             const name = document.getElementById('stateName').value;
             const h = document.getElementById('homePrice').value;
@@ -284,42 +291,24 @@
             loadStates();
         }
 
-        function loadStates() {
-            const list = document.getElementById('statesList');
-            const states = currentStore.delivery || {};
-            list.innerHTML = Object.entries(states).map(([n, p]) => `<div class="state-item"><span>${n}</span><span>H: ${p.home}</span><span>O: ${p.office}</span><button class="btn-delete" onclick="deleteState('${n}')">Delete</button></div>`).join('');
-        }
-
         async function deleteState(name) {
             delete currentStore.delivery[name];
             await db.collection('stores').doc(currentCode).update({delivery: currentStore.delivery});
             loadStates();
         }
 
-        // --- الطلبيات والمنتجات ---
-        async function loadOrders() {
-            const list = document.getElementById('ordersList');
-            const snap = await db.collection('stores').doc(currentCode).collection('orders').orderBy('createdAt', 'desc').limit(500).get();
-            list.innerHTML = snap.empty ? "No orders" : snap.docs.map(doc => {
-                const o = doc.data();
-                return `<div class="order-item"><span>${o.customer.name}</span><span>${o.customer.phone}</span><span>${o.total}</span><span>${o.status}</span></div>`;
-            }).join('');
-        }
-
         async function loadProducts() {
             const list = document.getElementById('productsList');
             const snap = await db.collection('stores').doc(currentCode).collection('products').get();
-            list.innerHTML = snap.docs.map(d => `<div class="product-item"><img src="${d.data().image}" class="product-img"><span>${d.data().name}</span><button class="btn-delete" onclick="deleteProd('${d.id}')">Delete</button></div>`).join('');
+            list.innerHTML = snap.docs.map(d => `<div class="order-item"><span><b>${d.data().name}</b></span><span>${d.data().price} DA</span><span>${d.data().category}</span><button class="btn-delete" onclick="deleteProd('${d.id}')">Delete</button></div>`).join('');
         }
 
-        async function deleteProd(id) {
-            await db.collection('stores').doc(currentCode).collection('products').doc(id).delete();
-            loadProducts();
-        }
+        async function deleteProd(id) { if(confirm("Delete?")){ await db.collection('stores').doc(currentCode).collection('products').doc(id).delete(); loadProducts(); } }
 
         function logout() { localStorage.clear(); location.reload(); }
     </script>
 </body>
 </html>
+
 
 
