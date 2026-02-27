@@ -11,145 +11,153 @@
 
     <style>
         :root {
-            --accent-color: #000000;
-            --bg-products: #ffffff; /* لون صفحة المنتجات */
-            --bg-header: #f8f8f8;   /* لون مختلف للهيدر للتناسق */
+            --primary-color: #000000;
+            --bg-color: #ffffff;
             --text-color: #1a1a1a;
         }
 
         body {
-            background-color: var(--bg-products);
+            background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Montserrat', sans-serif;
-            margin: 0;
+            transition: all 0.5s ease;
         }
 
         .font-vogue { font-family: 'Bodoni Moda', serif; }
 
-        /* Navbar: 60% Transparency */
+        /* Navbar: 60% Transparency & Layout */
         nav {
             background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid rgba(0,0,0,0.05);
-            transition: all 0.3s ease;
+            position: fixed;
+            top: 0; width: 100%; z-index: 1000;
         }
 
-        /* Hero Section (Different Color) */
-        .hero-section {
-            background-color: var(--bg-header);
-            padding: 120px 20px 80px 20px;
-            text-align: center;
+        .nav-container {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            align-items: center;
+            padding: 20px 40px;
         }
 
-        /* Logo in the middle */
-        .logo-container img {
-            max-height: 50px;
+        /* Logo Area in Middle */
+        .logo-mid img {
+            max-height: 60px;
             width: auto;
-            object-fit: contain;
+        }
+
+        /* Hero / Header Section */
+        .hero-section {
+            padding: 160px 20px 100px;
+            text-align: center;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .hero-section h2 {
+            color: var(--primary-color); /* يتغير حسب لوحة الإدارة */
         }
 
         /* Luxury Product Card */
-        .product-card {
-            transition: transform 0.4s ease;
-        }
         .img-wrapper {
             position: relative;
             overflow: hidden;
-            background: #fff;
             aspect-ratio: 3/4;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            background: #fdfdfd;
         }
         .product-card img {
             width: 100%; height: 100%; object-fit: cover;
-            transition: transform 0.8s cubic-bezier(0.2, 1, 0.3, 1);
+            transition: transform 1s cubic-bezier(0.2, 1, 0.3, 1);
         }
         .product-card:hover img { transform: scale(1.05); }
 
-        .add-to-bag {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 18px;
-            font-size: 10px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
+        .btn-add {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: var(--primary-color);
+            color: #fff; padding: 20px;
+            font-size: 10px; letter-spacing: 3px;
             transform: translateY(100%);
             transition: transform 0.4s ease;
         }
-        .product-card:hover .add-to-bag { transform: translateY(0); }
+        .product-card:hover .btn-add { transform: translateY(0); }
 
-        /* Professional Italian Sidebar */
+        /* Sidebar Cart (Italian Professional) */
         #cart-sidebar {
             transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            background: #ffffff;
-            box-shadow: -20px 0 50px rgba(0,0,0,0.05);
-        }
-
-        .cart-item {
-            display: flex; gap: 20px; padding: 20px 0;
-            border-bottom: 1px solid #f0f0f0;
+            background: var(--bg-color);
+            color: var(--text-color);
         }
 
         .checkout-btn {
-            background: var(--accent-color);
-            color: white;
-            width: 100%;
-            padding: 20px;
-            font-size: 11px;
-            letter-spacing: 4px;
-            text-transform: uppercase;
+            background: var(--primary-color);
+            color: #fff;
+            width: 100%; padding: 20px;
+            font-size: 11px; letter-spacing: 4px;
             font-weight: 600;
-            margin-top: 20px;
         }
+
+        /* Social Footer */
+        .footer-social a {
+            color: var(--text-color);
+            font-size: 18px;
+            transition: opacity 0.3s;
+        }
+        .footer-social a:hover { opacity: 0.5; }
     </style>
 </head>
 <body>
 
-    <nav class="fixed top-0 w-full z-[100]">
-        <div class="container mx-auto px-8 py-5 grid grid-cols-3 items-center">
-            <button onclick="toggleCart(true)" class="flex items-center gap-2">
-                <i class="fa-solid fa-bag-shopping text-sm"></i>
-                <span id="cart-count" class="text-[10px] font-bold uppercase tracking-widest">Bag (0)</span>
-            </button>
+    <nav>
+        <div class="nav-container">
+            <div class="text-left">
+                <h1 id="nav-store-name" class="font-vogue text-xl font-bold tracking-tighter uppercase">Studio</h1>
+            </div>
 
-            <div class="logo-container flex justify-center">
-                <img id="store-logo" src="" alt="" class="hidden"> 
-                <h1 id="nav-store-name" class="font-vogue text-2xl font-bold tracking-tighter uppercase">STUDIO</h1>
+            <div class="logo-mid">
+                <img id="store-logo" src="" alt="Logo" class="hidden">
             </div>
 
             <div class="text-right">
-                <span class="text-[9px] uppercase tracking-[0.3em] opacity-40 italic">Italian Suite</span>
+                <button onclick="toggleCart(true)" class="group flex items-center gap-3 justify-end w-full">
+                    <span id="cart-count" class="text-[10px] font-bold uppercase tracking-[0.2em]">Bag (0)</span>
+                    <i class="fa-solid fa-bag-shopping text-sm"></i>
+                </button>
             </div>
         </div>
     </nav>
 
     <header class="hero-section">
-        <h2 id="header-store-name" class="font-vogue text-7xl md:text-9xl italic mb-6">Signature</h2>
-        <p id="store-bio" class="text-gray-400 uppercase tracking-[0.6em] text-[10px] max-w-xl mx-auto"></p>
+        <h2 id="header-store-name" class="font-vogue text-6xl md:text-9xl italic mb-6 uppercase tracking-tighter">Boutique</h2>
+        <p id="store-bio" class="uppercase tracking-[0.5em] text-[10px] opacity-40 max-w-2xl mx-auto"></p>
     </header>
 
-    <main class="container mx-auto px-8 py-32">
+    <main class="container mx-auto px-10 py-32">
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-16">
             </div>
     </main>
 
+    <footer class="py-24 border-t border-gray-50 text-center">
+        <div id="social-links" class="footer-social flex justify-center gap-12 mb-10">
+            </div>
+        <p class="text-[9px] uppercase tracking-[0.4em] opacity-30">&copy; <span id="year"></span> All Rights Reserved</p>
+    </footer>
+
     <div id="cart-overlay" class="fixed inset-0 bg-black/10 hidden z-[900] backdrop-blur-sm" onclick="toggleCart(false)"></div>
-    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[1000] translate-x-full p-12 flex flex-col">
-        <div class="flex justify-between items-center mb-12">
-            <h2 class="font-vogue text-4xl italic">Your Selection</h2>
-            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-300 hover:text-black"></i></button>
+    <div id="cart-sidebar" class="fixed top-0 right-0 w-full max-w-md h-full z-[1000] translate-x-full p-12 flex flex-col shadow-2xl">
+        <div class="flex justify-between items-center mb-16">
+            <h2 class="font-vogue text-4xl italic tracking-tighter">Selection</h2>
+            <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark text-gray-300"></i></button>
         </div>
         
-        <div id="cart-items" class="flex-grow overflow-y-auto pr-4">
+        <div id="cart-items" class="flex-grow overflow-y-auto pr-2">
             </div>
 
-        <div class="mt-auto pt-8 border-t border-gray-100">
-            <div class="flex justify-between font-light mb-2">
-                <span class="text-gray-400 text-xs uppercase tracking-widest">Subtotal</span>
-                <span id="cart-total" class="font-bold">0.00 USD</span>
+        <div class="mt-auto pt-10 border-t border-gray-100">
+            <div class="flex justify-between items-center mb-8">
+                <span class="text-[10px] uppercase tracking-widest opacity-40">Total Amount</span>
+                <span id="cart-total" class="font-bold text-xl">0.00 USD</span>
             </div>
-            <button onclick="checkout()" class="checkout-btn">Complete Order</button>
+            <button onclick="checkout()" class="checkout-btn uppercase">Order via WhatsApp</button>
         </div>
     </div>
 
@@ -157,7 +165,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 
     <script>
-        // استخدام بياناتك الخاصة
         const firebaseConfig = {
           apiKey: "AIzaSyBEoyeQvUzFJviG2oYs5sZsAQ0bR9dHN0U",
           authDomain: "my-simple-stores.firebaseapp.com",
@@ -175,52 +182,60 @@
 
         async function initStore() {
             if(!storeCode) return;
-            const doc = await db.collection('stores').doc(storeCode).get();
-            if (doc.exists) {
-                const store = doc.data();
-                
-                // Colors & Theme
-                if(store.colors) {
-                    document.documentElement.style.setProperty('--accent-color', store.colors.primary);
-                    // يمكنك هنا تغيير لون الهيدر إذا أردتِ من لوحة التحكم
-                }
+            db.collection('stores').doc(storeCode).onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    
+                    // 1. Dynamic Colors from Admin Panel
+                    if(data.colors) {
+                        document.documentElement.style.setProperty('--primary-color', data.colors.primary);
+                        document.documentElement.style.setProperty('--bg-color', data.colors.background);
+                        document.documentElement.style.setProperty('--text-color', data.colors.text);
+                    }
 
-                // Info
-                document.getElementById('nav-store-name').innerText = store.name;
-                document.getElementById('header-store-name').innerText = store.name;
-                document.getElementById('store-bio').innerText = store.info?.bio || "New Collection 2024";
-                
-                // Logo Management
-                if(store.info?.logo) {
-                    const logoImg = document.getElementById('store-logo');
-                    logoImg.src = store.info.logo;
-                    logoImg.classList.remove('hidden');
-                    document.getElementById('nav-store-name').classList.add('hidden');
-                }
+                    // 2. Info & Logo
+                    document.getElementById('nav-store-name').innerText = data.name || "Studio";
+                    document.getElementById('header-store-name').innerText = data.name || "Boutique";
+                    document.getElementById('store-bio').innerText = data.info?.bio || "";
+                    
+                    if(data.info?.logo) {
+                        const logo = document.getElementById('store-logo');
+                        logo.src = data.info.logo;
+                        logo.classList.remove('hidden');
+                    }
 
-                loadProducts();
-            }
+                    // 3. Social Links
+                    const socialDiv = document.getElementById('social-links');
+                    socialDiv.innerHTML = '';
+                    if(data.info?.social) {
+                        const s = data.info.social;
+                        if(s.instagram) socialDiv.innerHTML += `<a href="${s.instagram}"><i class="fa-brands fa-instagram"></i></a>`;
+                        if(s.facebook) socialDiv.innerHTML += `<a href="${s.facebook}"><i class="fa-brands fa-facebook"></i></a>`;
+                        if(s.tiktok) socialDiv.innerHTML += `<a href="${s.tiktok}"><i class="fa-brands fa-tiktok"></i></a>`;
+                    }
+                    
+                    loadProducts();
+                }
+            });
         }
 
         async function loadProducts() {
             const grid = document.getElementById('products-grid');
-            const snapshot = await db.collection('stores').doc(storeCode).collection('products').get();
+            const snap = await db.collection('stores').doc(storeCode).collection('products').get();
             grid.innerHTML = "";
-            
-            snapshot.forEach(doc => {
+            snap.forEach(doc => {
                 const p = doc.data();
                 grid.innerHTML += `
-                    <div class="product-card">
+                    <div class="product-card group cursor-pointer">
                         <div class="img-wrapper">
                             <img src="${p.image || ''}" alt="">
-                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" class="add-to-bag">Add to Bag +</button>
+                            <button onclick="addToCart('${doc.id}', '${p.name}', ${p.price}, '${p.image}')" class="btn-add">ADD TO BAG +</button>
                         </div>
                         <div class="mt-8 text-center">
                             <h3 class="font-vogue text-2xl italic tracking-tight">${p.name}</h3>
-                            <p class="text-[11px] font-semibold opacity-30 mt-2">${p.price} USD</p>
+                            <p class="text-[11px] font-bold opacity-30 mt-2">${p.price} USD</p>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
@@ -238,12 +253,12 @@
             container.innerHTML = cart.map((item, idx) => {
                 total += (item.price * item.qty);
                 return `
-                    <div class="cart-item">
-                        <img src="${item.img}" class="w-20 h-24 object-cover bg-gray-50">
+                    <div class="flex gap-6 py-6 border-b border-gray-50 items-center">
+                        <img src="${item.img}" class="w-20 h-28 object-cover">
                         <div class="flex-grow">
                             <h4 class="font-vogue text-lg italic">${item.name}</h4>
-                            <p class="text-[10px] text-gray-400 uppercase mt-1">${item.price} USD x ${item.qty}</p>
-                            <button onclick="removeFromCart(${idx})" class="text-[9px] uppercase tracking-widest mt-4 border-b border-gray-200">Remove</button>
+                            <p class="text-[10px] opacity-40 uppercase mt-1">${item.price} USD x ${item.qty}</p>
+                            <button onclick="removeFromCart(${idx})" class="text-[9px] uppercase tracking-widest mt-4 border-b">Remove</button>
                         </div>
                     </div>`;
             }).join('');
@@ -258,14 +273,14 @@
         }
 
         function checkout() {
-            let msg = `Order Details:\n`;
-            cart.forEach(i => msg += `- ${i.name} (${i.qty})\n`);
-            window.open(`https://wa.me/YOUR_PHONE?text=${encodeURIComponent(msg)}`);
+            let msg = `New Order:\n`;
+            cart.forEach(i => msg += `- ${i.name} (Qty: ${i.qty})\n`);
+            msg += `\nTotal: ${document.getElementById('cart-total').innerText}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`);
         }
 
+        document.getElementById('year').innerText = new Date().getFullYear();
         initStore();
     </script>
 </body>
 </html>
-
-
