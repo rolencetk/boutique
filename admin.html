@@ -258,6 +258,12 @@
                             <label>اسم المستخدم للعميل</label>
                             <input type="text" id="clientUsername" placeholder="مثال: rolla_store" required>
                         </div>
+
+                          
+18                    <div class="form-group">
+19                        <label>اسم المتجر</label>
+20                        <input type="text" id="storeName" placeholder="مثال: متجر رحيل" required>
+21                    </div>
                         
                         <div class="form-group">
     <label>شعار المتجر (اختياري)</label>
@@ -310,8 +316,8 @@
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>الشعار</th>
                                 <th>اسم المستخدم</th>
+                                <th>الشعار</th>
                                 <th>الكود</th>
                                 <th>الرابط</th>
                                 <th>الحالة</th>
@@ -386,7 +392,8 @@
                 const storeCode = generateStoreCode();
                 const storeData = {
                     username: document.getElementById('clientUsername').value,
-                    logo: uploadedLogoUrl || 'storeName', // 
+                    name: document.getElementById('storeName').value,
+                    logo: uploadedLogoUrl || '',
                     colors: {
                         primary: document.getElementById('storeColor').value,
                         background: document.getElementById('storeBgColor').value,
