@@ -260,9 +260,13 @@
                         </div>
                         
                         <div class="form-group">
-                            <label>اسم المتجر</label>
-                            <input type="text" id="storeName" placeholder="مثال: متجر رحيل" required>
-                        </div>
+    <label>شعار المتجر (اختياري)</label>
+    <input type="file" id="storeLogo" accept="image/*">
+    <div id="logoPreview" style="margin-top: 10px; display: none;">
+        <img id="previewImage" src="" style="max-width: 100px; border-radius: 8px;">
+        <span id="uploadStatus" style="display: block; margin-top: 5px; color: #10b981;">✅ تم الرفع</span>
+    </div>
+
                         
                         <div class="form-group">
                             <label>لون المتجر الأساسي</label>
@@ -378,7 +382,7 @@
                 const storeCode = generateStoreCode();
                 const storeData = {
                     username: document.getElementById('clientUsername').value,
-                    name: document.getElementById('storeName').value,
+                    logo: uploadedLogoUrl || 'storeName', // 
                     colors: {
                         primary: document.getElementById('storeColor').value,
                         background: document.getElementById('storeBgColor').value,
@@ -427,6 +431,70 @@
                 submitBtn.textContent = 'إنشاء المتجر';
             }
         });
+
+        // ═══════════════════════════════════════════════════
+// دوال رفع الشعار لـ Cloudinary
+// ═══════════════════════════════════════════════════
+
+// ==== أجيبي تملأ هالمعلومات من حسابك في Cloudinary ====
+const CLOUDINARY_CLOUD_NAME = 'dtyhzuyfl'; // استبدلي باسم cloud name تبعك
+const CLOUDINARY_UPLOAD_PRESET = 'funzxnsy';  // استبدلي بـ unsigned preset
+
+let uploadedLogoUrl = '';
+
+// دالة رفع الصورة
+async function uploadLogoToCloudinary(file) {
+    if (!file) return null;
+    
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+    
+    try {
+        const response = await fetch(
+            `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
+        
+        const data = await response.json();
+        return data.secure_url;
+    } catch (error) {
+        console.error('Error uploading logo:', error);
+        return null;
+    }
+}
+
+// عند اختيار صورة
+document.getElementById('storeLogo').addEventListener('change', async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    const previewDiv = document.getElementById('logoPreview');
+    const previewImg = document.getElementById('previewImage');
+    const statusSpan = document.getElementById('uploadStatus');
+    
+    // عرض الصورة مؤقتاً من الملف المحلي
+    const localUrl = URL.createObjectURL(file);
+    previewImg.src = localUrl;
+    previewDiv.style.display = 'block';
+    statusSpan.textContent = '⏳ جاري الرفع...';
+    
+    // رفع الصورة لـ Cloudinary
+    const cloudUrl = await uploadLogoToCloudinary(file);
+    
+    if (cloudUrl) {
+        uploadedLogoUrl = cloudUrl;
+        previewImg.src = cloudUrl;
+        statusSpan.textContent = '✅ تم الرفع بنجاح!';
+        statusSpan.style.color = '#10b981';
+    } else {
+        statusSpan.textContent = '❌ فشل الرفع';
+        statusSpan.style.color = '#ef4444';
+    }
+});
         
         // تحميل قائمة المتاجر
         async function loadStores() {
