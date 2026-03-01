@@ -14,18 +14,7 @@
         body { background-color: var(--bg); color: var(--text); font-family: 'Montserrat', sans-serif; transition: 0.5s; }
         .font-vogue { font-family: 'Bodoni Moda', serif; }
         
-        /* التعديل: شفافية 60% ثابتة */
-        nav { 
-            background: rgba(255, 255, 255, 0.6) !important; 
-            backdrop-filter: blur(15px); 
-            -webkit-backdrop-filter: blur(15px);
-            border-bottom: 1px solid rgba(0,0,0,0.05); 
-            position: fixed; 
-            top: 0; 
-            width: 100%; 
-            z-index: 1000; 
-        }
-
+        nav { background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(15px); border-bottom: 1px solid rgba(0,0,0,0.05); position: fixed; top: 0; width: 100%; z-index: 1000; }
         .bio-bar { background: var(--primary); color: var(--bg); font-size: 9px; text-transform: uppercase; letter-spacing: 2px; padding: 10px; text-align: center; }
         
         .form-input { width: 100%; padding: 14px; border: 1px solid #eee; font-size: 11px; margin-bottom: 10px; background: transparent; outline: none; }
@@ -42,9 +31,9 @@
         #cart-sidebar { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); background: var(--bg); z-index: 2100; }
         .old-price { text-decoration: line-through; opacity: 0.3; font-size: 0.8em; margin-right: 8px; }
 
-        /* تعديل حجم الشعار ومكانه */
+        /* تعديل حجم الشعار ليكون واضحاً */
         #store-logo {
-            max-height: 80px; 
+            max-height: 60px; 
             width: auto;
             object-fit: contain;
         }
@@ -54,14 +43,14 @@
 
     <nav>
         <div id="store-bio-small" class="bio-bar">LUXURY COLLECTION</div>
-        <div class="flex justify-between items-center px-4 md:px-10 py-2">
-            <div class="flex items-center">
+        <div class="grid grid-cols-2 items-center px-10 py-5">
+            <div class="text-left flex items-center">
                 <img id="store-logo" src="" class="hidden">
-                <div class="font-vogue text-xl uppercase tracking-tighter hidden" id="nav-store-name"></div>
+                <div class="text-left font-vogue text-xl uppercase tracking-tighter hidden" id="nav-store-name">Studio</div>
             </div>
             
-            <div class="flex items-center">
-                <button onclick="toggleCart(true)" class="flex items-center gap-2">
+            <div class="text-right">
+                <button onclick="toggleCart(true)" class="flex items-center gap-2 justify-end w-full">
                     <span id="cart-count" class="text-[9px] font-bold uppercase tracking-widest">Bag (0)</span>
                     <i class="fa-solid fa-bag-shopping text-sm"></i>
                 </button>
@@ -117,24 +106,35 @@
             <h2 class="font-vogue text-4xl italic tracking-tighter">Shopping Bag</h2>
             <button onclick="toggleCart(false)"><i class="fa-solid fa-xmark opacity-20 hover:opacity-100"></i></button>
         </div>
+
         <div id="cart-items" class="space-y-6 mb-12 border-b border-gray-50 pb-10"></div>
+
         <div class="space-y-6">
             <h3 class="text-[10px] uppercase tracking-widest font-bold opacity-30">Customer Details</h3>
             <input type="text" id="cust-name" class="form-input" placeholder="Full Name">
             <input type="tel" id="cust-phone" class="form-input" placeholder="Phone Number">
-            <select id="cust-wilaya" class="form-input" onchange="updateShipping()"><option value="">Select Wilaya</option></select>
+            
+            <select id="cust-wilaya" class="form-input" onchange="updateShipping()">
+                <option value="">Select Wilaya</option>
+            </select>
+
             <div id="delivery-box" class="grid grid-cols-2 gap-2 hidden">
                 <div id="opt-home" class="delivery-card" onclick="selectShip('home')">Home <br> <span id="p-home"></span> DA</div>
                 <div id="opt-office" class="delivery-card" onclick="selectShip('office')">Office <br> <span id="p-office"></span> DA</div>
             </div>
+
             <select id="pay-method" class="form-input">
                 <option value="Cash on Delivery">Cash on Delivery</option>
                 <option value="BaridiMob">BaridiMob</option>
                 <option value="Paysera">Paysera / Wise</option>
             </select>
         </div>
+
         <div class="mt-12 pt-8 border-t border-gray-100">
-            <div class="flex justify-between mb-8"><span class="text-[10px] uppercase opacity-40">Total Amount</span><span id="cart-total" class="font-bold text-2xl">0 DA</span></div>
+            <div class="flex justify-between mb-8">
+                <span class="text-[10px] uppercase opacity-40">Total Amount</span>
+                <span id="cart-total" class="font-bold text-2xl">0 DA</span>
+            </div>
             <button id="send-btn" onclick="submitOrder()" class="btn-main">Send Order</button>
         </div>
     </div>
@@ -174,18 +174,24 @@
             document.documentElement.style.setProperty('--primary', data.colors.primary);
             document.documentElement.style.setProperty('--bg', data.colors.background);
             document.documentElement.style.setProperty('--text', data.colors.text);
+            
+            // تحديث العناوين
             document.getElementById('header-store-name').innerText = data.name;
             document.getElementById('store-description').innerText = data.info?.description || "";
             document.getElementById('store-bio-small').innerText = data.info?.bio || "Signature Suite";
+            
+            // إظهار الشعار في جهة اليسار
             const logoUrl = data.logo || data.info?.logo;
             if(logoUrl) { 
                 const logoImg = document.getElementById('store-logo');
-                logoImg.src = logoUrl; logoImg.classList.remove('hidden'); 
-                document.getElementById('nav-store-name').classList.add('hidden');
+                logoImg.src = logoUrl; 
+                logoImg.classList.remove('hidden'); 
+                document.getElementById('nav-store-name').classList.add('hidden'); 
             } else {
-                document.getElementById('nav-store-name').innerText = data.name;
+                // إذا لم يوجد شعار يظهر الاسم
                 document.getElementById('nav-store-name').classList.remove('hidden');
             }
+            
             const soc = document.getElementById('social-links'); soc.innerHTML = '';
             if(data.info?.social) Object.entries(data.info.social).forEach(([k,v]) => { if(v) soc.innerHTML += `<a href="${v}"><i class="fa-brands fa-${k}"></i></a>`; });
         }
@@ -202,11 +208,12 @@
             grid.innerHTML = "";
             snap.forEach(doc => {
                 const p = doc.data();
-                grid.innerHTML += `<div class="product-card cursor-pointer" onclick='openP(${JSON.stringify({id: doc.id, ...p}).replace(/'/g, "&apos;")})'>
-                    <div class="aspect-[3/4] mb-8 overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover hover:scale-105 transition duration-700"></div>
-                    <div class="text-center font-vogue italic text-2xl">${p.name}</div>
-                    <div class="text-center text-[10px] mt-2">${p.oldPrice ? `<span class="old-price">${p.oldPrice} DA</span>` : ''} ${p.price} DA</div>
-                </div>`;
+                grid.innerHTML += `
+                    <div class="product-card cursor-pointer" onclick='openP(${JSON.stringify({id: doc.id, ...p}).replace(/'/g, "&apos;")})'>
+                        <div class="aspect-[3/4] mb-8 overflow-hidden"><img src="${p.image}" class="w-full h-full object-cover hover:scale-105 transition duration-700"></div>
+                        <div class="text-center font-vogue italic text-2xl">${p.name}</div>
+                        <div class="text-center text-[10px] mt-2">${p.oldPrice ? `<span class="old-price">${p.oldPrice} DA</span>` : ''} ${p.price} DA</div>
+                    </div>`;
             });
         }
 
@@ -218,43 +225,93 @@
             document.getElementById('modal-old-price').innerText = p.oldPrice ? p.oldPrice + " DA" : "";
             document.getElementById('modal-desc').innerText = p.description || "";
             document.getElementById('modal-qty').innerText = "1";
+            
             const sz = document.getElementById('modal-sizes'); sz.innerHTML = "";
             if(p.sizes) p.sizes.split(',').forEach(s => sz.innerHTML += `<div class="p-2 border border-gray-100 text-[10px] cursor-pointer" onclick="selectS(this, '${s.trim()}')">${s.trim()}</div>`);
+            
             const cl = document.getElementById('modal-colors'); cl.innerHTML = "";
             if(p.colors) p.colors.split(',').forEach(c => cl.innerHTML += `<div class="w-6 h-6 rounded-full border border-gray-200 cursor-pointer" style="background:${c.trim()}" onclick="selectC(this, '${c.trim()}')"></div>`);
+
             document.getElementById('product-modal').classList.remove('hidden');
             setTimeout(() => document.getElementById('product-modal').classList.add('active'), 10);
-            document.getElementById('add-to-cart-final').onclick = () => { cart.push({ ...p, qty: currentQty, size: selectedS, color: selectedC }); updateCart(); closeModal(); toggleCart(true); };
+            
+            document.getElementById('add-to-cart-final').onclick = () => {
+                cart.push({ ...p, qty: currentQty, size: selectedS, color: selectedC });
+                updateCart(); closeModal(); toggleCart(true);
+            };
         }
 
         function selectS(el, s) { document.querySelectorAll('#modal-sizes div').forEach(d => d.style.borderColor = '#eee'); el.style.borderColor = 'var(--primary)'; selectedS = s; }
         function selectC(el, c) { document.querySelectorAll('#modal-colors div').forEach(d => d.style.transform = 'scale(1)'); el.style.transform = 'scale(1.3)'; selectedC = c; }
         function updateQty(v) { currentQty = Math.max(1, currentQty + v); document.getElementById('modal-qty').innerText = currentQty; }
         function closeModal() { document.getElementById('product-modal').classList.remove('active'); setTimeout(() => document.getElementById('product-modal').classList.add('hidden'), 400); }
+
         function updateShipping() {
             const w = document.getElementById('cust-wilaya').value;
             const box = document.getElementById('delivery-box');
-            if(w && storeData.delivery[w]) { box.classList.remove('hidden'); document.getElementById('p-home').innerText = storeData.delivery[w].home; document.getElementById('p-office').innerText = storeData.delivery[w].office; selectShip(shipType); } 
-            else { box.classList.add('hidden'); shipPrice = 0; updateCart(); }
+            if(w && storeData.delivery[w]) {
+                box.classList.remove('hidden');
+                document.getElementById('p-home').innerText = storeData.delivery[w].home;
+                document.getElementById('p-office').innerText = storeData.delivery[w].office;
+                selectShip(shipType);
+            } else { box.classList.add('hidden'); shipPrice = 0; updateCart(); }
         }
-        function selectShip(t) { shipType = t; shipPrice = parseFloat(storeData.delivery[document.getElementById('cust-wilaya').value][t]); document.getElementById('opt-home').classList.toggle('active', t==='home'); document.getElementById('opt-office').classList.toggle('active', t==='office'); updateCart(); }
+
+        function selectShip(t) {
+            shipType = t; shipPrice = parseFloat(storeData.delivery[document.getElementById('cust-wilaya').value][t]);
+            document.getElementById('opt-home').classList.toggle('active', t==='home');
+            document.getElementById('opt-office').classList.toggle('active', t==='office');
+            updateCart();
+        }
+
         function updateCart() {
-            const cont = document.getElementById('cart-items'); let sub = 0;
-            cont.innerHTML = cart.map((i, idx) => { sub += (i.price * i.qty); return `<div class="flex gap-4 text-xs items-center"><img src="${i.image}" class="w-14 h-20 object-cover"><div class="flex-grow"><b>${i.name}</b><br><span class="opacity-40">${i.size} | ${i.color}</span><br>${i.price} DA x ${i.qty}</div><button onclick="cart.splice(${idx},1);updateCart()">×</button></div>`; }).join('');
+            const cont = document.getElementById('cart-items');
+            let sub = 0;
+            cont.innerHTML = cart.map((i, idx) => {
+                sub += (i.price * i.qty);
+                return `<div class="flex gap-4 text-xs items-center">
+                    <img src="${i.image}" class="w-14 h-20 object-cover">
+                    <div class="flex-grow"><b>${i.name}</b><br><span class="opacity-40">${i.size} | ${i.color}</span><br>${i.price} DA x ${i.qty}</div>
+                    <button onclick="cart.splice(${idx},1);updateCart()">×</button>
+                </div>`;
+            }).join('');
             document.getElementById('cart-total').innerText = (sub + shipPrice) + " DA";
             document.getElementById('cart-count').innerText = `Bag (${cart.length})`;
         }
+
         function toggleCart(s) { document.getElementById('cart-sidebar').style.transform = s ? "translateX(0)" : "translateX(100%)"; document.getElementById('cart-overlay').classList.toggle('hidden', !s); }
+
         async function submitOrder() {
-            const name = document.getElementById('cust-name').value; const phone = document.getElementById('cust-phone').value; const wilaya = document.getElementById('cust-wilaya').value;
+            const name = document.getElementById('cust-name').value;
+            const phone = document.getElementById('cust-phone').value;
+            const wilaya = document.getElementById('cust-wilaya').value;
             if(!name || !phone || !wilaya || cart.length === 0) return alert("Please complete info");
-            const btn = document.getElementById('send-btn'); btn.innerText = "Processing..."; btn.disabled = true;
-            try { await db.collection('stores').doc(storeCode).collection('orders').add({ customer: { name, phone, wilaya, delivery: shipType }, items: cart, total: document.getElementById('cart-total').innerText, payment: document.getElementById('pay-method').value, status: 'New', createdAt: new Date().toISOString() }); alert("Order Sent!"); cart = []; updateCart(); toggleCart(false); } 
-            catch (e) { alert("Error"); } btn.innerText = "Send Order"; btn.disabled = false;
+
+            const btn = document.getElementById('send-btn');
+            btn.innerText = "Processing...";
+            btn.disabled = true;
+
+            const orderData = {
+                customer: { name, phone, wilaya, delivery: shipType },
+                items: cart,
+                total: document.getElementById('cart-total').innerText,
+                payment: document.getElementById('pay-method').value,
+                status: 'New',
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                await db.collection('stores').doc(storeCode).collection('orders').add(orderData);
+                alert("Order Sent Successfully!");
+                cart = []; updateCart(); toggleCart(false);
+            } catch (e) { alert("Error sending order"); }
+            btn.innerText = "Send Order"; btn.disabled = false;
         }
+
         init();
     </script>
 </body>
 </html>
+
 
 
