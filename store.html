@@ -53,6 +53,14 @@
         <p id="store-description" class="text-[10px] uppercase tracking-[0.5em] opacity-30 max-w-lg mx-auto leading-relaxed px-6"></p>
     </header>
 
+    #store-logo {
+    max-height: 45px; /* يمكنك زيادة الرقم حسب رغبتك */
+    width: auto;
+    object-fit: contain;
+    margin: 0 auto;
+}
+
+
     <main class="container mx-auto px-10 py-20">
         <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-20"></div>
     </main>
@@ -168,8 +176,22 @@
             document.getElementById('header-store-name').innerText = data.name;
             document.getElementById('store-description').innerText = data.info?.description || "";
             document.getElementById('store-bio-small').innerText = data.info?.bio || "Signature Suite";
-            if(data.info?.logo) { document.getElementById('store-logo').src = data.info.logo; document.getElementById('store-logo').classList.remove('hidden'); document.getElementById('nav-store-name').classList.add('hidden'); }
             
+            // التعديل هنا: التحقق من وجود logo في بيانات المتجر مباشرة
+            const logoUrl = data.logo || data.info?.logo; 
+            if(logoUrl) { 
+                const logoImg = document.getElementById('store-logo');
+                logoImg.src = logoUrl; 
+                logoImg.classList.remove('hidden'); 
+                document.getElementById('nav-store-name').classList.add('hidden'); 
+            }
+            
+            const soc = document.getElementById('social-links'); soc.innerHTML = '';
+            if(data.info?.social) Object.entries(data.info.social).forEach(([k,v]) => { if(v) soc.innerHTML += `<a href="${v}"><i class="fa-brands fa-${k}"></i></a>`; });
+        }
+
+
+
             const soc = document.getElementById('social-links'); soc.innerHTML = '';
             if(data.info?.social) Object.entries(data.info.social).forEach(([k,v]) => { if(v) soc.innerHTML += `<a href="${v}"><i class="fa-brands fa-${k}"></i></a>`; });
         }
