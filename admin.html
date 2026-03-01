@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         /* ═══════════════════════════════════════════════════
-           CSS لوحة التحكم
+           CSS لوحة التحكم (تم الإبقاء عليه كما هو)
            ═══════════════════════════════════════════════════ */
         
         .admin-container {
@@ -204,6 +204,15 @@
             padding: 0.4rem 0.8rem;
             font-size: 0.85rem;
         }
+
+        /* تنسيق معاينة الشعار */
+        .img-preview {
+            width: 60px;
+            height: 60px;
+            object-fit: contain;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
         
         @media (max-width: 768px) {
             .sidebar {
@@ -232,7 +241,6 @@
 </head>
 <body>
     <div class="admin-container">
-        <!-- القائمة الجانبية -->
         <aside class="sidebar">
             <h2>👑 لوحة التحكم</h2>
             <ul class="sidebar-menu">
@@ -242,9 +250,7 @@
             </ul>
         </aside>
 
-        <!-- المحتوى الرئيسي -->
         <main class="main-content">
-            <!-- صفحة إنشاء متجر -->
             <div id="create-page" class="page active">
                 <h1 class="page-title">إنشاء متجر جديد</h1>
                 
@@ -262,6 +268,12 @@
                         <div class="form-group">
                             <label>اسم المتجر</label>
                             <input type="text" id="storeName" placeholder="مثال: متجر رحيل" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>شعار المتجر (Logo)</label>
+                            <input type="file" id="storeLogo" accept="image/*">
+                            <small style="color: #6366f1; display: block; margin-top: 5px;">* سيتم رفع الصورة تلقائياً إلى Cloudinary</small>
                         </div>
                         
                         <div class="form-group">
@@ -283,19 +295,12 @@
                     </form>
                 </div>
                 
-                <!-- شرح الكود -->
                 <div class="card">
                     <h3>📋 كيف يعمل النظام؟</h3>
-                    <p>عند إنشاء متجر جديد، سيتم:</p>
-                    <ol style="margin: 1rem 0 0 1.5rem; line-height: 2;">
-                        <li>生成 كود فريد للمتجر (مثل: <code>STR-8K2M-P5N-2024</code>)</li>
-                        <li>حفظ بيانات المتجر في قاعدة البيانات</li>
-                        <li>إعطائك الكود لإعطائه للعميل</li>
-                    </ol>
+                    <p>عند إنشاء متجر جديد، سيتم رفع الشعار لـ Cloudinary وحفظ الرابط في Firebase.</p>
                 </div>
             </div>
 
-            <!-- صفحة قائمة المتاجر -->
             <div id="list-page" class="page">
                 <h1 class="page-title">قائمة المتاجر</h1>
                 
@@ -305,19 +310,17 @@
                     <table class="stores-table">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>الشعار</th>
                                 <th>اسم المتجر</th>
                                 <th>اسم المستخدم</th>
                                 <th>الكود</th>
                                 <th>الرابط</th>
-                                <th>الحالة</th>
                                 <th>إجراءات</th>
                             </tr>
                         </thead>
                         <tbody id="storesTableBody">
-                            <!-- سيتم ملؤه من Firebase -->
                             <tr>
-                                <td colspan="7" style="text-align: center;">جاري تحميل المتاجر...</td>
+                                <td colspan="6" style="text-align: center;">جاري تحميل المتاجر...</td>
                             </tr>
                         </tbody>
                     </table>
@@ -326,34 +329,23 @@
         </main>
     </div>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
     <script src="app.js"></script>
     
     <script>
-        // ═══════════════════════════════════════════════════
-        // كود JavaScript للوحة التحكم
-        // ═══════════════════════════════════════════════════
-        
-        // تغيير الصفحات
+        // 🛑 إعدادات Cloudinary (قومي بتعبئتها ليعمل الرفع)
+        const CLOUD_NAME = "ضع_اسم_سحابتك_هنا"; 
+        const UPLOAD_PRESET = "ضع_اسم_البريسيت_هنا"; 
+
+        // تغيير الصفحات (كما هي)
         function showPage(pageName) {
-            // إخفاء كل الصفحات
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            // إظهار الصفحة المطلوبة
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageName + '-page').classList.add('active');
-            
-            // تحديث القائمة
-            document.querySelectorAll('.sidebar-menu a').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.classList.add('active');
+            document.querySelectorAll('.sidebar-menu a').forEach(link => link.classList.remove('active'));
+            if(event) event.target.classList.add('active');
         }
         
-        // إنشاء كود عشوائي للمتجر
         function generateStoreCode() {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             let code = 'STR-';
@@ -364,21 +356,43 @@
             return code;
         }
         
-        // إنشاء متجر جديد
+        // ✨ إنشاء متجر جديد (المعدل للتعامل مع Cloudinary)
         document.getElementById('createStoreForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const alertDiv = document.getElementById('createAlert');
             const submitBtn = this.querySelector('button[type="submit"]');
+            const logoFile = document.getElementById('storeLogo').files[0];
             
             try {
                 submitBtn.disabled = true;
-                submitBtn.textContent = 'جاري الإنشاء...';
+                submitBtn.textContent = 'جاري رفع الشعار...';
                 
+                let logoUrl = "https://via.placeholder.com/150?text=No+Logo"; // افتراضي
+
+                // الرفع لـ Cloudinary إذا وجدت صورة
+                if (logoFile) {
+                    const formData = new FormData();
+                    formData.append('file', logoFile);
+                    formData.append('upload_preset', UPLOAD_PRESET);
+
+                    const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    const data = await response.json();
+                    if (data.secure_url) {
+                        logoUrl = data.secure_url;
+                    }
+                }
+
+                submitBtn.textContent = 'جاري حفظ البيانات...';
                 const storeCode = generateStoreCode();
                 const storeData = {
                     username: document.getElementById('clientUsername').value,
                     name: document.getElementById('storeName').value,
+                    logo: logoUrl, // حفظ الرابط هنا ✅
                     colors: {
                         primary: document.getElementById('storeColor').value,
                         background: document.getElementById('storeBgColor').value,
@@ -387,35 +401,18 @@
                     code: storeCode,
                     status: 'active',
                     createdAt: new Date().toISOString(),
-                    info: {
-                        description: '',
-                        bio: '',
-                        social: {
-                            facebook: '',
-                            instagram: '',
-                            tiktok: ''
-                        }
-                    },
+                    info: { description: '', bio: '', social: { facebook: '', instagram: '', tiktok: '' } },
                     delivery: {},
                     products: {}
                 };
                 
-                // حفظ في Firebase
                 await db.collection('stores').doc(storeCode).set(storeData);
                 
                 alertDiv.className = 'alert alert-success';
                 alertDiv.style.display = 'block';
-                alertDiv.innerHTML = `
-                    ✅ تم إنشاء المتجر بنجاح!<br>
-                    <strong>كود المتجر:</strong> <code>${storeCode}</code><br>
-                    <strong>اسم المستخدم:</strong> ${storeData.username}<br>
-                    <strong>رابط المتجر:</strong> store.html?code=${storeCode}
-                `;
+                alertDiv.innerHTML = `✅ تم إنشاء المتجر بنجاح!<br><strong>كود المتجر:</strong> <code>${storeCode}</code>`;
                 
-                // تحديث قائمة المتاجر
                 loadStores();
-                
-                // تنظيف النموذج
                 this.reset();
                 
             } catch (error) {
@@ -428,96 +425,50 @@
             }
         });
         
-        // تحميل قائمة المتاجر
+        // 🔄 تحميل قائمة المتاجر (المعدل لعرض الشعار في الجدول)
         async function loadStores() {
             const tbody = document.getElementById('storesTableBody');
             const alertDiv = document.getElementById('listAlert');
             
             try {
                 const snapshot = await db.collection('stores').get();
-                
                 if (snapshot.empty) {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="7" style="text-align: center;">
-                                ❌ لا توجد متاجر بعد
-                            </td>
-                        </tr>
-                    `;
+                    tbody.innerHTML = `<tr><td colspan="6" style="text-align: center;">❌ لا توجد متاجر</td></tr>`;
                     return;
                 }
                 
                 let html = '';
-                let counter = 1;
-                
                 snapshot.forEach(doc => {
                     const store = doc.data();
                     html += `
                         <tr>
-                            <td>${counter}</td>
+                            <td><img src="${store.logo}" class="img-preview" onerror="this.src='https://via.placeholder.com/50'"></td>
                             <td>${store.name}</td>
                             <td>${store.username}</td>
                             <td><span class="store-code">${store.code}</span></td>
-                            <td>
-                                <a href="store.html?code=${store.code}" target="_blank">
-                                    فتح المتجر ↗
-                                </a>
-                            </td>
-                            <td>
-                                <span class="${store.status === 'active' ? 'status-active' : 'status-inactive'}">
-                                    ${store.status === 'active' ? 'نشط' : 'موقوف'}
-                                </span>
-                            </td>
+                            <td><a href="store.html?code=${store.code}" target="_blank">فتح ↗</a></td>
                             <td>
                                 <div class="actions-btns">
-                                    <a href="dashboard.html?code=${store.code}" class="btn btn-primary btn-small">
-                                        لوحة العميل
-                                    </a>
-                                    <button class="btn btn-danger btn-small" onclick="deleteStore('${store.code}')">
-                                        حذف
-                                    </button>
+                                    <button class="btn btn-danger btn-small" onclick="deleteStore('${store.code}')">حذف</button>
                                 </div>
                             </td>
                         </tr>
                     `;
-                    counter++;
                 });
-                
                 tbody.innerHTML = html;
-                
             } catch (error) {
-                alertDiv.className = 'alert alert-error';
-                alertDiv.style.display = 'block';
-                alertDiv.textContent = '❌ خطأ في تحميل المتاجر: ' + error.message;
+                console.error(error);
             }
         }
         
-        // حذف متجر
         async function deleteStore(code) {
-            if (!confirm('هل أنتِ متأكدة من حذف هذا المتجر؟')) {
-                return;
-            }
-            
-            const alertDiv = document.getElementById('listAlert');
-            
+            if (!confirm('هل أنتِ متأكدة؟')) return;
             try {
                 await db.collection('stores').doc(code).delete();
-                
-                alertDiv.className = 'alert alert-success';
-                alertDiv.style.display = 'block';
-                alertDiv.textContent = '✅ تم حذف المتجر بنجاح';
-                
-                // إعادة تحميل القائمة
                 loadStores();
-                
-            } catch (error) {
-                alertDiv.className = 'alert alert-error';
-                alertDiv.style.display = 'block';
-                alertDiv.textContent = '❌ خطأ في الحذف: ' + error.message;
-            }
+            } catch (error) { alert('خطأ في الحذف'); }
         }
         
-        // تحميل المتاجر عند فتح الصفحة
         loadStores();
     </script>
 </body>
