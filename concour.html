@@ -1,0 +1,650 @@
+<!doctype html>
+<html lang="ar" dir="rtl" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ثنائي الركح</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;family=Playfair+Display:wght@400;700;900&amp;family=Tajawal:wght@300;400;500;700;900&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: 'Amiri', serif; margin: 0; }
+    .font-playfair { font-family: 'Playfair Display', serif; }
+
+    @keyframes float-light {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+      50% { transform: translateY(-30px) scale(1.2); opacity: 0.7; }
+    }
+    @keyframes float-light2 {
+      0%, 100% { transform: translateY(0) scale(1.1); opacity: 0.2; }
+      50% { transform: translateY(-20px) scale(0.9); opacity: 0.6; }
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(16,185,129,0.3), 0 0 60px rgba(59,130,246,0.1); }
+      50% { box-shadow: 0 0 40px rgba(16,185,129,0.5), 0 0 80px rgba(59,130,246,0.3); }
+    }
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    @keyframes fade-in-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes spotlight {
+      0%, 100% { opacity: 0.08; transform: rotate(0deg) scale(1); }
+      33% { opacity: 0.15; transform: rotate(2deg) scale(1.05); }
+      66% { opacity: 0.1; transform: rotate(-2deg) scale(0.98); }
+    }
+
+    .light-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(40px);
+    }
+    .anim-fade-up { animation: fade-in-up 0.8s ease forwards; opacity: 0; }
+    .anim-delay-1 { animation-delay: 0.15s; }
+    .anim-delay-2 { animation-delay: 0.3s; }
+    .anim-delay-3 { animation-delay: 0.45s; }
+    .anim-delay-4 { animation-delay: 0.6s; }
+
+    .hero-section {
+      background: linear-gradient(135deg, #022c22 0%, #0c1e3a 40%, #064e3b 70%, #0f172a 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-section::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0deg, rgba(16,185,129,0.05) 60deg, transparent 120deg, rgba(59,130,246,0.05) 200deg, transparent 260deg);
+      animation: spotlight 12s ease-in-out infinite;
+    }
+
+    .glass-card {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .form-section {
+      background: linear-gradient(180deg, #0f172a 0%, #022c22 50%, #0c1e3a 100%);
+      position: relative;
+    }
+
+    .input-field {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #e2e8f0;
+      padding: 12px 16px;
+      border-radius: 12px;
+      width: 100%;
+      font-family: 'Amiri', serif;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+    .input-field:focus {
+      border-color: #10b981;
+      box-shadow: 0 0 0 3px rgba(16,185,129,0.15);
+      background: rgba(255,255,255,0.08);
+    }
+    .input-field::placeholder { color: rgba(255,255,255,0.3); }
+
+    select.input-field option { background: #1e293b; color: #e2e8f0; }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      background-size: 200% 200%;
+      animation: shimmer 3s ease infinite;
+      border: none;
+      color: white;
+      padding: 16px 48px;
+      border-radius: 16px;
+      font-family: 'Amiri', serif;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .submit-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(16,185,129,0.4); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .person-card {
+      background: linear-gradient(145deg, rgba(16,185,129,0.06), rgba(59,130,246,0.06));
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 32px;
+      position: relative;
+    }
+    .person-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #10b981, #3b82f6);
+      border-radius: 20px 20px 0 0;
+    }
+
+    .condition-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+    .condition-card:hover {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(16,185,129,0.3);
+      transform: translateY(-2px);
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 9999;
+      pointer-events: none;
+    }
+    .toast {
+      padding: 16px 28px;
+      border-radius: 14px;
+      color: white;
+      font-family: 'Amiri', serif;
+      font-weight: 500;
+      pointer-events: auto;
+      animation: fade-in-up 0.4s ease;
+      margin-bottom: 8px;
+    }
+    .toast-success { background: linear-gradient(135deg, #10b981, #059669); }
+    .toast-error { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+    .nav-link {
+      color: rgba(255,255,255,0.6);
+      text-decoration: none;
+      transition: color 0.3s;
+      font-weight: 500;
+    }
+    .nav-link:hover { color: #10b981; }
+
+    .scroll-smooth { scroll-behavior: smooth; }
+
+    .italian-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin: 24px 0;
+    }
+    .italian-divider span {
+      height: 2px;
+      width: 60px;
+      border-radius: 2px;
+    }
+
+    .number-badge {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .spinner { animation: spin-slow 1s linear infinite; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full overflow-auto scroll-smooth" style="background: #0a1628;">
+  <div id="app-wrapper" class="w-full h-full" style="min-height: 100%;">
+   <!-- Toast Container -->
+   <div class="toast-container" id="toastContainer"></div><!-- Navigation -->
+   <nav style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(10,22,40,0.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(255,255,255,0.06);">
+    <div style="max-width:1200px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;">
+     <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#10b981,#3b82f6);display:flex;align-items:center;justify-content:center;">
+       <i data-lucide="theater" style="width:20px;height:20px;color:white;"></i>
+      </div><span style="font-weight:700;font-size:17px;color:#e2e8f0;" id="navTitle">ثنائي الركح</span>
+     </div>
+     <div style="display:flex;gap:24px;align-items:center;">
+      <a href="#home" class="nav-link" style="font-size:14px;">الرئيسية</a> <a href="#conditions" class="nav-link" style="font-size:14px;">الشروط</a> <a href="#register" class="nav-link" style="font-size:14px;">التسجيل</a>
+     </div>
+    </div>
+   </nav><!-- Hero Section -->
+   <section id="home" class="hero-section" style="min-height:100%;display:flex;align-items:center;justify-content:center;padding:120px 24px 80px;">
+    <!-- Light orbs -->
+    <div class="light-orb" style="width:300px;height:300px;background:rgba(16,185,129,0.15);top:10%;right:5%;animation:float-light 8s ease-in-out infinite;"></div>
+    <div class="light-orb" style="width:200px;height:200px;background:rgba(59,130,246,0.15);top:60%;left:10%;animation:float-light2 6s ease-in-out infinite;"></div>
+    <div class="light-orb" style="width:150px;height:150px;background:rgba(16,185,129,0.1);bottom:20%;right:30%;animation:float-light 10s ease-in-out infinite 2s;"></div>
+    <div class="light-orb" style="width:100px;height:100px;background:rgba(59,130,246,0.12);top:30%;left:40%;animation:float-light2 7s ease-in-out infinite 1s;"></div>
+    <div style="text-align:center;position:relative;z-index:2;max-width:800px;">
+     <div class="anim-fade-up" style="margin-bottom:20px;">
+      <span style="display:inline-block;padding:8px 24px;border-radius:50px;font-size:13px;font-weight:500;color:#10b981;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);"> 🎭 مسابقة مسرحية </span>
+     </div>
+     <h1 id="heroTitle" class="anim-fade-up anim-delay-1" style="font-size:clamp(42px,8vw,80px);font-weight:900;line-height:1.1;margin:0 0 12px;background:linear-gradient(135deg,#10b981,#34d399,#3b82f6,#60a5fa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">ثنائي الركح</h1>
+     <div class="italian-divider anim-fade-up anim-delay-2">
+      <span style="background:#10b981;"></span> <i data-lucide="sparkles" style="width:18px;height:18px;color:#10b981;"></i> <span style="background:#3b82f6;"></span>
+     </div>
+     <p id="heroSlogan" class="anim-fade-up anim-delay-2" style="font-size:clamp(20px,3.5vw,30px);font-weight:300;color:#94a3b8;margin:16px 0 8px;letter-spacing:1px;">بروح أسامة نكمل المشوار</p>
+     <p class="anim-fade-up anim-delay-3" style="font-size:16px;color:rgba(255,255,255,0.4);margin:0 0 40px;max-width:500px;display:inline-block;line-height:1.7;">منصة التسجيل الرسمية للمسابقة المسرحية الثنائية — سجّلوا ثنائيكم الآن وأبدعوا على خشبة المسرح</p>
+     <div class="anim-fade-up anim-delay-4" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="#register" id="heroRegisterBtn" style="display:inline-flex;align-items:center;gap:8px;padding:16px 40px;border-radius:16px;background:linear-gradient(135deg,#10b981,#3b82f6);color:white;text-decoration:none;font-weight:700;font-size:17px;transition:all 0.3s;animation:pulse-glow 3s ease-in-out infinite;"> <i data-lucide="pen-tool" style="width:20px;height:20px;"></i> سجّل الآن </a> <a href="#conditions" style="display:inline-flex;align-items:center;gap:8px;padding:16px 32px;border-radius:16px;border:1px solid rgba(255,255,255,0.15);color:#94a3b8;text-decoration:none;font-weight:500;font-size:15px;transition:all 0.3s;"> <i data-lucide="scroll-text" style="width:18px;height:18px;"></i> شروط المشاركة </a>
+     </div><!-- Stats -->
+     <div class="anim-fade-up anim-delay-4" style="display:flex;gap:40px;justify-content:center;margin-top:60px;flex-wrap:wrap;">
+      <div class="glass-card" style="padding:20px 32px;border-radius:16px;text-align:center;">
+       <div style="font-size:28px;font-weight:900;color:#10b981;">
+        🎭
+       </div>
+       <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;">
+        مسابقة ثنائية
+       </div>
+      </div>
+      <div class="glass-card" style="padding:20px 32px;border-radius:16px;text-align:center;">
+       <div style="font-size:28px;font-weight:900;color:#3b82f6;">
+        📹
+       </div>
+       <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;">
+        فيديو إبداعي
+       </div>
+      </div>
+      <div class="glass-card" style="padding:20px 32px;border-radius:16px;text-align:center;">
+       <div style="font-size:28px;font-weight:900;color:#10b981;">
+        🏆
+       </div>
+       <div style="font-size:13px;color:rgba(255,255,255,0.5);margin-top:4px;">
+        جوائز قيّمة
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Conditions Section -->
+   <section id="conditions" class="form-section" style="padding:80px 24px;position:relative;">
+    <div class="light-orb" style="width:250px;height:250px;background:rgba(59,130,246,0.1);top:20%;left:5%;animation:float-light 9s ease-in-out infinite;"></div>
+    <div style="max-width:900px;margin:0 auto;position:relative;z-index:2;">
+     <div style="text-align:center;margin-bottom:48px;">
+      <span style="display:inline-block;padding:6px 20px;border-radius:50px;font-size:12px;font-weight:500;color:#3b82f6;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.2);margin-bottom:16px;"> 📋 قبل التسجيل </span>
+      <h2 style="font-size:clamp(28px,5vw,40px);font-weight:900;color:#e2e8f0;margin:0 0 8px;">شروط المشاركة</h2>
+      <p style="color:rgba(255,255,255,0.4);font-size:15px;">يرجى قراءة الشروط بعناية قبل التسجيل</p>
+     </div>
+     <div style="display:grid;gap:16px;">
+      <div class="condition-card" style="display:flex;gap:16px;align-items:flex-start;">
+       <div class="number-badge" style="background:rgba(16,185,129,0.15);color:#10b981;">
+        1
+       </div>
+       <div>
+        <h3 style="color:#e2e8f0;font-weight:700;margin:0 0 4px;font-size:16px;">المشاركة ثنائية</h3>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:14px;line-height:1.7;">يجب التسجيل كثنائي (شخصين) في استمارة واحدة.</p>
+       </div>
+      </div>
+      <div class="condition-card" style="display:flex;gap:16px;align-items:flex-start;">
+       <div class="number-badge" style="background:rgba(59,130,246,0.15);color:#3b82f6;">
+        2
+       </div>
+       <div>
+        <h3 style="color:#e2e8f0;font-weight:700;margin:0 0 4px;font-size:16px;">الفيديو إلزامي</h3>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:14px;line-height:1.7;">يجب إرسال فيديو المسابقة وهو شرط أساسي للمشاركة.</p>
+       </div>
+      </div>
+      <div class="condition-card" style="display:flex;gap:16px;align-items:flex-start;">
+       <div class="number-badge" style="background:rgba(16,185,129,0.15);color:#10b981;">
+        3
+       </div>
+       <div>
+        <h3 style="color:#e2e8f0;font-weight:700;margin:0 0 4px;font-size:16px;">طلبة جامعيون</h3>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:14px;line-height:1.7;">المسابقة مفتوحة لطلبة الجامعات فقط مع ذكر الجامعة والسنة الدراسية.</p>
+       </div>
+      </div>
+      <div class="condition-card" style="display:flex;gap:16px;align-items:flex-start;">
+       <div class="number-badge" style="background:rgba(59,130,246,0.15);color:#3b82f6;">
+        4
+       </div>
+       <div>
+        <h3 style="color:#e2e8f0;font-weight:700;margin:0 0 4px;font-size:16px;">البيانات الشخصية</h3>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:14px;line-height:1.7;">يجب ملء جميع الحقول الإلزامية بمعلومات صحيحة ودقيقة لكلا المشاركَين.</p>
+       </div>
+      </div>
+      <div class="condition-card" style="display:flex;gap:16px;align-items:flex-start;">
+       <div class="number-badge" style="background:rgba(16,185,129,0.15);color:#10b981;">
+        5
+       </div>
+       <div>
+        <h3 style="color:#e2e8f0;font-weight:700;margin:0 0 4px;font-size:16px;">الصورة الشخصية (اختياري)</h3>
+        <p style="color:rgba(255,255,255,0.5);margin:0;font-size:14px;line-height:1.7;">يمكن إرفاق صورة شخصية لكل مشارك ولكنها ليست إلزامية.</p>
+       </div>
+      </div>
+     </div>
+    </div>
+   </section><!-- Registration Form -->
+   <section id="register" class="form-section" style="padding:80px 24px 100px;position:relative;">
+    <div class="light-orb" style="width:200px;height:200px;background:rgba(16,185,129,0.12);top:10%;right:8%;animation:float-light2 8s ease-in-out infinite;"></div>
+    <div class="light-orb" style="width:180px;height:180px;background:rgba(59,130,246,0.1);bottom:15%;left:5%;animation:float-light 7s ease-in-out infinite 1s;"></div>
+    <div style="max-width:1000px;margin:0 auto;position:relative;z-index:2;">
+     <div style="text-align:center;margin-bottom:48px;">
+      <span style="display:inline-block;padding:6px 20px;border-radius:50px;font-size:12px;font-weight:500;color:#10b981;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2);margin-bottom:16px;"> ✍️ استمارة التسجيل </span>
+      <h2 style="font-size:clamp(28px,5vw,40px);font-weight:900;color:#e2e8f0;margin:0 0 8px;">سجّلوا ثنائيكم</h2>
+      <p style="color:rgba(255,255,255,0.4);font-size:15px;">أكملوا البيانات أدناه لكلا المشاركَين</p>
+     </div>
+     <form id="registrationForm" onsubmit="return false;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,400px),1fr));gap:32px;margin-bottom:40px;">
+       <!-- Person 1 -->
+       <div class="person-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+         <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;">
+          <i data-lucide="user" style="width:22px;height:22px;color:white;"></i>
+         </div>
+         <div>
+          <h3 style="color:#e2e8f0;font-weight:700;margin:0;font-size:18px;">المشارك الأول</h3>
+          <p style="color:rgba(255,255,255,0.4);margin:0;font-size:12px;">البيانات الشخصية</p>
+         </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1fn">الاسم *</label> <input type="text" id="p1fn" class="input-field" placeholder="أدخل الاسم" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1ln">اللقب *</label> <input type="text" id="p1ln" class="input-field" placeholder="أدخل اللقب" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1bd">تاريخ الميلاد *</label> <input type="date" id="p1bd" class="input-field" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1bp">مكان الميلاد *</label> <input type="text" id="p1bp" class="input-field" placeholder="أدخل مكان الميلاد" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1ph">رقم الهاتف *</label> <input type="tel" id="p1ph" class="input-field" placeholder="مثال: 0550000000" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1ph2">رقم هاتف إضافي <span style="color:rgba(255,255,255,0.3);">(اختياري)</span></label> <input type="tel" id="p1ph2" class="input-field" placeholder="رقم هاتف آخر">
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1uni">الجامعة *</label> <input type="text" id="p1uni" class="input-field" placeholder="اسم الجامعة" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p1yr">السنة الدراسية *</label> <select id="p1yr" class="input-field" required> <option value="">اختر السنة</option> <option value="السنة الأولى">السنة الأولى</option> <option value="السنة الثانية">السنة الثانية</option> <option value="السنة الثالثة">السنة الثالثة</option> <option value="السنة الرابعة">السنة الرابعة</option> <option value="السنة الخامسة">السنة الخامسة</option> <option value="ماستر 1">ماستر 1</option> <option value="ماستر 2">ماستر 2</option> <option value="دكتوراه">دكتوراه</option> </select>
+         </div>
+        </div>
+       </div><!-- Person 2 -->
+       <div class="person-card">
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
+         <div style="width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,#3b82f6,#2563eb);display:flex;align-items:center;justify-content:center;">
+          <i data-lucide="user" style="width:22px;height:22px;color:white;"></i>
+         </div>
+         <div>
+          <h3 style="color:#e2e8f0;font-weight:700;margin:0;font-size:18px;">المشارك الثاني</h3>
+          <p style="color:rgba(255,255,255,0.4);margin:0;font-size:12px;">البيانات الشخصية</p>
+         </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:14px;">
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2fn">الاسم *</label> <input type="text" id="p2fn" class="input-field" placeholder="أدخل الاسم" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2ln">اللقب *</label> <input type="text" id="p2ln" class="input-field" placeholder="أدخل اللقب" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2bd">تاريخ الميلاد *</label> <input type="date" id="p2bd" class="input-field" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2bp">مكان الميلاد *</label> <input type="text" id="p2bp" class="input-field" placeholder="أدخل مكان الميلاد" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2ph">رقم الهاتف *</label> <input type="tel" id="p2ph" class="input-field" placeholder="مثال: 0550000000" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2ph2">رقم هاتف إضافي <span style="color:rgba(255,255,255,0.3);">(اختياري)</span></label> <input type="tel" id="p2ph2" class="input-field" placeholder="رقم هاتف آخر">
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2uni">الجامعة *</label> <input type="text" id="p2uni" class="input-field" placeholder="اسم الجامعة" required>
+         </div>
+         <div>
+          <label style="display:block;color:#94a3b8;font-size:13px;font-weight:500;margin-bottom:6px;" for="p2yr">السنة الدراسية *</label> <select id="p2yr" class="input-field" required> <option value="">اختر السنة</option> <option value="السنة الأولى">السنة الأولى</option> <option value="السنة الثانية">السنة الثانية</option> <option value="السنة الثالثة">السنة الثالثة</option> <option value="السنة الرابعة">السنة الرابعة</option> <option value="السنة الخامسة">السنة الخامسة</option> <option value="ماستر 1">ماستر 1</option> <option value="ماستر 2">ماستر 2</option> <option value="دكتوراه">دكتوراه</option> </select>
+         </div>
+        </div>
+       </div>
+      </div><!-- Video & Photo Note -->
+      <div class="glass-card" style="border-radius:20px;padding:28px 32px;margin-bottom:32px;text-align:center;">
+       <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;">
+        <i data-lucide="video" style="width:24px;height:24px;color:#10b981;"></i>
+        <h3 style="color:#e2e8f0;font-weight:700;margin:0;font-size:17px;">الفيديو والصور</h3>
+       </div>
+       <p style="color:rgba(255,255,255,0.5);margin:0 0 8px;font-size:14px;line-height:1.8;">⚠️ بعد إكمال التسجيل، يرجى إرسال <strong style="color:#10b981;">فيديو المسابقة</strong> (إلزامي) و<strong style="color:#3b82f6;">الصور الشخصية</strong> (اختياري) عبر البريد الإلكتروني أو وسائل التواصل الخاصة بالمسابقة.</p>
+       <p style="color:rgba(255,255,255,0.3);margin:0;font-size:12px;">سيتم التواصل معكم لتأكيد استلام الملفات</p>
+      </div><!-- Submit -->
+      <div style="text-align:center;">
+       <button type="submit" class="submit-btn" id="submitBtn"> <span id="submitText" style="display:flex;align-items:center;gap:8px;justify-content:center;"> <i data-lucide="send" style="width:20px;height:20px;"></i> إرسال التسجيل </span> <span id="submitLoading" style="display:none;align-items:center;gap:8px;justify-content:center;">
+         <svg class="spinner" width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" stroke-opacity="0.3" /><path d="M12 2a10 10 0 0 1 10 10" />
+         </svg> جارٍ الإرسال... </span> </button>
+      </div>
+     </form><!-- Success message (hidden by default) -->
+     <div id="successMessage" style="display:none;text-align:center;padding:60px 24px;">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,#10b981,#059669);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;">
+       <i data-lucide="check" style="width:40px;height:40px;color:white;"></i>
+      </div>
+      <h2 style="color:#e2e8f0;font-weight:900;font-size:28px;margin:0 0 12px;">تم التسجيل بنجاح! 🎉</h2>
+      <p style="color:rgba(255,255,255,0.5);font-size:15px;line-height:1.8;max-width:500px;margin:0 auto 24px;">شكراً لتسجيلكم في مسابقة ثنائي الركح. لا تنسوا إرسال فيديو المسابقة!</p><button onclick="resetForm()" style="padding:12px 32px;border-radius:12px;border:1px solid rgba(255,255,255,0.15);background:transparent;color:#94a3b8;font-family:'Tajawal',sans-serif;font-size:15px;cursor:pointer;transition:all 0.3s;"> تسجيل ثنائي آخر </button>
+     </div>
+    </div>
+   </section><!-- Footer -->
+   <footer style="background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.06);padding:40px 24px;text-align:center;">
+    <div style="max-width:900px;margin:0 auto;">
+     <p style="color:rgba(255,255,255,0.3);margin:0 0 16px;font-size:13px;">🎭 ثنائي الركح — بروح أسامة نكمل المشوار</p>
+     <div style="border-top:1px solid rgba(255,255,255,0.08);padding:16px 0;margin-top:16px;">
+      <p style="color:rgba(255,255,255,0.4);margin:8px 0;font-size:12px;line-height:1.8;"><strong style="color:#10b981;">المسابقة منظمة من قبل:</strong><br>
+        نادي مواهب الإعلام والثقافة</p>
+      <p style="color:rgba(255,255,255,0.4);margin:8px 0;font-size:12px;line-height:1.8;"><strong style="color:#3b82f6;">بالتنسيق مع:</strong><br>
+        منظمة الأمنية</p>
+      <p style="color:rgba(255,255,255,0.4);margin:8px 0;font-size:12px;line-height:1.8;"><strong style="color:#10b981;">بمساهمة:</strong><br>
+        مديرية الشباب والرياضة • نادي رائدات الإعلام</p>
+     </div>
+    </div>
+   </footer>
+  </div>
+  <script>
+    // ===== Config & Element SDK =====
+    const defaultConfig = {
+      main_title: 'ثنائي الركح',
+      slogan: 'بروح أسامة نكمل المشوار',
+      register_button_text: 'سجّل الآن',
+      background_color: '#0a1628',
+      surface_color: '#0f172a',
+      text_color: '#e2e8f0',
+      primary_action_color: '#10b981',
+      secondary_action_color: '#3b82f6',
+      font_family: 'Amiri',
+      font_size: 16,
+      google_sheets_url: 'https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID/edit'
+    };
+
+    function applyConfig(config) {
+      const el = (id) => document.getElementById(id);
+      const title = config.main_title || defaultConfig.main_title;
+      const slogan = config.slogan || defaultConfig.slogan;
+      const regBtn = config.register_button_text || defaultConfig.register_button_text;
+      const font = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      const bg = config.background_color || defaultConfig.background_color;
+      const surface = config.surface_color || defaultConfig.surface_color;
+      const text = config.text_color || defaultConfig.text_color;
+      const primary = config.primary_action_color || defaultConfig.primary_action_color;
+      const secondary = config.secondary_action_color || defaultConfig.secondary_action_color;
+
+      el('heroTitle').textContent = title;
+      el('navTitle').textContent = title;
+      el('heroSlogan').textContent = slogan;
+      el('heroRegisterBtn').childNodes[el('heroRegisterBtn').childNodes.length - 1].textContent = ' ' + regBtn;
+
+      document.body.style.fontFamily = `${font}, Tajawal, sans-serif`;
+      document.body.style.fontSize = baseSize + 'px';
+      document.body.style.background = bg;
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => applyConfig(config),
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['main_title', config.main_title || defaultConfig.main_title],
+        ['slogan', config.slogan || defaultConfig.slogan],
+        ['register_button_text', config.register_button_text || defaultConfig.register_button_text]
+      ])
+    });
+
+    // ===== Data SDK =====
+    let recordCount = 0;
+
+    const dataHandler = {
+      onDataChanged(data) {
+        recordCount = data.length;
+      }
+    };
+
+    (async () => {
+      const res = await window.dataSdk.init(dataHandler);
+      if (!res.isOk) console.error('Data SDK init failed');
+    })();
+
+    // ===== Toast =====
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.textContent = message;
+      container.appendChild(toast);
+      setTimeout(() => { toast.style.opacity = '0'; toast.style.transition = 'opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 4000);
+    }
+
+    // ===== Form =====
+    const form = document.getElementById('registrationForm');
+    const submitBtn = document.getElementById('submitBtn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (recordCount >= 999) {
+        showToast('تم الوصول للحد الأقصى من التسجيلات.', 'error');
+        return;
+      }
+
+      const val = (id) => document.getElementById(id).value.trim();
+
+      // Validate required fields
+      const required = ['p1fn','p1ln','p1bd','p1bp','p1ph','p1uni','p1yr','p2fn','p2ln','p2bd','p2bp','p2ph','p2uni','p2yr'];
+      for (const id of required) {
+        if (!val(id)) {
+          showToast('يرجى ملء جميع الحقول الإلزامية.', 'error');
+          document.getElementById(id).focus();
+          return;
+        }
+      }
+
+      // Show loading
+      submitBtn.disabled = true;
+      document.getElementById('submitText').style.display = 'none';
+      document.getElementById('submitLoading').style.display = 'flex';
+
+      const record = {
+        person1_first_name: val('p1fn'),
+        person1_last_name: val('p1ln'),
+        person1_birth_date: val('p1bd'),
+        person1_birth_place: val('p1bp'),
+        person1_phone: val('p1ph'),
+        person1_phone2: val('p1ph2'),
+        person1_university: val('p1uni'),
+        person1_year: val('p1yr'),
+        person2_first_name: val('p2fn'),
+        person2_last_name: val('p2ln'),
+        person2_birth_date: val('p2bd'),
+        person2_birth_place: val('p2bp'),
+        person2_phone: val('p2ph'),
+        person2_phone2: val('p2ph2'),
+        person2_university: val('p2uni'),
+        person2_year: val('p2yr'),
+        submitted_at: new Date().toISOString()
+      };
+
+      const result = await window.dataSdk.create(record);
+
+      submitBtn.disabled = false;
+      document.getElementById('submitText').style.display = 'flex';
+      document.getElementById('submitLoading').style.display = 'none';
+
+      if (result.isOk) {
+        showToast('تم التسجيل بنجاح! 🎉');
+        form.style.display = 'none';
+        document.getElementById('successMessage').style.display = 'block';
+        
+        // Send to Google Sheets
+        const sheetsUrl = window.elementSdk?.config?.google_sheets_url || defaultConfig.google_sheets_url;
+        if (sheetsUrl && sheetsUrl !== defaultConfig.google_sheets_url) {
+          sendToGoogleSheets(record, sheetsUrl);
+        }
+        
+        lucide.createIcons();
+      } else {
+        showToast('حدث خطأ أثناء التسجيل. حاول مرة أخرى.', 'error');
+      }
+    });
+
+    // Send data to Google Sheets via Forms
+    function sendToGoogleSheets(record, sheetsUrl) {
+      try {
+        // Extract form ID from Google Sheets URL
+        const formUrl = sheetsUrl.replace('/edit', '/formResponse');
+        
+        // Map record fields to Google Forms entry IDs
+        // You'll need to update these entry IDs based on your form structure
+        const data = new FormData();
+        data.append('entry.123456789', record.person1_first_name); // Replace with actual entry ID for person1_first_name
+        data.append('entry.987654321', record.person1_last_name); // Replace with actual entry ID for person1_last_name
+        // Add more fields as needed...
+        
+        fetch(formUrl, {
+          method: 'POST',
+          body: data,
+          mode: 'no-cors'
+        }).catch(e => console.log('Google Sheets sync attempted'));
+      } catch (e) {
+        console.log('Google Sheets integration note: Please configure form entry IDs');
+      }
+    }
+
+    function resetForm() {
+      form.reset();
+      form.style.display = 'block';
+      document.getElementById('successMessage').style.display = 'none';
+    }
+
+    // Init icons
+    lucide.createIcons();
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fb2e52782f09845',t:'MTc3ODY4ODIyNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
